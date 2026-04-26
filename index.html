@@ -462,6 +462,10 @@ footer { text-align: center; padding: 1.5rem; font-size: 9px; letter-spacing: 2p
 ════════════════════════════════════════════════════════════════════════════ -->
 <div class="section active" id="section-harta">
   <div class="map-section">
+    <div id="pm-no-data-banner" style="display:none;background:rgba(201,168,76,0.12);border:1px solid var(--border);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1rem;text-align:center;">
+      <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:0.4rem;">✈ În așteptare</div>
+      <div style="font-size:13px;color:var(--gray);line-height:1.6;">Lista de invitați nu a fost publicată încă.<br>Organizatorii vor activa harta în curând.</div>
+    </div>
     <div class="pm-card">
       <div class="pm-card-label">BOARDING PASS · PASAGER</div>
       <div class="pm-card-title" id="pm-title">Caută-ți locul la bord</div>
@@ -624,15 +628,26 @@ var GUESTS = [], TABLES = [], DECORS = [], GUEST_NAMES = [];
 function loadSiteData() {
   try {
     const raw = localStorage.getItem('loveairlines_data');
-    if (!raw) return;
+    if (!raw) {
+      updateDataBanner(false);
+      return;
+    }
     const d = JSON.parse(raw);
-    GUESTS      = d.guests  || [];
-    TABLES      = d.tables  || [];
-    DECORS      = d.decors  || [];
+    GUESTS      = d.guests   || [];
+    TABLES      = d.tables   || [];
+    DECORS      = d.decors   || [];
     GUEST_NAMES = d.allNames || GUESTS.map(g => g.name);
+    updateDataBanner(GUEST_NAMES.length > 0);
+    console.log('[Site] Date încărcate: ' + GUEST_NAMES.length + ' invitați, ' + GUESTS.length + ' asignați');
   } catch(e) {
-    console.warn('Nu s-au putut încărca datele site-ului:', e);
+    console.warn('[Site] Eroare încărcare date:', e);
+    updateDataBanner(false);
   }
+}
+
+function updateDataBanner(hasData) {
+  const banner = document.getElementById('pm-no-data-banner');
+  if (banner) banner.style.display = hasData ? 'none' : 'block';
 }
 loadSiteData();
 
@@ -905,12 +920,8 @@ function pmSearch(v) {
   pmSuggs = [];
   if (q.length < 2) return;
   if (GUESTS.length === 0) {
-    // Reîncearcă să citească datele
     loadSiteData();
-    if (GUESTS.length === 0) {
-      pmNotF.textContent = 'Lista de invitați nu a fost încă publicată de organizatori.';
-      pmNotF.style.display = 'block'; return;
-    }
+    if (GUESTS.length === 0) return; // banner already shown
   }
   pmSuggs = GUESTS.filter(g => g.name.toLowerCase().includes(q)).slice(0, 8);
   if (!pmSuggs.length) {
