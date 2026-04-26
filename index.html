@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Love Airlines · Dalia & Theo · 23 August 2026</title>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-VV41PWCJQT"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-VV41PWCJQT');
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & BASE ─────────────────────────────────────────────────────────── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --green:       #1a3a2a;
+  --green-dark:  #112418;
+  --green-light: #244d38;
+  --gold:        #c9a84c;
+  --gold-light:  #e8c97a;
+  --cream:       #f7f3ee;
+  --cream-dark:  #ede7d9;
+  --white:       #ffffff;
+  --gray:        #8a9a8e;
+  --border:      rgba(201,168,76,0.35);
+}
+html, body { height: 100%; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--green);
+  color: var(--cream);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── FLOATERS ─────────────────────────────────────────────────────────────── */
+.floaters { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.floater {
+  position: absolute; opacity: 0.17;
+  animation: floatUp linear infinite;
+}
+@keyframes floatUp {
+  0%   { transform: translateY(110vh) rotate(0deg);  opacity: 0; }
+  10%  { opacity: 0.20; }
+  90%  { opacity: 0.15; }
+  100% { transform: translateY(-10vh) rotate(20deg); opacity: 0; }
+}
+
+/* ── NAVBAR ───────────────────────────────────────────────────────────────── */
+.navbar {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--green-dark);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  height: 52px;
+  flex-shrink: 0;
+}
+.nav-logo {
+  font-family: 'Playfair Display', serif;
+  color: var(--gold); font-size: 0.95rem;
+  letter-spacing: 3px; white-space: nowrap;
+}
+.nav-tabs {
+  display: flex; gap: 0; align-items: center;
+  position: absolute; left: 50%; transform: translateX(-50%);
+}
+.nav-tab {
+  background: none; border: none;
+  padding: 0 1.1rem;
+  height: 52px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px; font-weight: 500;
+  letter-spacing: 2.5px; text-transform: uppercase;
+  color: var(--gray); cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+  white-space: nowrap;
+  display: flex; align-items: center; gap: 6px;
+}
+.nav-tab:hover { color: var(--gold-light); }
+.nav-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+.nav-tab .tab-icon { font-size: 14px; }
+.lang-switcher { display: flex; gap: 5px; align-items: center; }
+.lang-btn {
+  background: none; border: 1px solid transparent;
+  border-radius: 6px; padding: 4px 7px;
+  font-size: 17px; cursor: pointer;
+  transition: all 0.2s; opacity: 0.45; line-height: 1;
+}
+.lang-btn:hover { opacity: 0.8; border-color: var(--border); }
+.lang-btn.active { opacity: 1; border-color: var(--gold); background: rgba(201,168,76,0.12); }
+
+/* ── HEADER ───────────────────────────────────────────────────────────────── */
+.header {
+  text-align: center; padding: 2.5rem 1.5rem 1.75rem;
+  position: relative; z-index: 1;
+  border-bottom: 1px solid var(--border);
+}
+.header-airline { font-size: 10px; letter-spacing: 4px; color: var(--gold); text-transform: uppercase; margin-bottom: 0.6rem; }
+.header-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.9rem, 6vw, 3.2rem);
+  color: var(--gold); line-height: 1.1; margin-bottom: 0.4rem;
+}
+.header-subtitle {
+  font-size: 11px; letter-spacing: 3px;
+  color: var(--cream-dark); text-transform: uppercase;
+  opacity: 0.65; margin-bottom: 1.25rem;
+}
+.cities-row { position: relative; height: 62px; margin: 0.5rem 0; }
+.city-tag {
+  position: absolute; font-size: 10px; letter-spacing: 2px;
+  color: var(--gold); text-transform: uppercase;
+  border: 1px solid rgba(201,168,76,0.3); padding: 2px 8px;
+  border-radius: 3px;
+}
+.city-tag.center {
+  left: 50%; transform: translateX(-50%); top: 18px;
+  font-size: 11px; letter-spacing: 3px; opacity: 1;
+  border-color: rgba(201,168,76,0.7); padding: 4px 14px; font-weight: 500;
+}
+.flight-info {
+  display: flex; justify-content: center; gap: 1.5rem;
+  font-size: 11px; letter-spacing: 2px;
+  color: var(--gray); text-transform: uppercase; flex-wrap: wrap;
+}
+.flight-info span { color: var(--gold-light); }
+
+/* ── TICKER ───────────────────────────────────────────────────────────────── */
+.ticker {
+  background: rgba(201,168,76,0.08);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 0.45rem 0; overflow: hidden; white-space: nowrap;
+  position: relative; z-index: 1;
+}
+.ticker-inner { display: inline-block; animation: ticker 28s linear infinite; }
+.ticker-text { font-size: 10px; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; padding: 0 3rem; }
+@keyframes ticker { from { transform: translateX(100vw); } to { transform: translateX(-100%); } }
+
+/* ── SECTIONS ─────────────────────────────────────────────────────────────── */
+.section { display: none; position: relative; z-index: 1; }
+.section.active { display: block; }
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   TAB 1 — HARTA (PassengerMap)
+══════════════════════════════════════════════════════════════════════════════ */
+.map-section { padding: 2rem 1rem 3rem; max-width: 600px; margin: 0 auto; }
+
+/* Search card */
+.pm-card {
+  background: rgba(245,240,232,0.97); border-radius: 12px; padding: 1.5rem;
+  margin-bottom: 1rem; box-shadow: 0 6px 28px rgba(0,0,0,0.3);
+}
+.pm-card-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: #8a7a5a; margin-bottom: 0.2rem; }
+.pm-card-title { font-family: 'Playfair Display', serif; font-size: 1.35rem; color: #1a1a14; margin-bottom: 0.2rem; }
+.pm-card-sub { font-size: 12px; color: #8a7a5a; margin-bottom: 1rem; }
+.pm-search-wrap { position: relative; }
+.pm-input {
+  width: 100%; padding: 0.8rem 3rem 0.8rem 1rem;
+  border: 1.5px solid #d0c4a8; border-radius: 8px;
+  font-family: 'DM Sans', sans-serif; font-size: 15px;
+  color: #1a1a14; background: #faf7f2; outline: none;
+  transition: border-color 0.2s;
+}
+.pm-input:focus { border-color: var(--gold); }
+.pm-input::placeholder { color: #b0a080; }
+.pm-search-btn {
+  position: absolute; right: 5px; top: 50%; transform: translateY(-50%);
+  background: var(--green); border: none; border-radius: 6px;
+  width: 36px; height: 36px; cursor: pointer;
+  color: var(--gold); font-size: 1rem; display: flex; align-items: center; justify-content: center;
+}
+.pm-suggestions {
+  background: #fff; border: 1.5px solid #d0c4a8; border-top: none;
+  border-radius: 0 0 8px 8px; max-height: 220px; overflow-y: auto; display: none;
+}
+.pm-suggestions.open { display: block; }
+.pm-suggestion-item {
+  padding: 12px 14px; cursor: pointer; font-size: 14px; color: #1a1a14;
+  border-bottom: 1px solid #f0ebe0; transition: background 0.1s;
+}
+.pm-suggestion-item:last-child { border-bottom: none; }
+.pm-suggestion-item:hover { background: #f5f0e8; }
+.pm-suggestion-sub { font-size: 11px; color: var(--gold); margin-top: 2px; }
+.pm-not-found { font-size: 12px; color: #8b2e2e; padding: 6px 0; display: none; }
+
+/* Boarding pass result */
+.pm-boarding {
+  background: rgba(245,240,232,0.97); border-radius: 12px; overflow: hidden;
+  margin-bottom: 1rem; box-shadow: 0 6px 28px rgba(0,0,0,0.3); display: none;
+}
+.pm-boarding.show { display: block; }
+.pm-boarding-head {
+  background: #152e22; padding: 10px 16px;
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid rgba(201,168,76,0.2);
+}
+.pm-boarding-head-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); }
+.pm-boarding-head-sub { font-size: 10px; color: rgba(201,168,76,0.5); }
+.pm-boarding-body { padding: 1.25rem; }
+.pm-boarding-name { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: #1a1a14; margin-bottom: 0.75rem; }
+.pm-boarding-name span { color: var(--gold); font-style: italic; }
+.pm-boarding-fields { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 0.75rem; }
+.pm-boarding-field { flex: 1; min-width: 65px; }
+.pm-boarding-field-label { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: #8a7a5a; margin-bottom: 2px; }
+.pm-boarding-field-val { font-family: 'Playfair Display', serif; font-size: 1rem; color: #1a1a14; }
+.pm-boarding-divider { border: none; border-top: 1px dashed #d0c4a8; margin: 0.6rem 0; }
+.pm-boarding-nav {
+  font-size: 12px; color: #5a4a2a; background: #faf0d8;
+  border-radius: 4px; padding: 8px 12px;
+  border-left: 3px solid var(--gold); font-style: italic;
+}
+
+/* Map */
+.pm-map-wrap {
+  background: rgba(245,240,232,0.97); border-radius: 12px; overflow: hidden;
+  margin-bottom: 1rem; box-shadow: 0 6px 28px rgba(0,0,0,0.3);
+  display: none; overflow-x: auto; overflow-y: hidden;
+}
+.pm-map-wrap.show { display: block; }
+.pm-map-head {
+  background: #152e22; padding: 9px 16px;
+  display: flex; justify-content: space-between;
+  font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold);
+}
+#pm-canvas { display: block; background: #faf7f2; max-width: 100%; }
+.pm-map-foot {
+  padding: 7px 16px; background: #152e22; text-align: center;
+  font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold);
+}
+.pm-arrow { display: inline-block; animation: pmArrow 0.9s ease-in-out infinite alternate; }
+@keyframes pmArrow { from { opacity: 0.5; transform: translateY(0); } to { opacity: 1; transform: translateY(4px); } }
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   TAB 2 — MENIU (placeholder)
+══════════════════════════════════════════════════════════════════════════════ */
+.menu-section {
+  padding: 3rem 1.5rem;
+  max-width: 700px; margin: 0 auto;
+  text-align: center;
+}
+.menu-coming-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
+  border-radius: 20px; padding: 3rem 2rem;
+  position: relative; overflow: hidden;
+}
+.menu-coming-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0;
+  height: 4px; background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
+}
+.menu-coming-icon { font-size: 3rem; margin-bottom: 1rem; }
+.menu-coming-label { font-size: 9px; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); margin-bottom: 0.5rem; }
+.menu-coming-title { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--gold); margin-bottom: 0.75rem; }
+.menu-coming-sub { font-size: 13px; color: var(--gray); line-height: 1.7; max-width: 380px; margin: 0 auto; }
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   TAB 3 — ALBUM FOTO
+══════════════════════════════════════════════════════════════════════════════ */
+.album-section { padding: 2rem 1.25rem 3rem; max-width: 860px; margin: 0 auto; }
+
+/* Sub-tabs upload / gallery */
+.album-subtabs {
+  display: flex; justify-content: center;
+  background: rgba(0,0,0,0.2);
+  border-bottom: 1px solid var(--border);
+  position: relative; z-index: 1;
+}
+.album-subtab {
+  padding: 0.9rem 1.75rem; background: none; border: none;
+  color: var(--gray); font-family: 'DM Sans', sans-serif;
+  font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+  cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s;
+}
+.album-subtab.active { color: var(--gold); border-bottom-color: var(--gold); }
+.album-subtab:hover { color: var(--gold-light); }
+.album-subsection { display: none; }
+.album-subsection.active { display: block; }
+
+/* Boarding card (upload) */
+.boarding-card {
+  background: var(--cream); border-radius: 16px; padding: 2rem;
+  color: var(--green); position: relative; overflow: hidden;
+}
+.boarding-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0;
+  height: 5px; background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
+}
+.boarding-card::after { content: '✈'; position: absolute; right: 1.5rem; top: 1.5rem; font-size: 3rem; opacity: 0.06; color: var(--green); }
+.boarding-label { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--gray); margin-bottom: 1.25rem; }
+.boarding-title { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--green); margin-bottom: 0.3rem; }
+.boarding-sub { font-size: 13px; color: var(--gray); margin-bottom: 1.5rem; }
+.form-group { margin-bottom: 1.1rem; }
+.form-label { display: block; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--gray); margin-bottom: 0.4rem; }
+.form-input {
+  width: 100%; padding: 0.7rem 1rem;
+  background: var(--white); border: 1px solid rgba(26,58,42,0.15);
+  border-radius: 8px; font-family: 'DM Sans', sans-serif;
+  font-size: 15px; color: var(--green); outline: none; transition: border-color 0.2s;
+}
+.form-input:focus { border-color: var(--gold); }
+.drop-zone {
+  border: 2px dashed rgba(26,58,42,0.2); border-radius: 10px;
+  padding: 2.25rem 1.5rem; text-align: center; cursor: pointer;
+  transition: all 0.2s; background: rgba(26,58,42,0.03);
+}
+.drop-zone:hover, .drop-zone.drag-over { border-color: var(--gold); background: rgba(201,168,76,0.05); }
+.drop-zone-icon { font-size: 1.8rem; margin-bottom: 0.6rem; }
+.drop-zone-text { font-size: 14px; color: var(--green); font-weight: 500; margin-bottom: 0.2rem; }
+.drop-zone-sub { font-size: 12px; color: var(--gray); }
+.preview-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(76px,1fr));
+  gap: 8px; margin-top: 0.9rem;
+}
+.preview-item { position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden; }
+.preview-item img { width: 100%; height: 100%; object-fit: cover; }
+.preview-remove {
+  position: absolute; top: 3px; right: 3px; width: 20px; height: 20px;
+  background: rgba(0,0,0,0.65); border: none; border-radius: 50%;
+  color: white; font-size: 11px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.btn-primary {
+  width: 100%; padding: 0.9rem; background: var(--green);
+  border: 1px solid var(--gold); border-radius: 10px;
+  color: var(--gold); font-family: 'DM Sans', sans-serif;
+  font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+  cursor: pointer; transition: all 0.2s; margin-top: 0.9rem;
+}
+.btn-primary:hover { background: var(--green-light); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+.progress-bar {
+  width: 100%; height: 4px; background: rgba(26,58,42,0.1);
+  border-radius: 2px; margin-top: 0.9rem; overflow: hidden; display: none;
+}
+.progress-fill {
+  height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  border-radius: 2px; transition: width 0.3s; width: 0%;
+}
+.status-msg { text-align: center; font-size: 13px; margin-top: 0.6rem; min-height: 20px; color: var(--green); }
+.status-msg.success { color: #2d7a3a; font-weight: 500; }
+.status-msg.error { color: #c0392b; }
+
+/* Gallery */
+.gallery-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
+.gallery-title { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--gold); }
+.gallery-count { font-size: 10px; letter-spacing: 2px; color: var(--gray); text-transform: uppercase; margin-top: 0.2rem; }
+.refresh-btn {
+  padding: 0.45rem 1.1rem; background: none;
+  border: 1px solid var(--border); border-radius: 20px;
+  color: var(--gold); font-size: 12px; letter-spacing: 1px;
+  cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+}
+.refresh-btn:hover { background: rgba(201,168,76,0.1); }
+.gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: 14px; }
+.gallery-item {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border); border-radius: 12px;
+  overflow: hidden; transition: transform 0.2s, box-shadow 0.2s;
+}
+.gallery-item:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+.gallery-img-wrap { aspect-ratio: 1; overflow: hidden; cursor: pointer; }
+.gallery-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+.gallery-img-wrap:hover img { transform: scale(1.06); }
+.gallery-item-info { padding: 0.65rem; display: flex; justify-content: space-between; align-items: center; }
+.gallery-item-name { font-size: 13px; color: var(--cream-dark); font-weight: 500; }
+.gallery-item-time { font-size: 11px; color: var(--gray); margin-top: 2px; }
+.delete-btn { background: none; border: none; color: var(--gray); cursor: pointer; font-size: 14px; padding: 4px; border-radius: 4px; transition: color 0.2s; display: none; }
+.delete-btn:hover { color: #e74c3c; }
+.delete-btn.visible { display: block; }
+.gallery-empty, .gallery-loading { grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--gray); font-size: 14px; letter-spacing: 1px; }
+.gallery-loading { color: var(--gold); }
+
+/* Lightbox */
+.lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.93); z-index: 1000; align-items: center; justify-content: center; padding: 1rem; }
+.lightbox.open { display: flex; }
+.lightbox img { max-width: 90vw; max-height: 85vh; object-fit: contain; border-radius: 10px; border: 1px solid var(--border); }
+.lightbox-close { position: fixed; top: 1rem; right: 1rem; background: rgba(255,255,255,0.1); border: none; color: white; width: 42px; height: 42px; border-radius: 50%; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.lightbox-name { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); background: rgba(26,58,42,0.85); color: var(--gold); padding: 0.5rem 1.5rem; border-radius: 20px; font-size: 13px; letter-spacing: 1px; border: 1px solid var(--border); white-space: nowrap; }
+
+/* ── FOOTER ───────────────────────────────────────────────────────────────── */
+footer { text-align: center; padding: 1.5rem; font-size: 9px; letter-spacing: 2px; color: rgba(201,168,76,0.3); text-transform: uppercase; border-top: 1px solid rgba(201,168,76,0.1); position: relative; z-index: 1; }
+
+/* ── RESPONSIVE ───────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .nav-tabs { position: static; transform: none; flex: 1; justify-content: center; }
+  .nav-logo { display: none; }
+  .lang-switcher { flex-shrink: 0; }
+  .nav-tab { padding: 0 0.7rem; font-size: 9px; letter-spacing: 1.5px; }
+  .nav-tab .tab-icon { display: none; }
+  .album-section { padding: 1.5rem 1rem 2.5rem; }
+  .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(150px,1fr)); }
+  .boarding-card { padding: 1.5rem; }
+  .header { padding: 2rem 1rem 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- FLOATING EMOJIS -->
+<div class="floaters" id="floaters"></div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-logo">✦ &nbsp;D &amp; T&nbsp; ✦</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" id="tab-harta" onclick="showTab('harta', this)">
+      <span class="tab-icon">📍</span><span id="nt-harta">Harta</span>
+    </button>
+    <button class="nav-tab" id="tab-meniu" onclick="showTab('meniu', this)">
+      <span class="tab-icon">🍽️</span><span id="nt-meniu">Meniu</span>
+    </button>
+    <button class="nav-tab" id="tab-album" onclick="showTab('album', this)">
+      <span class="tab-icon">📸</span><span id="nt-album">Album Foto</span>
+    </button>
+  </div>
+  <div class="lang-switcher">
+    <button class="lang-btn active" onclick="setLang('ro', this)" title="Română">🇷🇴</button>
+    <button class="lang-btn" onclick="setLang('it', this)" title="Italiano">🇮🇹</button>
+    <button class="lang-btn" onclick="setLang('en', this)" title="English">🇬🇧</button>
+  </div>
+</nav>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-airline" id="h-airline">✈ Love Airlines · Zbor DL&TH-23.08.2026</div>
+  <div class="header-title" id="h-title">Dalia & Theo</div>
+  <div class="header-subtitle">23 August 2026 · Moonfields, Tâncăbești</div>
+  <div class="cities-row">
+    <span class="city-tag" style="left:2%;top:10px;opacity:.38;animation:floatCity 6s ease-in-out infinite;">Roma</span>
+    <span class="city-tag" style="left:16%;top:34px;opacity:.42;animation:floatCity 7s ease-in-out infinite 1s;">Napoli</span>
+    <span class="city-tag" style="left:31%;top:12px;opacity:.36;animation:floatCity 5.5s ease-in-out infinite 2s;">Firenze</span>
+    <span class="city-tag center">Moonfields</span>
+    <span class="city-tag" style="right:16%;top:30px;opacity:.40;animation:floatCity 8s ease-in-out infinite 0.5s;">Amalfi</span>
+    <span class="city-tag" style="right:7%;top:8px;opacity:.35;animation:floatCity 6.5s ease-in-out infinite 1.5s;">Positano</span>
+    <span class="city-tag" style="right:0%;top:36px;opacity:.38;animation:floatCity 7.5s ease-in-out infinite 3s;">Venezia</span>
+  </div>
+  <div class="flight-info">
+    <div id="h-gate">POARTĂ <span>MOONFIELDS</span></div>
+    <div id="h-dest">DESTINAȚIE <span>FERICIRE</span></div>
+    <div id="h-class">CLASĂ <span>AMINTIRI</span></div>
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker">
+  <span class="ticker-inner">
+    <span class="ticker-text" id="ticker-text">🧳 Bun venit la bordul zborului DL&TH-23.08 ✈ Dalia & Theo · 23 August 2026 · Moonfields ✦ Găsește-ți locul · Încarcă amintirile · Bucură-te de seară ✈ Love Airlines · Zbor DL&TH-23.08 ✦</span>
+  </span>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════════
+     SECTION 1: HARTA
+════════════════════════════════════════════════════════════════════════════ -->
+<div class="section active" id="section-harta">
+  <div class="map-section">
+    <div class="pm-card">
+      <div class="pm-card-label">BOARDING PASS · PASAGER</div>
+      <div class="pm-card-title" id="pm-title">Caută-ți locul la bord</div>
+      <div class="pm-card-sub" id="pm-sub">Introdu numele tău pentru a-ți găsi masa</div>
+      <div class="pm-search-wrap">
+        <input class="pm-input" id="pm-input" type="text" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="ex: Ion Popescu">
+        <button class="pm-search-btn" id="pm-search-btn">→</button>
+      </div>
+      <div class="pm-suggestions" id="pm-suggestions"></div>
+      <div class="pm-not-found" id="pm-not-found"></div>
+    </div>
+
+    <div class="pm-boarding" id="pm-boarding">
+      <div class="pm-boarding-head">
+        <div>
+          <div class="pm-boarding-head-label">BOARDING PASS</div>
+          <div class="pm-boarding-head-sub">✈ LOVE AIRLINES · DL&TH-23.08.2026</div>
+        </div>
+        <div style="font-size:1.2rem;color:var(--gold);opacity:.6">✈</div>
+      </div>
+      <div class="pm-boarding-body">
+        <div class="pm-boarding-name" id="pm-bp-name">Bun venit, <span id="pm-guest-first">—</span>!</div>
+        <div class="pm-boarding-fields">
+          <div class="pm-boarding-field">
+            <div class="pm-boarding-field-label" id="pm-fl1">MASĂ</div>
+            <div class="pm-boarding-field-val" id="pm-table">—</div>
+          </div>
+          <div class="pm-boarding-field">
+            <div class="pm-boarding-field-label" id="pm-fl2">SCAUN</div>
+            <div class="pm-boarding-field-val" id="pm-seat">—</div>
+          </div>
+          <div class="pm-boarding-field">
+            <div class="pm-boarding-field-label" id="pm-fl3">MENIU</div>
+            <div class="pm-boarding-field-val" id="pm-menu-val">—</div>
+          </div>
+        </div>
+        <hr class="pm-boarding-divider">
+        <div class="pm-boarding-nav" id="pm-nav">↓ Urmărește linia roșie pe harta de mai jos</div>
+      </div>
+    </div>
+
+    <div class="pm-map-wrap" id="pm-map-wrap">
+      <div class="pm-map-head">
+        <span id="pm-map-title">✈ PLAN SALĂ · MOONFIELDS</span>
+        <span>NORD ↑</span>
+      </div>
+      <canvas id="pm-canvas"></canvas>
+      <div class="pm-map-foot">
+        <span class="pm-arrow">▼</span><span id="pm-entrance"> INTRARE DREAPTA · ZONA CORTINA / PORTOFINO</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════════
+     SECTION 2: MENIU
+════════════════════════════════════════════════════════════════════════════ -->
+<div class="section" id="section-meniu">
+  <div class="menu-section">
+    <div class="menu-coming-card">
+      <div class="menu-coming-icon">🍽️</div>
+      <div class="menu-coming-label" id="mc-label">În pregătire</div>
+      <div class="menu-coming-title" id="mc-title">Meniul Serii</div>
+      <div class="menu-coming-sub" id="mc-sub">
+        Meniul complet va fi disponibil în curând.<br>
+        Vă așteptăm cu preparate speciale alese cu drag pentru această seară.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════════════════
+     SECTION 3: ALBUM FOTO
+════════════════════════════════════════════════════════════════════════════ -->
+<div class="section" id="section-album">
+  <!-- sub-tabs -->
+  <div class="album-subtabs">
+    <button class="album-subtab active" id="subtab-upload-btn" onclick="showSubTab('upload', this)">
+      ✈ <span id="t-tab-upload">Încarcă foto</span>
+    </button>
+    <button class="album-subtab" id="subtab-gallery-btn" onclick="showSubTab('gallery', this)">
+      🖼 <span id="t-tab-gallery">Galerie</span>
+    </button>
+  </div>
+
+  <div class="album-section">
+    <!-- UPLOAD -->
+    <div class="album-subsection active" id="subtab-upload">
+      <div class="boarding-card">
+        <div class="boarding-label" id="t-bp-label">Boarding Pass · Pasager</div>
+        <div class="boarding-title" id="t-bp-title">Încarcă amintirile tale</div>
+        <div class="boarding-sub" id="t-bp-sub">Maximum 10 fotografii per pasager · Ajută-ne să completăm albumul</div>
+        <div class="form-group">
+          <label class="form-label" id="t-name-label">Numele tău complet</label>
+          <input type="text" class="form-input" id="user-name" placeholder="ex. Maria Ionescu">
+        </div>
+        <div class="form-group">
+          <label class="form-label" id="t-photos-label">Fotografii (max. 10)</label>
+          <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+            <div class="drop-zone-icon">📷</div>
+            <div class="drop-zone-text" id="t-drop-text">Apasă sau trage fotografiile aici</div>
+            <div class="drop-zone-sub" id="t-drop-sub">JPG, PNG, WEBP · Max 10MB per fotografie</div>
+          </div>
+          <input type="file" id="file-input" multiple accept="image/*" style="display:none">
+          <div class="preview-grid" id="preview-grid"></div>
+        </div>
+        <button class="btn-primary" id="upload-btn" onclick="startUpload()">
+          ✈ <span id="t-upload-btn">Îmbarcare · Trimite fotografiile</span>
+        </button>
+        <div class="progress-bar" id="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+        <div class="status-msg" id="status-msg"></div>
+      </div>
+    </div>
+
+    <!-- GALLERY -->
+    <div class="album-subsection" id="subtab-gallery">
+      <div class="gallery-header">
+        <div>
+          <div class="gallery-title" id="t-gallery-title">Galerie</div>
+          <div class="gallery-count" id="gallery-count"></div>
+        </div>
+        <button class="refresh-btn" onclick="loadGallery()">↻ <span id="t-refresh">Refresh</span></button>
+      </div>
+      <div class="gallery-grid" id="gallery-grid">
+        <div class="gallery-loading" id="t-loading">↻ Se încarcă fotografiile...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt="">
+  <div class="lightbox-name" id="lightbox-name"></div>
+</div>
+
+<footer>✈ Love Airlines · DL&TH-23.08.2026 · Moonfields, Tâncăbești ✦ Dalia & Theo</footer>
+
+<style>
+@keyframes floatCity {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+</style>
+
+<script>
+// ══════════════════════════════════════════════════════════════════════════════
+// CONSTANTS
+// ══════════════════════════════════════════════════════════════════════════════
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwcWiuZbhFn8ZKyIqVXcJ-LEEy3685Xm136naSTmhsUwcjrqkyLXeKXtK74D2NncDsa/exec';
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PASSENGER MAP DATA — injected from invitati-planner export
+// Replace __GUESTS__, __TABLES__, __DECORS__ with the exported JSON
+// (generated via butonul "Pagină invitați" din planul de mese)
+// ══════════════════════════════════════════════════════════════════════════════
+var GUESTS = typeof __GUESTS__ !== 'undefined' ? __GUESTS__ : [];
+var TABLES = typeof __TABLES__ !== 'undefined' ? __TABLES__ : [];
+var DECORS = typeof __DECORS__ !== 'undefined' ? __DECORS__ : [];
+
+// ══════════════════════════════════════════════════════════════════════════════
+// TRANSLATIONS
+// ══════════════════════════════════════════════════════════════════════════════
+let currentLang = 'ro';
+
+const LANG = {
+  ro: {
+    navHarta: 'Harta', navMeniu: 'Meniu', navAlbum: 'Album Foto',
+    airline: '✈ Love Airlines · Zbor DL&TH-23.08.2026',
+    gate: 'POARTĂ', gateVal: 'MOONFIELDS',
+    dest: 'DESTINAȚIE', destVal: 'FERICIRE',
+    cls: 'CLASĂ', clsVal: 'AMINTIRI',
+    ticker: '🧳 Bun venit la bordul zborului DL&TH-23.08 ✈ Dalia & Theo · 23 August 2026 · Moonfields ✦ Găsește-ți locul · Încarcă amintirile · Bucură-te de seară ✈ Love Airlines · Zbor DL&TH-23.08 ✦',
+    // PassengerMap
+    pmTitle: 'Caută-ți locul la bord',
+    pmSub: 'Introdu numele tău pentru a-ți găsi masa',
+    pmPlaceholder: 'ex: Ion Popescu',
+    pmNotFound: 'Numele nu a fost găsit.',
+    pmWelcome: 'Bun venit, ',
+    pmF1: 'MASĂ', pmF2: 'SCAUN', pmF3: 'MENIU',
+    pmMapTitle: '✈ PLAN SALĂ · MOONFIELDS',
+    pmEntrance: ' INTRARE DREAPTA · ZONA CORTINA / PORTOFINO',
+    pmNavLeft: 'stânga', pmNavRight: 'dreapta', pmNavFront: 'față', pmNavBack: 'spate',
+    pmNavTpl: 'Intri pe ușa principală (sud) → mergi spre {side} → rândul din {depth} → masa {table}',
+    pmBpTicker: '✈ LOVE AIRLINES · DL&TH-23.08 ✦ MOONFIELDS · 23 AUGUST 2026 ✈ DESTINAȚIE: FERICIRE ✦ BOARDING NOW',
+    // Meniu
+    mcLabel: 'În pregătire', mcTitle: 'Meniul Serii',
+    mcSub: 'Meniul complet va fi disponibil în curând.<br>Vă așteptăm cu preparate speciale alese cu drag pentru această seară.',
+    // Album
+    tabUpload: 'Încarcă foto', tabGallery: 'Galerie',
+    bpLabel: 'Boarding Pass · Pasager',
+    bpTitle: 'Încarcă amintirile tale',
+    bpSub: 'Maximum 10 fotografii per pasager · Ajută-ne să completăm albumul',
+    nameLabel: 'Numele tău complet', namePlaceholder: 'ex. Maria Ionescu',
+    photosLabel: 'Fotografii (max. 10)',
+    dropText: 'Apasă sau trage fotografiile aici', dropSub: 'JPG, PNG, WEBP · Max 10MB per fotografie',
+    uploadBtn: 'Îmbarcare · Trimite fotografiile',
+    galleryTitle: 'Galerie', refresh: 'Refresh',
+    loading: '↻ Se încarcă fotografiile...',
+    empty: 'Nu există fotografii încă. Fii primul care încarcă! 📷',
+    errName: 'Te rugăm să introduci numele tău.',
+    errPhoto: 'Selectează cel puțin o fotografie.',
+    sending: 'Se trimite', of: 'din',
+    successMsg: (n, name) => `✓ ${n} fotografie${n > 1 ? 'i' : ''} încărcate! Mulțumim, ${name}! 🧳`,
+    errLimit: 'Ai atins limita de fotografii.',
+    errGeneral: 'A apărut o eroare. Încearcă din nou.',
+    confirmDelete: 'Ești sigur că vrei să ștergi această fotografie?',
+    errNoName: 'Introdu mai întâi numele tău în secțiunea de upload.',
+    errDelete: 'Eroare la ștergere.', errLoad: 'Eroare la încărcare. Verifică conexiunea.',
+    photos: (n) => n + ' fotografi' + (n === 1 ? 'e' : 'i'),
+    menuNormal: 'Normal', menuVeg: 'Vegetarian', menuVegan: 'Vegan', menuCopil: 'Copil',
+  },
+  it: {
+    navHarta: 'Mappa', navMeniu: 'Menu', navAlbum: 'Album Foto',
+    airline: '✈ Love Airlines · Volo DL&TH-23.08.2026',
+    gate: 'PORTA', gateVal: 'MOONFIELDS',
+    dest: 'DESTINAZIONE', destVal: 'FELICITÀ',
+    cls: 'CLASSE', clsVal: 'RICORDI',
+    ticker: '🧳 Benvenuti a bordo del volo DL&TH-23.08 ✈ Dalia & Theo · 23 Agosto 2026 · Moonfields ✦ Trova il tuo posto · Carica i ricordi · Goditi la serata ✈ Love Airlines ✦',
+    pmTitle: 'Trova il tuo posto a bordo',
+    pmSub: 'Inserisci il tuo nome per trovare il tuo tavolo',
+    pmPlaceholder: 'es. Mario Rossi',
+    pmNotFound: 'Nome non trovato.',
+    pmWelcome: 'Benvenuto/a, ',
+    pmF1: 'TAVOLO', pmF2: 'POSTO', pmF3: 'MENU',
+    pmMapTitle: '✈ MAPPA SALA · MOONFIELDS',
+    pmEntrance: ' INGRESSO DESTRA · ZONA CORTINA / PORTOFINO',
+    pmNavLeft: 'sinistra', pmNavRight: 'destra', pmNavFront: 'fronte', pmNavBack: 'fondo',
+    pmNavTpl: 'Entra porta principale (sud) → vai a {side} → fila {depth} → tavolo {table}',
+    pmBpTicker: '✈ LOVE AIRLINES · DL&TH-23.08 ✦ MOONFIELDS · 23 AGOSTO 2026 ✈ DESTINAZIONE: FELICITÀ ✦ IMBARCO',
+    mcLabel: 'In preparazione', mcTitle: 'Il Menu della Serata',
+    mcSub: 'Il menu completo sarà disponibile a breve.<br>Vi aspettiamo con piatti speciali scelti con amore.',
+    tabUpload: 'Carica foto', tabGallery: 'Galleria',
+    bpLabel: "Carta d'imbarco · Passeggero",
+    bpTitle: 'Carica i tuoi ricordi',
+    bpSub: "Massimo 10 foto per passeggero · Aiutaci a completare l'album",
+    nameLabel: 'Il tuo nome completo', namePlaceholder: 'es. Maria Rossi',
+    photosLabel: 'Fotografie (max. 10)',
+    dropText: 'Clicca o trascina le foto qui', dropSub: 'JPG, PNG, WEBP · Max 10MB per foto',
+    uploadBtn: 'Imbarco · Invia le fotografie',
+    galleryTitle: 'Galleria', refresh: 'Aggiorna',
+    loading: '↻ Caricamento fotografie...',
+    empty: 'Nessuna foto ancora. Sii il primo a caricare! 📷',
+    errName: 'Inserisci il tuo nome.',
+    errPhoto: 'Seleziona almeno una foto.',
+    sending: 'Invio', of: 'di',
+    successMsg: (n, name) => `✓ ${n} foto caricate! Grazie, ${name}! 🧳`,
+    errLimit: 'Hai raggiunto il limite di foto.',
+    errGeneral: 'Si è verificato un errore. Riprova.',
+    confirmDelete: 'Sei sicuro di voler eliminare questa foto?',
+    errNoName: 'Inserisci prima il tuo nome nella sezione di caricamento.',
+    errDelete: "Errore durante l'eliminazione.", errLoad: 'Errore di caricamento. Controlla la connessione.',
+    photos: (n) => n + ' foto',
+    menuNormal: 'Normale', menuVeg: 'Vegetariano', menuVegan: 'Vegano', menuCopil: 'Bambino',
+  },
+  en: {
+    navHarta: 'Map', navMeniu: 'Menu', navAlbum: 'Photo Album',
+    airline: '✈ Love Airlines · Flight DL&TH-23.08.2026',
+    gate: 'GATE', gateVal: 'MOONFIELDS',
+    dest: 'DESTINATION', destVal: 'HAPPINESS',
+    cls: 'CLASS', clsVal: 'MEMORIES',
+    ticker: '🧳 Welcome aboard flight DL&TH-23.08 ✈ Dalia & Theo · 23 August 2026 · Moonfields ✦ Find your seat · Upload memories · Enjoy the evening ✈ Love Airlines ✦',
+    pmTitle: 'Find your seat on board',
+    pmSub: 'Enter your name to find your table',
+    pmPlaceholder: 'e.g. John Smith',
+    pmNotFound: 'Name not found.',
+    pmWelcome: 'Welcome, ',
+    pmF1: 'TABLE', pmF2: 'SEAT', pmF3: 'MENU',
+    pmMapTitle: '✈ HALL MAP · MOONFIELDS',
+    pmEntrance: ' ENTRANCE RIGHT · CORTINA / PORTOFINO AREA',
+    pmNavLeft: 'left', pmNavRight: 'right', pmNavFront: 'front', pmNavBack: 'back',
+    pmNavTpl: 'Enter main door (south) → go {side} → {depth} row → table {table}',
+    pmBpTicker: '✈ LOVE AIRLINES · DL&TH-23.08 ✦ MOONFIELDS · 23 AUGUST 2026 ✈ DESTINATION: HAPPINESS ✦ BOARDING NOW',
+    mcLabel: 'Coming soon', mcTitle: "Evening's Menu",
+    mcSub: 'The full menu will be available soon.<br>We look forward to welcoming you with specially selected dishes.',
+    tabUpload: 'Upload photos', tabGallery: 'Gallery',
+    bpLabel: 'Boarding Pass · Passenger',
+    bpTitle: 'Upload your memories',
+    bpSub: 'Maximum 10 photos per passenger · Help us complete the album',
+    nameLabel: 'Your full name', namePlaceholder: 'e.g. John Smith',
+    photosLabel: 'Photos (max. 10)',
+    dropText: 'Click or drag photos here', dropSub: 'JPG, PNG, WEBP · Max 10MB per photo',
+    uploadBtn: 'Boarding · Send your photos',
+    galleryTitle: 'Gallery', refresh: 'Refresh',
+    loading: '↻ Loading photos...',
+    empty: 'No photos yet. Be the first to upload! 📷',
+    errName: 'Please enter your name.',
+    errPhoto: 'Please select at least one photo.',
+    sending: 'Sending', of: 'of',
+    successMsg: (n, name) => `✓ ${n} photo${n > 1 ? 's' : ''} uploaded! Thank you, ${name}! 🧳`,
+    errLimit: 'You have reached the photo limit.',
+    errGeneral: 'An error occurred. Please try again.',
+    confirmDelete: 'Are you sure you want to delete this photo?',
+    errNoName: 'Please enter your name in the upload section first.',
+    errDelete: 'Error deleting photo.', errLoad: 'Loading error. Check your connection.',
+    photos: (n) => n + ' photo' + (n !== 1 ? 's' : ''),
+    menuNormal: 'Normal', menuVeg: 'Vegetarian', menuVegan: 'Vegan', menuCopil: 'Child',
+  }
+};
+
+function getMenuLabel(key) {
+  const t = LANG[currentLang];
+  const map = { normal: t.menuNormal, veg: t.menuVeg, vegan: t.menuVegan, copil: t.menuCopil };
+  return map[key] || key;
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// LANG SWITCH
+// ══════════════════════════════════════════════════════════════════════════════
+function setLang(lang, btn) {
+  currentLang = lang;
+  const t = LANG[lang];
+  document.documentElement.lang = lang;
+
+  // navbar
+  document.getElementById('nt-harta').textContent = t.navHarta;
+  document.getElementById('nt-meniu').textContent = t.navMeniu;
+  document.getElementById('nt-album').textContent = t.navAlbum;
+
+  // header
+  document.getElementById('h-airline').textContent = t.airline;
+  document.getElementById('h-gate').innerHTML   = t.gate   + ' <span>' + t.gateVal   + '</span>';
+  document.getElementById('h-dest').innerHTML   = t.dest   + ' <span>' + t.destVal   + '</span>';
+  document.getElementById('h-class').innerHTML  = t.cls    + ' <span>' + t.clsVal    + '</span>';
+  document.getElementById('ticker-text').textContent = t.ticker;
+
+  // map
+  document.getElementById('pm-title').textContent     = t.pmTitle;
+  document.getElementById('pm-sub').textContent       = t.pmSub;
+  document.getElementById('pm-input').placeholder     = t.pmPlaceholder;
+  document.getElementById('pm-fl1').textContent       = t.pmF1;
+  document.getElementById('pm-fl2').textContent       = t.pmF2;
+  document.getElementById('pm-fl3').textContent       = t.pmF3;
+  document.getElementById('pm-map-title').textContent = t.pmMapTitle;
+  document.getElementById('pm-entrance').textContent  = t.pmEntrance;
+  if (pmSelG) showBoardingPass(pmSelG);
+
+  // meniu
+  document.getElementById('mc-label').textContent = t.mcLabel;
+  document.getElementById('mc-title').textContent = t.mcTitle;
+  document.getElementById('mc-sub').innerHTML     = t.mcSub;
+
+  // album
+  document.getElementById('t-tab-upload').textContent    = t.tabUpload;
+  document.getElementById('t-tab-gallery').textContent   = t.tabGallery;
+  document.getElementById('t-bp-label').textContent      = t.bpLabel;
+  document.getElementById('t-bp-title').textContent      = t.bpTitle;
+  document.getElementById('t-bp-sub').textContent        = t.bpSub;
+  document.getElementById('t-name-label').textContent    = t.nameLabel;
+  document.getElementById('user-name').placeholder       = t.namePlaceholder;
+  document.getElementById('t-photos-label').textContent  = t.photosLabel;
+  document.getElementById('t-drop-text').textContent     = t.dropText;
+  document.getElementById('t-drop-sub').textContent      = t.dropSub;
+  document.getElementById('t-upload-btn').textContent    = t.uploadBtn;
+  document.getElementById('t-gallery-title').textContent = t.galleryTitle;
+  document.getElementById('t-refresh').textContent       = t.refresh;
+
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  const gc = document.getElementById('gallery-count');
+  if (gc.textContent) loadGallery();
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// TAB NAVIGATION
+// ══════════════════════════════════════════════════════════════════════════════
+function showTab(name, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('section-' + name).classList.add('active');
+  btn.classList.add('active');
+  if (name === 'album') {
+    const activeSubtab = document.querySelector('.album-subtab.active');
+    if (activeSubtab && activeSubtab.id === 'subtab-gallery-btn') loadGallery();
+  }
+  if (name === 'harta' && pmSelG) {
+    setTimeout(() => drawMap(pmSelG), 150);
+  }
+}
+
+function showSubTab(name, btn) {
+  document.querySelectorAll('.album-subsection').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.album-subtab').forEach(b => b.classList.remove('active'));
+  document.getElementById('subtab-' + name).classList.add('active');
+  btn.classList.add('active');
+  if (name === 'gallery') loadGallery();
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// PASSENGER MAP — Search + Boarding Pass + Canvas
+// ══════════════════════════════════════════════════════════════════════════════
+let pmSuggs = [], pmSelG = null;
+
+const pmInput   = document.getElementById('pm-input');
+const pmSuggest = document.getElementById('pm-suggestions');
+const pmNotF    = document.getElementById('pm-not-found');
+
+pmInput.addEventListener('input', () => pmSearch(pmInput.value));
+pmInput.addEventListener('keydown', e => { if (e.key === 'Enter') pmPickFirst(); });
+document.getElementById('pm-search-btn').addEventListener('click', pmPickFirst);
+
+function pmSearch(v) {
+  const q = v.trim().toLowerCase();
+  pmNotF.style.display = 'none';
+  pmSuggest.className = 'pm-suggestions';
+  pmSuggest.innerHTML = '';
+  pmSuggs = [];
+  if (q.length < 2) return;
+  pmSuggs = GUESTS.filter(g => g.name.toLowerCase().includes(q)).slice(0, 8);
+  if (!pmSuggs.length) {
+    if (q.length >= 3) { pmNotF.textContent = LANG[currentLang].pmNotFound; pmNotF.style.display = 'block'; }
+    return;
+  }
+  pmSuggs.forEach((g, i) => {
+    const d = document.createElement('div');
+    d.className = 'pm-suggestion-item';
+    d.innerHTML = `<strong>${esc(g.name)}</strong><div class="pm-suggestion-sub">Masa ${g.table}</div>`;
+    d.onclick = () => pmPick(i);
+    pmSuggest.appendChild(d);
+  });
+  pmSuggest.className = 'pm-suggestions open';
+}
+
+function pmPickFirst() { if (pmSuggs.length) pmPick(0); }
+
+function pmPick(i) {
+  const g = pmSuggs[i];
+  if (!g) return;
+  pmSelG = g;
+  pmInput.value = g.name;
+  pmSuggest.className = 'pm-suggestions';
+  pmSuggest.innerHTML = '';
+  pmNotF.style.display = 'none';
+  showBoardingPass(g);
+  document.getElementById('pm-map-wrap').className = 'pm-map-wrap show';
+  document.getElementById('pm-boarding').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  setTimeout(() => drawMap(g), 300);
+}
+
+function showBoardingPass(g) {
+  const t = LANG[currentLang];
+  document.getElementById('pm-bp-name').innerHTML = t.pmWelcome + '<span style="color:var(--gold);font-style:italic">' + esc(g.name.split(' ')[0]) + '</span>!';
+  document.getElementById('pm-table').textContent    = g.table;
+  document.getElementById('pm-seat').textContent     = '#' + (g.seatIdx + 1);
+  document.getElementById('pm-menu-val').textContent = getMenuLabel(g.menu);
+  document.getElementById('pm-fl1').textContent = t.pmF1;
+  document.getElementById('pm-fl2').textContent = t.pmF2;
+  document.getElementById('pm-fl3').textContent = t.pmF3;
+
+  let tbl = null;
+  for (let i = 0; i < TABLES.length; i++) {
+    if (String(TABLES[i].id) === String(g.tableId)) { tbl = TABLES[i]; break; }
+  }
+  if (tbl) {
+    const allX = TABLES.filter(x => !x.miri).map(x => x.x);
+    const allY = TABLES.filter(x => !x.miri).map(x => x.y);
+    const midX = (Math.min(...allX) + Math.max(...allX)) / 2;
+    const midY = (Math.min(...allY) + Math.max(...allY)) / 2;
+    const side  = tbl.x < midX ? t.pmNavLeft  : t.pmNavRight;
+    const depth = tbl.y < midY ? t.pmNavFront : t.pmNavBack;
+    const nav = t.pmNavTpl.replace('{side}', side).replace('{depth}', depth).replace('{table}', g.table);
+    document.getElementById('pm-nav').textContent = nav;
+  }
+  document.getElementById('pm-boarding').className = 'pm-boarding show';
+}
+
+function drawMap(g) {
+  const cv  = document.getElementById('pm-canvas');
+  const ctx = cv.getContext('2d');
+  const container = document.getElementById('pm-map-wrap');
+  if (!TABLES || !TABLES.length) return;
+
+  const allX = TABLES.map(t => t.x);
+  const allY = TABLES.map(t => t.y);
+  const minX = Math.min(...allX) - 60;
+  const maxX = Math.max(...allX) + 150;
+  const minY = Math.min(...allY) - 50;
+  const maxY = Math.max(...allY) + 50;
+  const worldW = maxX - minX;
+  const worldH = maxY - minY;
+
+  const cRect = container.getBoundingClientRect();
+  const dispW = cRect.width > 10 ? cRect.width : (window.innerWidth - 32);
+  const sc = (dispW - 4) / worldW;
+
+  const cvW = Math.ceil(worldW * sc + 4);
+  const cvH = Math.ceil(worldH * sc + 4);
+  cv.width = cvW; cv.height = cvH;
+  cv.style.width = cvW + 'px'; cv.style.height = cvH + 'px';
+
+  const wx = x => (x - minX) * sc + 2;
+  const wy = y => (y - minY) * sc + 2;
+
+  ctx.fillStyle = '#faf7f2'; ctx.fillRect(0, 0, cvW, cvH);
+  ctx.strokeStyle = 'rgba(184,146,74,.05)'; ctx.lineWidth = 1;
+  for (let gx = 0; gx < cvW; gx += 24) { ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,cvH); ctx.stroke(); }
+  for (let gy = 0; gy < cvH; gy += 24) { ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(cvW,gy); ctx.stroke(); }
+
+  DECORS && DECORS.forEach(d => {
+    const sx=wx(d.x), sy=wy(d.y), dw=d.w*sc, dh=d.h*sc;
+    let fill='#ede8f8', stroke='#9080c0';
+    if(d.type==='bar')   { fill='#e0f0e8'; stroke='#3a7a54'; }
+    if(d.type==='stage') { fill='#f0e8d8'; stroke='#b8924a'; }
+    ctx.save();
+    ctx.beginPath(); ctx.roundRect(sx-dw/2, sy-dh/2, dw, dh, 3);
+    ctx.fillStyle=fill; ctx.fill();
+    ctx.strokeStyle=stroke; ctx.lineWidth=1; ctx.setLineDash([4,3]); ctx.stroke(); ctx.setLineDash([]);
+    const fs=Math.max(5,Math.round(6*sc));
+    if(fs>=5){ ctx.font='bold '+fs+'px sans-serif'; ctx.fillStyle=stroke; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(d.label,sx,sy); }
+    ctx.restore();
+  });
+
+  let tbl = null;
+  TABLES.forEach(t => {
+    const isT = String(t.id) === String(g.tableId);
+    if(isT) tbl = t;
+    const sx=wx(t.x), sy=wy(t.y);
+    const tw=(t.tw||220)*sc, th=(t.th||65)*sc;
+    ctx.save();
+    ctx.beginPath(); ctx.roundRect(sx-tw/2, sy-th/2, tw, th, 2);
+    ctx.fillStyle = isT ? '#fff3e8' : (t.miri ? '#fffcf0' : '#fff'); ctx.fill();
+    ctx.strokeStyle = isT ? '#c03010' : (t.miri ? '#c9a84c' : '#d0c4b0');
+    ctx.lineWidth = isT ? 2 : 0.7;
+    if(t.miri) ctx.setLineDash([3,2]);
+    ctx.stroke(); ctx.setLineDash([]);
+    const fs2=Math.max(4,Math.round(6*sc));
+    ctx.font=(isT?'bold ':'')+fs2+'px sans-serif';
+    ctx.fillStyle=isT?'#c03010':'#7a6050'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(t.name,sx,sy); ctx.restore();
+  });
+
+  if(!tbl) return;
+  const entX=maxX-10, entY=(Math.min(...allY)+Math.max(...allY))/2;
+  const ex=wx(entX), ey=wy(entY), tx=wx(tbl.x), ty=wy(tbl.y);
+
+  ctx.save();
+  ctx.strokeStyle='#c03010'; ctx.lineWidth=Math.max(1.5,2*sc);
+  ctx.lineCap='round'; ctx.lineJoin='round';
+  ctx.setLineDash([Math.max(4,7*sc),Math.max(3,4*sc)]);
+  ctx.shadowColor='rgba(192,48,16,.3)'; ctx.shadowBlur=4;
+  ctx.beginPath(); ctx.moveTo(ex,ey);
+  ctx.bezierCurveTo(ex-(ex-tx)*0.3,ey,tx,ey+(ty-ey)*0.5,tx,ty+(tbl.th||65)*sc/2+3);
+  ctx.stroke(); ctx.setLineDash([]); ctx.shadowColor='transparent';
+
+  const r=Math.max(4,6*sc);
+  ctx.beginPath(); ctx.arc(ex,ey,r,0,Math.PI*2);
+  ctx.fillStyle='#1a3a2a'; ctx.fill();
+  ctx.strokeStyle='#c9a84c'; ctx.lineWidth=Math.max(1,1.5*sc); ctx.stroke();
+  ctx.beginPath(); ctx.arc(ex,ey,r*0.5,0,Math.PI*2); ctx.fillStyle='#c9a84c'; ctx.fill();
+
+  const ar=Math.max(4,6*sc);
+  ctx.fillStyle='#c03010'; ctx.beginPath();
+  ctx.moveTo(tx,ty-ar*1.5); ctx.lineTo(tx-ar*0.8,ty-ar*0.2); ctx.lineTo(tx+ar*0.8,ty-ar*0.2);
+  ctx.closePath(); ctx.fill();
+
+  ctx.beginPath(); ctx.arc(tx,ty,(tbl.th||65)*sc/2+Math.max(4,6*sc),0,Math.PI*2);
+  ctx.fillStyle='rgba(192,48,16,.1)'; ctx.fill();
+  ctx.strokeStyle='#c03010'; ctx.lineWidth=Math.max(1,1.5*sc); ctx.stroke();
+
+  const lbl={ro:'INTRARE',en:'ENTRANCE',it:'INGRESSO'}[currentLang]||'INTRARE';
+  const fs3=Math.max(7,Math.round(8*sc));
+  ctx.font='bold '+fs3+'px sans-serif'; ctx.textAlign='left'; ctx.textBaseline='middle';
+  const lw=ctx.measureText('► '+lbl).width+10;
+  const lx=ex-lw-r-4;
+  ctx.fillStyle='#c9a84c'; ctx.beginPath(); ctx.roundRect(lx,ey-fs3*0.7,lw,fs3*1.4,2); ctx.fill();
+  ctx.fillStyle='#1a1a14'; ctx.fillText('► '+lbl,lx+5,ey);
+  ctx.restore();
+}
+
+window.addEventListener('resize', () => { if(pmSelG) setTimeout(() => drawMap(pmSelG), 100); });
+
+// ══════════════════════════════════════════════════════════════════════════════
+// ALBUM FOTO — Upload + Gallery
+// ══════════════════════════════════════════════════════════════════════════════
+let selectedFiles = [];
+
+const dropZone  = document.getElementById('drop-zone');
+const fileInput = document.getElementById('file-input');
+const previewGrid = document.getElementById('preview-grid');
+
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('drag-over'); addFiles(Array.from(e.dataTransfer.files)); });
+fileInput.addEventListener('change', () => addFiles(Array.from(fileInput.files)));
+
+function addFiles(files) {
+  const imgs = files.filter(f => f.type.startsWith('image/'));
+  const remaining = 10 - selectedFiles.length;
+  selectedFiles = [...selectedFiles, ...imgs.slice(0, remaining)];
+  renderPreviews();
+}
+
+function renderPreviews() {
+  previewGrid.innerHTML = '';
+  selectedFiles.forEach((file, i) => {
+    const url = URL.createObjectURL(file);
+    const div = document.createElement('div');
+    div.className = 'preview-item';
+    div.innerHTML = `<img src="${url}" alt=""><button class="preview-remove" onclick="removeFile(${i})">✕</button>`;
+    previewGrid.appendChild(div);
+  });
+}
+
+function removeFile(i) { selectedFiles.splice(i, 1); renderPreviews(); }
+
+async function fileToBase64(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result.split(',')[1]);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
+async function startUpload() {
+  const t = LANG[currentLang];
+  const name = document.getElementById('user-name').value.trim();
+  if (!name) return setStatus(t.errName, 'error');
+  if (!selectedFiles.length) return setStatus(t.errPhoto, 'error');
+  const btn = document.getElementById('upload-btn');
+  btn.disabled = true;
+  const pb = document.getElementById('progress-bar');
+  const pf = document.getElementById('progress-fill');
+  pb.style.display = 'block'; pf.style.width = '0%';
+  let uploaded = 0;
+  for (let i = 0; i < selectedFiles.length; i++) {
+    setStatus(`${t.sending} ${i+1} ${t.of} ${selectedFiles.length}...`, '');
+    try {
+      const base64Data = await fileToBase64(selectedFiles[i]);
+      const resp = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action:'upload', userName:name, fileName:selectedFiles[i].name, mimeType:selectedFiles[i].type, base64Data })
+      });
+      const data = await resp.json();
+      if (data.success) uploaded++;
+      else if (data.error && data.error.includes('limita')) { setStatus(t.errLimit, 'error'); break; }
+    } catch(e) {}
+    pf.style.width = ((i+1)/selectedFiles.length*100) + '%';
+  }
+  btn.disabled = false;
+  if (uploaded > 0) {
+    setStatus(t.successMsg(uploaded, name), 'success');
+    selectedFiles = []; renderPreviews();
+    document.getElementById('user-name').value = '';
+  } else { setStatus(t.errGeneral, 'error'); }
+}
+
+function setStatus(msg, type) {
+  const el = document.getElementById('status-msg');
+  el.textContent = msg; el.className = 'status-msg ' + type;
+}
+
+async function loadGallery() {
+  const t = LANG[currentLang];
+  const grid = document.getElementById('gallery-grid');
+  const count = document.getElementById('gallery-count');
+  grid.innerHTML = `<div class="gallery-loading">${t.loading}</div>`;
+  count.textContent = '';
+  try {
+    const resp = await fetch(APPS_SCRIPT_URL + '?action=list');
+    const data = await resp.json();
+    if (!data.success || !data.photos.length) {
+      grid.innerHTML = `<div class="gallery-empty">${t.empty}</div>`;
+      count.textContent = t.photos(0); return;
+    }
+    count.textContent = t.photos(data.photos.length);
+    grid.innerHTML = '';
+    const storedName = document.getElementById('user-name')?.value?.trim() || '';
+    data.photos.forEach(photo => {
+      const date = new Date(photo.timestamp);
+      const timeStr = date.toLocaleTimeString(currentLang === 'en' ? 'en-GB' : currentLang === 'it' ? 'it-IT' : 'ro-RO', { hour:'2-digit', minute:'2-digit' });
+      const isOwner = storedName && storedName.toLowerCase() === photo.userName.toLowerCase();
+      const item = document.createElement('div');
+      item.className = 'gallery-item';
+      item.innerHTML = `
+        <div class="gallery-img-wrap" onclick="openLightbox('${photo.url}','${esc(photo.userName)}')">
+          <img src="${photo.url}" alt="${esc(photo.userName)}" loading="lazy">
+        </div>
+        <div class="gallery-item-info">
+          <div>
+            <div class="gallery-item-name">${esc(photo.userName)}</div>
+            <div class="gallery-item-time">${timeStr}</div>
+          </div>
+          <button class="delete-btn ${isOwner?'visible':''}" onclick="deletePhoto('${photo.fileId}','${esc(photo.userName)}',this)">🗑</button>
+        </div>`;
+      grid.appendChild(item);
+    });
+  } catch(e) { grid.innerHTML = `<div class="gallery-empty">${t.errLoad}</div>`; }
+}
+
+async function deletePhoto(fileId, userName, btn) {
+  const t = LANG[currentLang];
+  if (!confirm(t.confirmDelete)) return;
+  const storedName = document.getElementById('user-name')?.value?.trim() || '';
+  if (!storedName) return alert(t.errNoName);
+  btn.disabled = true; btn.textContent = '...';
+  try {
+    const resp = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action:'delete', fileId, userName:storedName })
+    });
+    const data = await resp.json();
+    if (data.success) loadGallery();
+    else { alert(data.error||t.errDelete); btn.disabled=false; btn.textContent='🗑'; }
+  } catch(e) { alert(t.errDelete); btn.disabled=false; btn.textContent='🗑'; }
+}
+
+function openLightbox(url, name) {
+  document.getElementById('lightbox-img').src = url;
+  document.getElementById('lightbox-name').textContent = name;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeLightbox(); });
+
+// ══════════════════════════════════════════════════════════════════════════════
+// FLOATING EMOJIS
+// ══════════════════════════════════════════════════════════════════════════════
+const emojis = ['🧳','✈️','💒','🌸','🍾','💛','🌿','🎊'];
+const floatersEl = document.getElementById('floaters');
+for (let i = 0; i < 22; i++) {
+  const el = document.createElement('div');
+  el.className = 'floater';
+  el.textContent = emojis[i % emojis.length];
+  el.style.cssText = `left:${Math.random()*98}vw;font-size:${1.2+Math.random()*0.8}rem;animation-duration:${10+Math.random()*12}s;animation-delay:${Math.random()*8}s;`;
+  floatersEl.appendChild(el);
+}
+
+// ══════════════════════════════════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════════════════════════════════
+function esc(str) {
+  return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+</script>
+</body>
+</html>
