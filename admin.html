@@ -1663,37 +1663,81 @@ function save(){
     publishToSite(false);
   }catch{}
 }
-function publishToSite(showAlert=true){
+function publishToSite(showAlert){
+  if(showAlert===undefined) showAlert=true;
   try{
-    const gD=guests.filter(g=>g.tableId!=null).map(g=>{
-      const t=tables.find(x=>x.id==g.tableId);
-      return {name:g.name,table:t?t.name:'',tableId:g.tableId,seatIdx:g.seatIdx,menu:g.menu,cazare:g.cazare};
+    var gD=guests.filter(function(g){return g.tableId!=null;}).map(function(g){
+      var t=tables.find(function(x){return x.id==g.tableId;});
+      return {name:g.name,table:t?t.name:'',tableId:g.tableId,
+              seatIdx:g.seatIdx!=null?g.seatIdx:0,menu:g.menu||'normal',cazare:g.cazare||'nu'};
     });
-    const allNames=guests.map(g=>g.name);
-    const tD=tables.map(t=>({id:t.id,name:t.name,x:t.x,y:t.y,
-      tw:t.tw!==undefined?t.tw:(t.miri?65:220),
-      th:t.th!==undefined?t.th:(t.miri?121:65),
-      miri:!!t.miri,seats:t.seats}));
-    const dD=decorElements.map(d=>({type:d.type,x:d.x,y:d.y,w:d.w,h:d.h,label:d.label}));
-    localStorage.setItem('loveairlines_data', JSON.stringify({
-      guests: gD,
-      allNames: allNames,
-      tables: tD,
-      decors: dD,
-      publishedAt: new Date().toISOString()
-    }));
+    var allNames=guests.map(function(g){return g.name;}).filter(function(n){return n&&n.trim();});
+    var tD=tables.map(function(t){
+      return {id:t.id,name:t.name,x:t.x,y:t.y,
+        tw:t.tw!==undefined?t.tw:(t.miri?65:220),
+        th:t.th!==undefined?t.th:(t.miri?121:65),
+        miri:!!t.miri,seats:t.seats};
+    });
+    var dD=decorElements.map(function(d){
+      return {type:d.type,x:d.x,y:d.y,w:d.w,h:d.h,label:d.label};
+    });
+    var payload=JSON.stringify({guests:gD,allNames:allNames,tables:tD,decors:dD,publishedAt:new Date().toISOString()});
+    localStorage.setItem('loveairlines_data',payload);
+    console.log('[Admin] Publicat: '+gD.length+' asignati, '+allNames.length+' total');
     if(showAlert) showPublishStatus();
-  }catch(e){ if(showAlert) alert('Eroare la publicare: ' + e.message); }
+  }catch(e){
+    console.error('[Admin] Eroare publicare:',e);
+    if(showAlert) alert('Eroare la publicare: '+e.message);
+  }
 }
 function showPublishStatus(){
-  const btn = document.getElementById('pub-status');
-  if(btn){ btn.textContent = '✓ Publicat!'; btn.style.background='#3a5c44'; setTimeout(()=>{ btn.textContent='🌐 Publică pe site'; btn.style.background=''; }, 2500); }
+  var btn=document.getElementById('pub-status');
+  if(btn){
+    btn.textContent='✓ Publicat cu succes!';
+    btn.style.background='#2d6e3a';
+    btn.style.color='white';
+    btn.style.borderColor='#2d6e3a';
+    setTimeout(function(){
+      btn.textContent='🌐 Publică pe site';
+      btn.style.background='';
+      btn.style.color='';
+      btn.style.borderColor='';
+    },3000);
+  }
 }
 function load(){
   try{
     const d=JSON.parse(localStorage.getItem('mp11'));
-    if(d){tables=d.tables||[];guests=d.guests||[];decorElements=d.decorElements||[];nextTid=d.nextTid||1;nextGid=d.nextGid||1;cityIdx=d.cityIdx||0;}
-  }catch{}
+    if(d){
+      tables=d.tables||[];guests=d.guests||[];decorElements=d.decorElements||[];
+      nextTid=d.nextTid||1;nextGid=d.nextGid||1;cityIdx=d.cityIdx||0;
+      migrateTableNames();
+    }
+  }catch(e){ console.warn('load error:',e); }
+}
+
+const OLD_TO_NEW = {'Genova':'Como','Padova':'Trieste','Taormina':'Siracusa','Siracusa':'Agrigento','Agrigento':'Taormina'};
+
+function migrateTableNames(){
+  const nonMiri = tables.filter(t=>!t.miri);
+  let changed = false;
+  nonMiri.forEach((t,idx)=>{
+    const isNew = CITY_NAMES.includes(t.name);
+    if(!isNew){
+      const mapped = OLD_TO_NEW[t.name];
+      t.name = mapped || (CITY_NAMES[idx] || t.name);
+      changed = true;
+    }
+  });
+  if(changed){
+    guests.forEach(g=>{
+      if(g.tableId!=null){
+        const t=tables.find(x=>x.id===g.tableId);
+        if(t) g.table=t.name;
+      }
+    });
+    console.log('[Admin] Mese migrate automat cu noile nume');
+  }
 }
 
 // ══════════════════════════════════════════
