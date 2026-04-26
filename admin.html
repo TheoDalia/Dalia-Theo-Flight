@@ -153,9 +153,9 @@ header{background:var(--deep);padding:7px 14px;display:flex;align-items:center;g
         <button class="btn btn-outline" onclick="exportExcelTemplate()">↓ CSV</button>
         <button class="btn btn-outline" onclick="openImport()">↑ Excel</button>
         <button class="btn btn-outline" onclick="exportGuestPage()" style="background:#3a5c44;color:white;border-color:#3a5c44;width:100%;margin-top:4px;justify-content:center;" title="Generează pagina pentru invitați cu QR">📍 Pagină invitați</button>
-        <button class="btn btn-outline" onclick="exportFullSite()" style="background:#1a3a2a;color:#c9a84c;border:1px solid #c9a84c;width:100%;margin-top:4px;justify-content:center;" title="Generează index.html cu invitații incluși — uploadează pe GitHub">📥 Exportă site complet</button>
-        <button class="btn btn-outline btn-sm" onclick="forceRenameAllTables()" style="background:#5a3a10;color:#f0d090;border-color:#b8924a;width:100%;margin-top:4px;justify-content:center;font-size:.72rem;" title="Aplică noile nume italiene pe toate mesele">✎ Redenumește mese</button>
-        <button class="btn btn-red btn-sm" onclick="confirmReset()" style="width:100%;margin-top:4px;justify-content:center;font-size:.72rem;">⟳ Reset complet</button>
+        <button class="btn btn-outline" onclick="exportFullSite()" style="background:#1a3a2a;color:#c9a84c;border:1px solid #c9a84c;width:100%;margin-top:4px;justify-content:center;" title="Generează index.html cu invitații incluși">📥 Exportă site complet</button>
+        <button class="btn btn-outline btn-sm" onclick="forceRenameAllTables()" style="background:#5a3a10;color:#f0d090;border-color:#b8924a;width:100%;margin-top:4px;justify-content:center;" title="Reaplică noile nume pe toate mesele">✎ Redenumește mese</button>
+        <button class="btn btn-red btn-sm" onclick="confirmReset()" style="width:100%;margin-top:4px;justify-content:center;">⟳ Reset complet</button>
       </div>
     </div>
     <div class="sb">
@@ -460,18 +460,18 @@ const XLSXMini = (() => {
 // ITALIAN CITY NAMES for tables
 // ══════════════════════════════════════════
 const CITY_NAMES = [
-  // Stânga Col 1 — Nord-Vest
-  'Torino','Milano','Bergamo','Como',
-  // Stânga Col 2 — Nord-Est
-  'Venezia','Verona','Trieste','Padova',
-  // Stânga Col 3 — Centru
-  'Bologna','Firenze','Siena','Perugia',
-  // Dreapta Col 4 — Sud
-  'Napoli','Amalfi','Positano','Capri',
-  // Dreapta Col 5 — Sicilia
-  'Palermo','Agrigento','Siracusa','Taormina',
-  // Dreapta Col 6 — Sardinia
-  'Cagliari','Alghero','Olbia','Costa Smeralda',
+  // Stânga Col 1 — Nord-Vest → Sud-Vest (de sus în jos)
+  'Torino','Milano','Genova','Pisa',
+  // Stânga Col 2 — Nord → Centru (de sus în jos)
+  'Venezia','Verona','Bologna','Firenze',
+  // Stânga Col 3 — Centru → Sud-Vest (de sus în jos)
+  'Bergamo','Como','Siena','Perugia',
+  // Dreapta Col 4 — Centru-Est → Sud (de sus în jos)
+  'Napoli','Bari','Amalfi','Positano',
+  // Dreapta Col 5 — Sud → Sicilia (de sus în jos)
+  'Capri','Palermo','Agrigento','Siracusa',
+  // Dreapta Col 6 — Sicilia-Est → Sardinia (de sus în jos)
+  'Taormina','Cagliari','Alghero','Costa Smeralda',
 ];
 let cityIdx = 0;
 function nextCity() { return CITY_NAMES[cityIdx++ % CITY_NAMES.length]; }
@@ -715,8 +715,8 @@ function drawTable(t){
   ctx.strokeStyle='rgba(200,185,160,.4)';ctx.lineWidth=.8*sc;ctx.stroke();
 
   ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.font=`italic ${Math.max(8,11*sc)}px 'Cormorant Garamond',serif`;
-  ctx.fillStyle='#6a4a30';
+  ctx.font=`bold italic ${Math.max(12,15*sc)}px 'Cormorant Garamond',serif`;
+  ctx.fillStyle='#4a2e18';
   ctx.fillText(t.name,s.x,s.y-7*sc);
   ctx.font=`${Math.max(6,8.5*sc)}px 'Jost',sans-serif`;
   ctx.fillStyle='#b0a090';
@@ -748,7 +748,7 @@ function drawMiriTable(t){
 
   ctx.textAlign='center';ctx.textBaseline='middle';
   if(sc>0.45){ctx.font=`${Math.max(10,13*sc)}px serif`;ctx.fillStyle='#b8924a';ctx.fillText('♛',s.x,s.y-8*sc);}
-  ctx.font=`italic ${Math.max(7,11*sc)}px 'Cormorant Garamond',serif`;
+  ctx.font=`bold italic ${Math.max(12,15*sc)}px 'Cormorant Garamond',serif`;
   ctx.fillStyle='#7a5020';
   ctx.fillText(t.name,s.x,s.y+(sc>0.45?6:0)*sc);
 
@@ -1656,11 +1656,7 @@ function toggleSidebar(){
 // ══════════════════════════════════════════
 // PERSIST
 // ══════════════════════════════════════════
-function save(){
-  try{
-    localStorage.setItem('mp11',JSON.stringify({tables,guests,decorElements,nextTid,nextGid,cityIdx}));
-  }catch(e){}
-}
+function save(){try{localStorage.setItem('mp11',JSON.stringify({tables,guests,decorElements,nextTid,nextGid,cityIdx}));}catch{}}
 function load(){
   try{
     const d=JSON.parse(localStorage.getItem('mp11'));
@@ -2603,11 +2599,11 @@ initPage();
 
 
 
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════
 // REDENUMIRE FORȚATĂ MESE
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════
 function forceRenameAllTables(){
-  if(!confirm('Redenumești toate mesele cu noile nume italiene? Invitații rămân la aceleași mese.')) return;
+  if(!confirm('Redenumești toate mesele non-miri cu noile nume italiene? Invitații rămân la aceleași mese.')) return;
   const nonMiri = tables.filter(t => !t.miri);
   nonMiri.forEach((t, idx) => { if(CITY_NAMES[idx]) t.name = CITY_NAMES[idx]; });
   guests.forEach(g => {
@@ -2620,34 +2616,28 @@ function forceRenameAllTables(){
   alert('✓ ' + nonMiri.length + ' mese redenumite!');
 }
 
-// ══════════════════════════════════════════════
-// EXPORTĂ SITE COMPLET — generează index.html cu date baked-in
-// ══════════════════════════════════════════════
+// ══════════════════════════════════════════
+// EXPORTĂ SITE COMPLET
+// ══════════════════════════════════════════
 function exportFullSite(){
   if(guests.length === 0){
     alert('Nu există invitați. Importă Excel-ul mai întâi.');
     return;
   }
-  
-  // Pregătim datele
   const gD = guests.filter(g => g.tableId != null).map(g => {
     const t = tables.find(x => x.id == g.tableId);
-    return {
-      name: g.name, table: t ? t.name : '',
-      tableId: g.tableId, seatIdx: g.seatIdx != null ? g.seatIdx : 0,
-      menu: g.menu || 'normal', cazare: g.cazare || 'nu'
-    };
+    return { name:g.name, table:t?t.name:'', tableId:g.tableId,
+             seatIdx:g.seatIdx!=null?g.seatIdx:0, menu:g.menu||'normal', cazare:g.cazare||'nu' };
   });
   const allNames = guests.map(g => g.name).filter(n => n && n.trim());
   const tD = tables.map(t => ({
-    id: t.id, name: t.name, x: t.x, y: t.y,
-    tw: t.tw !== undefined ? t.tw : (t.miri ? 65 : 220),
-    th: t.th !== undefined ? t.th : (t.miri ? 121 : 65),
-    miri: !!t.miri, seats: t.seats
+    id:t.id, name:t.name, x:t.x, y:t.y,
+    tw:t.tw!==undefined?t.tw:(t.miri?65:220),
+    th:t.th!==undefined?t.th:(t.miri?121:65),
+    miri:!!t.miri, seats:t.seats
   }));
   const dD = decorElements.map(d => ({type:d.type,x:d.x,y:d.y,w:d.w,h:d.h,label:d.label}));
 
-  // Fetch index.html template de pe server și înlocuiește placeholders
   fetch('index.html')
     .then(r => r.text())
     .then(html => {
@@ -2656,16 +2646,15 @@ function exportFullSite(){
         .replace("typeof __LA_TABLES__      !== 'undefined' ? __LA_TABLES__      : []", JSON.stringify(tD))
         .replace("typeof __LA_DECORS__      !== 'undefined' ? __LA_DECORS__      : []", JSON.stringify(dD))
         .replace("typeof __LA_GUEST_NAMES__ !== 'undefined' ? __LA_GUEST_NAMES__ : []", JSON.stringify(allNames));
-      
-      const blob = new Blob([html], {type: 'text/html;charset=utf-8'});
+      const blob = new Blob([html], {type:'text/html;charset=utf-8'});
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
       a.download = 'index.html';
       document.body.appendChild(a); a.click();
       setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(a.href); }, 1000);
-      alert('✓ index.html generat cu ' + allNames.length + ' invitați ('+gD.length+' asignați la mese)!\n\nUploadează fișierul pe GitHub → repo Dalia-Theo-Flight.');
+      alert('✓ index.html generat cu ' + allNames.length + ' invitați (' + gD.length + ' asignați)!\n\nUploadează pe GitHub → repo Dalia-Theo-Flight.');
     })
-    .catch(e => alert('Eroare: ' + e.message + '\nAsigură-te că index.html este în același folder cu admin.html pe GitHub.'));
+    .catch(e => alert('Eroare: ' + e.message + '\nAsigură-te că index.html e în același folder cu admin.html pe GitHub.'));
 }
 
 </script>
