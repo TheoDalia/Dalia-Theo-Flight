@@ -220,9 +220,9 @@ body {
 
 /* Map */
 .pm-map-wrap {
-  background: rgba(245,240,232,0.97); border-radius: 12px; overflow: hidden;
+  background: rgba(245,240,232,0.97); border-radius: 12px;
   margin-bottom: 1rem; box-shadow: 0 6px 28px rgba(0,0,0,0.3);
-  display: none; overflow-x: auto; overflow-y: hidden;
+  display: none; overflow: hidden;
 }
 .pm-map-wrap.show { display: block; }
 .pm-map-head {
@@ -230,7 +230,8 @@ body {
   display: flex; justify-content: space-between;
   font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold);
 }
-#pm-canvas { display: block; background: #faf7f2; max-width: 100%; }
+#pm-svg-container { display: block; background: #faf7f2; }
+#pm-svg-container svg { display: block; width: 100%; touch-action: none; }
 .pm-map-foot {
   padding: 7px 16px; background: #152e22; text-align: center;
   font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold);
@@ -507,7 +508,7 @@ footer { text-align: center; padding: 1.5rem; font-size: 9px; letter-spacing: 2p
         <span id="pm-map-title">✈ PLAN SALĂ · MOONFIELDS</span>
         <span>NORD ↑</span>
       </div>
-      <canvas id="pm-canvas"></canvas>
+      <div id="pm-svg-container" style="width:100%;overflow:hidden;touch-action:none;cursor:grab;background:#faf7f2;"></div>
       <div class="pm-map-foot">
         <span class="pm-arrow">▼</span><span id="pm-entrance"> INTRARE DREAPTA · ZONA CORTINA / PORTOFINO</span>
       </div>
@@ -969,110 +970,213 @@ function showBoardingPass(g) {
   document.getElementById('pm-boarding').className = 'pm-boarding show';
 }
 
-function drawMap(g) {
-  const cv  = document.getElementById('pm-canvas');
-  const ctx = cv.getContext('2d');
-  const container = document.getElementById('pm-map-wrap');
-  if (!TABLES || !TABLES.length) return;
+// ══════════════════════════════════════════════════════════════════════════════
+// SVG MAP — vectorial, zoomabil, text clar, touch-friendly
+// ══════════════════════════════════════════════════════════════════════════════
+let svgZoom = { scale: 1, panX: 0, panY: 0, isDragging: false, lastX: 0, lastY: 0, lastDist: 0 };
 
+function drawMap(g) {
+  if (!TABLES || !TABLES.length) return;
+  const container = document.getElementById('pm-svg-container');
+  if (!container) return;
+
+  // World bounds — spațiu generos pentru scenă și bar
   const allX = TABLES.map(t => t.x);
   const allY = TABLES.map(t => t.y);
-  const minX = Math.min(...allX) - 80;
-  const maxX = Math.max(...allX) + 180;
-  const minY = Math.min(...allY) - 160;
-  const maxY = Math.max(...allY) + 160;
+  const minX = Math.min(...allX) - 100;
+  const maxX = Math.max(...allX) + 200;
+  const minY = Math.min(...allY) - 180;
+  const maxY = Math.max(...allY) + 180;
   const worldW = maxX - minX;
   const worldH = maxY - minY;
 
-  const cRect = container.getBoundingClientRect();
-  const dispW = cRect.width > 10 ? cRect.width : (window.innerWidth - 32);
-  // Scale to fit width, but cap height at 520px to keep it readable
-  const scByW = (dispW - 4) / worldW;
-  const scByH = 620 / worldH;
-  const sc = Math.min(scByW, scByH);
+  // SVG viewBox — coordonate world, SVG scalează automat
+  const vb = `${minX} ${minY} ${worldW} ${worldH}`;
+  // Înălțime proporțională față de lățimea containerului
+  const contW = container.clientWidth || window.innerWidth - 32;
+  const aspect = worldH / worldW;
+  const svgH = Math.min(Math.round(contW * aspect), 580);
 
-  const cvW = Math.ceil(worldW * sc + 4);
-  const cvH = Math.ceil(worldH * sc + 4);
-  cv.width = cvW; cv.height = cvH;
-  cv.style.width = cvW + 'px'; cv.style.height = cvH + 'px';
+  // Tabla mirilor
+  const tbl = TABLES.find(t => String(t.id) === String(g.tableId)) || null;
 
-  const wx = x => (x - minX) * sc + 2;
-  const wy = y => (y - minY) * sc + 2;
+  // Entry point
+  const entX = maxX - 20;
+  const entY = (Math.min(...allY) + Math.max(...allY)) / 2;
 
-  ctx.fillStyle = '#faf7f2'; ctx.fillRect(0, 0, cvW, cvH);
-  ctx.strokeStyle = 'rgba(184,146,74,.05)'; ctx.lineWidth = 1;
-  for (let gx = 0; gx < cvW; gx += 24) { ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,cvH); ctx.stroke(); }
-  for (let gy = 0; gy < cvH; gy += 24) { ctx.beginPath(); ctx.moveTo(0,gy); ctx.lineTo(cvW,gy); ctx.stroke(); }
+  // Linie roșie (bezier) — în coordonate world
+  let pathD = '';
+  if (tbl) {
+    const tx = tbl.x, ty = tbl.y;
+    const th = tbl.th || 65;
+    pathD = `M ${entX} ${entY} C ${entX-(entX-tx)*0.3} ${entY}, ${tx} ${entY+(ty-entY)*0.5}, ${tx} ${ty + th/2 + 5}`;
+  }
 
-  DECORS && DECORS.forEach(d => {
-    const sx=wx(d.x), sy=wy(d.y), dw=d.w*sc, dh=d.h*sc;
-    let fill='#ede8f8', stroke='#9080c0';
-    if(d.type==='bar')   { fill='#e0f0e8'; stroke='#3a7a54'; }
-    if(d.type==='stage') { fill='#f0e8d8'; stroke='#b8924a'; }
-    ctx.save();
-    ctx.beginPath(); ctx.roundRect(sx-dw/2, sy-dh/2, dw, dh, 3);
-    ctx.fillStyle=fill; ctx.fill();
-    ctx.strokeStyle=stroke; ctx.lineWidth=1; ctx.setLineDash([4,3]); ctx.stroke(); ctx.setLineDash([]);
-    const fs=Math.max(5,Math.round(6*sc));
-    if(fs>=5){ ctx.font='bold '+fs+'px sans-serif'; ctx.fillStyle=stroke; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText(d.label,sx,sy); }
-    ctx.restore();
+  // Helper — rect rotunjit ca string SVG
+  function svgRoundRect(cx, cy, w, h, r) {
+    const x = cx - w/2, y = cy - h/2;
+    return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" ry="${r}"`;
+  }
+
+  // Build SVG
+  let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}" width="100%" height="${svgH}" id="pm-svg" style="display:block;cursor:grab;">
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1" stdDeviation="3" flood-color="rgba(0,0,0,0.12)"/>
+    </filter>
+    <marker id="arrow-red" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#c03010"/>
+    </marker>
+  </defs>
+  <!-- Grid subtil -->
+  <pattern id="grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+    <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(184,146,74,0.07)" stroke-width="0.5"/>
+  </pattern>
+  <rect x="${minX}" y="${minY}" width="${worldW}" height="${worldH}" fill="url(#grid)"/>`;
+
+  // Decors (ring, scenă, bar)
+  const DECORS_DATA = DECORS || [];
+  DECORS_DATA.forEach(d => {
+    let fill, stroke, label = d.label || d.type;
+    if (d.type === 'bar')   { fill = '#e0f0e8'; stroke = '#3a7a54'; }
+    else if (d.type === 'stage') { fill = '#f0e8d8'; stroke = '#b8924a'; }
+    else { fill = '#ede8f8'; stroke = '#9080c0'; }
+    const x = d.x - d.w/2, y = d.y - d.h/2;
+    svg += `
+  <rect x="${x}" y="${y}" width="${d.w}" height="${d.h}" rx="5" fill="${fill}" stroke="${stroke}" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <text x="${d.x}" y="${d.y}" text-anchor="middle" dominant-baseline="middle" font-family="'DM Sans',sans-serif" font-size="11" font-weight="700" fill="${stroke}" letter-spacing="0.5">${label}</text>`;
   });
 
-  let tbl = null;
+  // Mese
   TABLES.forEach(t => {
-    const isT = String(t.id) === String(g.tableId);
-    if(isT) tbl = t;
-    const sx=wx(t.x), sy=wy(t.y);
-    const tw=(t.tw||220)*sc, th=(t.th||65)*sc;
-    ctx.save();
-    ctx.beginPath(); ctx.roundRect(sx-tw/2, sy-th/2, tw, th, 2);
-    ctx.fillStyle = isT ? '#fff3e8' : (t.miri ? '#fffcf0' : '#fff'); ctx.fill();
-    ctx.strokeStyle = isT ? '#c03010' : (t.miri ? '#c9a84c' : '#d0c4b0');
-    ctx.lineWidth = isT ? 2 : 0.7;
-    if(t.miri) ctx.setLineDash([3,2]);
-    ctx.stroke(); ctx.setLineDash([]);
-    const fs2=Math.max(4,Math.round(6*sc));
-    ctx.font=(isT?'bold ':'')+fs2+'px sans-serif';
-    ctx.fillStyle=isT?'#c03010':'#7a6050'; ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText(t.name,sx,sy); ctx.restore();
+    const isTarget = String(t.id) === String(g.tableId);
+    const tw = t.tw || (t.miri ? 65 : 220);
+    const th = t.th || (t.miri ? 121 : 65);
+    const fill = isTarget ? '#fff3e8' : (t.miri ? '#fffcf0' : '#ffffff');
+    const stroke = isTarget ? '#c03010' : (t.miri ? '#c9a84c' : '#d0c4b0');
+    const sw = isTarget ? 2.5 : (t.miri ? 1.5 : 0.8);
+    const dash = t.miri && !isTarget ? 'stroke-dasharray="4,3"' : '';
+    const textFill = isTarget ? '#c03010' : '#6a5040';
+    const fontW = isTarget ? '700' : (t.miri ? '600' : '500');
+    const fontSize = t.miri ? 10 : 9;
+    // Rotire pentru masa mirilor (verticală)
+    const rotate = t.miri ? `transform="rotate(-90,${t.x},${t.y})"` : '';
+    const filter = isTarget ? 'filter="url(#shadow)"' : '';
+    svg += `
+  <g ${filter}>
+    <rect x="${t.x-tw/2}" y="${t.y-th/2}" width="${tw}" height="${th}" rx="3" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" ${dash}/>
+    <text x="${t.x}" y="${t.y}" text-anchor="middle" dominant-baseline="middle" font-family="'DM Sans',sans-serif" font-size="${fontSize}" font-weight="${fontW}" fill="${textFill}" ${rotate}>${t.name}</text>
+  </g>`;
+    // Highlight pulsant pentru masa țintă
+    if (isTarget) {
+      svg += `
+  <circle cx="${t.x}" cy="${t.y}" r="${Math.max(th,tw)/2 + 12}" fill="rgba(192,48,16,0.08)" stroke="#c03010" stroke-width="1.5" stroke-dasharray="5,4">
+    <animate attributeName="r" values="${Math.max(th,tw)/2+10};${Math.max(th,tw)/2+18};${Math.max(th,tw)/2+10}" dur="2s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" values="0.6;0.2;0.6" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  <!-- Săgeată deasupra mesei țintă -->
+  <polygon points="${t.x},${t.y-th/2-18} ${t.x-9},${t.y-th/2-4} ${t.x+9},${t.y-th/2-4}" fill="#c03010">
+    <animate attributeName="points" 
+      values="${t.x},${t.y-th/2-22} ${t.x-9},${t.y-th/2-8} ${t.x+9},${t.y-th/2-8};${t.x},${t.y-th/2-16} ${t.x-9},${t.y-th/2-2} ${t.x+9},${t.y-th/2-2};${t.x},${t.y-th/2-22} ${t.x-9},${t.y-th/2-8} ${t.x+9},${t.y-th/2-8}"
+      dur="1.2s" repeatCount="indefinite"/>
+  </polygon>`;
+    }
   });
 
-  if(!tbl) return;
-  const entX=maxX-10, entY=(Math.min(...allY)+Math.max(...allY))/2;
-  const ex=wx(entX), ey=wy(entY), tx=wx(tbl.x), ty=wy(tbl.y);
+  // Linie roșie intrare → masă
+  if (pathD && tbl) {
+    svg += `
+  <!-- Linie roșie -->
+  <path d="${pathD}" fill="none" stroke="#c03010" stroke-width="2.5" stroke-dasharray="8,5" stroke-linecap="round" opacity="0.85"/>`;
+    // Dot verde intrare
+    svg += `
+  <circle cx="${entX}" cy="${entY}" r="10" fill="#1a3a2a" stroke="#c9a84c" stroke-width="2"/>
+  <circle cx="${entX}" cy="${entY}" r="5" fill="#c9a84c"/>`;
+    // Label INTRARE
+    const lbl = {ro:'INTRARE',en:'ENTRANCE',it:'INGRESSO'}[currentLang] || 'INTRARE';
+    svg += `
+  <rect x="${entX-52}" y="${entY-11}" width="50" height="22" rx="3" fill="#c9a84c"/>
+  <text x="${entX-27}" y="${entY}" text-anchor="middle" dominant-baseline="middle" font-family="'DM Sans',sans-serif" font-size="9" font-weight="700" fill="#1a1a14">▶ ${lbl}</text>`;
+  }
 
-  ctx.save();
-  ctx.strokeStyle='#c03010'; ctx.lineWidth=Math.max(1.5,2*sc);
-  ctx.lineCap='round'; ctx.lineJoin='round';
-  ctx.setLineDash([Math.max(4,7*sc),Math.max(3,4*sc)]);
-  ctx.shadowColor='rgba(192,48,16,.3)'; ctx.shadowBlur=4;
-  ctx.beginPath(); ctx.moveTo(ex,ey);
-  ctx.bezierCurveTo(ex-(ex-tx)*0.3,ey,tx,ey+(ty-ey)*0.5,tx,ty+(tbl.th||65)*sc/2+3);
-  ctx.stroke(); ctx.setLineDash([]); ctx.shadowColor='transparent';
+  svg += '
+</svg>';
 
-  const r=Math.max(4,6*sc);
-  ctx.beginPath(); ctx.arc(ex,ey,r,0,Math.PI*2);
-  ctx.fillStyle='#1a3a2a'; ctx.fill();
-  ctx.strokeStyle='#c9a84c'; ctx.lineWidth=Math.max(1,1.5*sc); ctx.stroke();
-  ctx.beginPath(); ctx.arc(ex,ey,r*0.5,0,Math.PI*2); ctx.fillStyle='#c9a84c'; ctx.fill();
+  container.innerHTML = svg;
 
-  const ar=Math.max(4,6*sc);
-  ctx.fillStyle='#c03010'; ctx.beginPath();
-  ctx.moveTo(tx,ty-ar*1.5); ctx.lineTo(tx-ar*0.8,ty-ar*0.2); ctx.lineTo(tx+ar*0.8,ty-ar*0.2);
-  ctx.closePath(); ctx.fill();
+  // ── PAN & ZOOM touch + mouse ───────────────────────────────────────────────
+  const svgEl = document.getElementById('pm-svg');
+  if (!svgEl) return;
 
-  ctx.beginPath(); ctx.arc(tx,ty,(tbl.th||65)*sc/2+Math.max(4,6*sc),0,Math.PI*2);
-  ctx.fillStyle='rgba(192,48,16,.1)'; ctx.fill();
-  ctx.strokeStyle='#c03010'; ctx.lineWidth=Math.max(1,1.5*sc); ctx.stroke();
+  let isPanning = false, startPanX = 0, startPanY = 0;
+  let curTransX = 0, curTransY = 0, curScale = 1;
+  let lastTouchDist = 0, pinching = false;
 
-  const lbl={ro:'INTRARE',en:'ENTRANCE',it:'INGRESSO'}[currentLang]||'INTRARE';
-  const fs3=Math.max(7,Math.round(8*sc));
-  ctx.font='bold '+fs3+'px sans-serif'; ctx.textAlign='left'; ctx.textBaseline='middle';
-  const lw=ctx.measureText('► '+lbl).width+10;
-  const lx=ex-lw-r-4;
-  ctx.fillStyle='#c9a84c'; ctx.beginPath(); ctx.roundRect(lx,ey-fs3*0.7,lw,fs3*1.4,2); ctx.fill();
-  ctx.fillStyle='#1a1a14'; ctx.fillText('► '+lbl,lx+5,ey);
-  ctx.restore();
+  function applyTransform() {
+    svgEl.style.transform = `translate(${curTransX}px, ${curTransY}px) scale(${curScale})`;
+    svgEl.style.transformOrigin = '50% 50%';
+  }
+
+  function getTouchDist(t1, t2) {
+    return Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+  }
+
+  // Mouse pan
+  svgEl.addEventListener('mousedown', e => { isPanning = true; startPanX = e.clientX - curTransX; startPanY = e.clientY - curTransY; svgEl.style.cursor = 'grabbing'; });
+  window.addEventListener('mousemove', e => { if (!isPanning) return; curTransX = e.clientX - startPanX; curTransY = e.clientY - startPanY; applyTransform(); });
+  window.addEventListener('mouseup', () => { isPanning = false; svgEl.style.cursor = 'grab'; });
+
+  // Mouse wheel zoom
+  svgEl.addEventListener('wheel', e => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? 0.88 : 1.14;
+    curScale = Math.min(Math.max(curScale * delta, 0.5), 4);
+    applyTransform();
+  }, { passive: false });
+
+  // Touch pan + pinch zoom
+  svgEl.addEventListener('touchstart', e => {
+    if (e.touches.length === 1) {
+      isPanning = true; pinching = false;
+      startPanX = e.touches[0].clientX - curTransX;
+      startPanY = e.touches[0].clientY - curTransY;
+    } else if (e.touches.length === 2) {
+      pinching = true; isPanning = false;
+      lastTouchDist = getTouchDist(e.touches[0], e.touches[1]);
+    }
+  }, { passive: true });
+
+  svgEl.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (e.touches.length === 1 && isPanning && !pinching) {
+      curTransX = e.touches[0].clientX - startPanX;
+      curTransY = e.touches[0].clientY - startPanY;
+      applyTransform();
+    } else if (e.touches.length === 2 && pinching) {
+      const dist = getTouchDist(e.touches[0], e.touches[1]);
+      const ratio = dist / lastTouchDist;
+      lastTouchDist = dist;
+      curScale = Math.min(Math.max(curScale * ratio, 0.5), 4);
+      applyTransform();
+    }
+  }, { passive: false });
+
+  svgEl.addEventListener('touchend', e => {
+    if (e.touches.length < 2) pinching = false;
+    if (e.touches.length === 0) isPanning = false;
+  });
+
+  // Buton reset zoom
+  let resetBtn = document.getElementById('pm-map-reset');
+  if (!resetBtn) {
+    resetBtn = document.createElement('button');
+    resetBtn.id = 'pm-map-reset';
+    resetBtn.textContent = '⊙ Reset zoom';
+    resetBtn.style.cssText = 'position:absolute;bottom:48px;right:10px;z-index:10;background:#1a3a2a;color:#c9a84c;border:1px solid #c9a84c;border-radius:20px;padding:5px 12px;font-size:11px;letter-spacing:1px;cursor:pointer;font-family:DM Sans,sans-serif;';
+    const wrap = document.getElementById('pm-map-wrap');
+    if (wrap) { wrap.style.position = 'relative'; wrap.appendChild(resetBtn); }
+  }
+  resetBtn.onclick = () => { curTransX=0; curTransY=0; curScale=1; applyTransform(); };
 }
 
 window.addEventListener('resize', () => { if(pmSelG) setTimeout(() => drawMap(pmSelG), 100); });
