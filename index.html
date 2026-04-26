@@ -112,7 +112,6 @@ body{font-family:'DM Sans',sans-serif;background:var(--green);color:var(--cream)
 .map-card-foot{padding:7px 16px;background:#152e22;text-align:center;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);}
 .map-arrow{display:inline-block;animation:mapArrow .9s ease-in-out infinite alternate;}
 @keyframes mapArrow{from{opacity:.5;transform:translateY(0);}to{opacity:1;transform:translateY(4px);}}
-.map-reset-btn{position:absolute;bottom:44px;right:10px;z-index:10;background:var(--green);color:var(--gold);border:1px solid var(--gold);border-radius:20px;padding:4px 12px;font-size:11px;letter-spacing:1px;cursor:pointer;font-family:'DM Sans',sans-serif;}
 
 /* ══════════════ TAB 2: MENIU ══════════════ */
 .menu-wrap{padding:3rem 1.5rem;max-width:700px;margin:0 auto;text-align:center;}
@@ -297,7 +296,6 @@ footer{text-align:center;padding:1.5rem;font-size:9px;letter-spacing:2px;color:r
       </div>
       <div id="svg-container"></div>
       <div class="map-card-foot"><span class="map-arrow">▼</span><span id="map-entrance"> INTRARE DREAPTA · ZONA CORTINA / PORTOFINO</span></div>
-      <button class="map-reset-btn" id="map-reset-btn" onclick="resetMapView()">⊙ Reset zoom</button>
     </div>
   </div>
 </div>
@@ -369,10 +367,10 @@ footer{text-align:center;padding:1.5rem;font-size:9px;letter-spacing:2px;color:r
 // ══════════════════════════════════════════════════════════════════════════════
 // DATE INVITAȚI — înlocuite la export din admin
 // ══════════════════════════════════════════════════════════════════════════════
-var GUESTS      = [{"name":"Dalia","table":"Roma","tableId":1,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Theo","table":"Roma","tableId":1,"seatIdx":1,"menu":"normal","cazare":"nu"},{"name":"Nasa","table":"Roma","tableId":1,"seatIdx":2,"menu":"normal","cazare":"nu"},{"name":"Nasu","table":"Roma","tableId":1,"seatIdx":3,"menu":"normal","cazare":"nu"},{"name":"Alessandra Chiariello","table":"Milano","tableId":3,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Fabio Cerullo","table":"Verona","tableId":7,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Latis Simina","table":"Firenze","tableId":11,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Latis Rares","table":"Bergamo","tableId":4,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Margherita Malaspina","table":"Trieste","tableId":8,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Giuseppe Iacomino","table":"Siena","tableId":12,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Alin Bobeica","table":"Venezia","tableId":6,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Irina Bobeica","table":"Perugia","tableId":13,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Alina Vreju","table":"Amalfi","tableId":15,"seatIdx":0,"menu":"normal","cazare":"nu"}];
-var TABLES      = [{"id":1,"name":"Roma","x":-105.60178115508401,"y":-1.7240712462033514,"tw":65,"th":481,"miri":true,"seats":4},{"id":2,"name":"Torino","x":80,"y":-175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":3,"name":"Milano","x":80,"y":-58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":4,"name":"Bergamo","x":80,"y":58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":5,"name":"Como","x":80,"y":175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":6,"name":"Venezia","x":355,"y":-175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":7,"name":"Verona","x":355,"y":-58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":8,"name":"Trieste","x":355,"y":58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":9,"name":"Padova","x":355,"y":175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":10,"name":"Bologna","x":630,"y":-175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":11,"name":"Firenze","x":630,"y":-58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":12,"name":"Siena","x":630,"y":58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":13,"name":"Perugia","x":630,"y":175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":14,"name":"Napoli","x":905,"y":-175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":15,"name":"Amalfi","x":905,"y":-58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":16,"name":"Positano","x":905,"y":58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":17,"name":"Capri","x":905,"y":175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":18,"name":"Palermo","x":1495,"y":-175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":19,"name":"Agrigento","x":1495,"y":-58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":20,"name":"Siracusa","x":1495,"y":58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":21,"name":"Taormina","x":1495,"y":175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":22,"name":"Cagliari","x":1770,"y":-175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":23,"name":"Alghero","x":1770,"y":-58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":24,"name":"Olbia","x":1770,"y":58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":25,"name":"Costa Smeralda","x":1770,"y":175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":26,"name":"Torino","x":2045,"y":-175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":27,"name":"Milano","x":2045,"y":-58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":28,"name":"Bergamo","x":2045,"y":58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":29,"name":"Como","x":2045,"y":175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":30,"name":"Venezia","x":2320,"y":-175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":31,"name":"Verona","x":2320,"y":-58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":32,"name":"Trieste","x":2320,"y":58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":33,"name":"Padova","x":2320,"y":175.5,"tw":220,"th":65,"miri":false,"seats":8}];
-var DECORS      = [{"type":"ring","x":1218.968651428442,"y":-77.58320607915124,"w":190,"h":260,"label":"Ring dans"},{"type":"stage","x":1206.9001527050186,"y":-286.2035623101681,"w":190,"h":100,"label":"Scenă / Formație"},{"type":"bar","x":1206.9001527050184,"y":248.27399489369412,"w":190,"h":100,"label":"Bar"}];
-var GUEST_NAMES = ["Dalia","Theo","Nasa","Nasu","Alessandra Chiariello","Fabio Cerullo","Latis Simina","Latis Rares","Margherita Malaspina","Giuseppe Iacomino","Alin Bobeica","Irina Bobeica","Alina Vreju"];
+var GUESTS      = typeof __LA_GUESTS__      !== 'undefined' ? __LA_GUESTS__      : [];
+var TABLES      = typeof __LA_TABLES__      !== 'undefined' ? __LA_TABLES__      : [];
+var DECORS      = typeof __LA_DECORS__      !== 'undefined' ? __LA_DECORS__      : [];
+var GUEST_NAMES = typeof __LA_GUEST_NAMES__ !== 'undefined' ? __LA_GUEST_NAMES__ : [];
 
 // ══════════════════════════════════════════════════════════════════════════════
 // TRADUCERI
@@ -622,7 +620,6 @@ function showBP(g) {
 // ── SVG MAP ──────────────────────────────────────────────────────────────────
 let mapTransX=0, mapTransY=0, mapScale=1, mapPanning=false, mapStartX=0, mapStartY=0, mapLastDist=0, mapPinching=false;
 
-function resetMapView() { mapTransX=0; mapTransY=0; mapScale=1; applyMapTransform(); }
 function applyMapTransform() {
   const svg = document.getElementById('pm-svg');
   if (svg) { svg.style.transform=`translate(${mapTransX}px,${mapTransY}px) scale(${mapScale})`; svg.style.transformOrigin='50% 50%'; }
