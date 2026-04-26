@@ -207,6 +207,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--green);color:var(--cream)
 .drinks-item-desc{font-size:12px;color:var(--gray);letter-spacing:.5px;}
 .drinks-item-special{font-size:10px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-top:.2rem;}
 .drinks-footer{text-align:center;font-size:9px;letter-spacing:2px;color:rgba(201,168,76,.35);text-transform:uppercase;margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid rgba(201,168,76,.1);}
+.drinks-brand{color:var(--gold);font-style:italic;font-weight:600;font-size:.95em;}
+.drinks-header-tagline{font-size:12px;color:var(--gold);font-style:italic;margin-top:.75rem;letter-spacing:1px;opacity:.8;}
+.drinks-item-featured{border-color:rgba(201,168,76,.5);background:rgba(201,168,76,.07);}
+.drinks-item-featured .drinks-item-name{color:var(--gold-light);}
 
 /* ── FOOTER ── */
 footer{text-align:center;padding:1.5rem;font-size:9px;letter-spacing:2px;color:rgba(201,168,76,.3);text-transform:uppercase;border-top:1px solid rgba(201,168,76,.1);position:relative;z-index:1;}
@@ -336,145 +340,204 @@ footer{text-align:center;padding:1.5rem;font-size:9px;letter-spacing:2px;color:r
 <div class="section" id="section-drinks">
   <div class="drinks-wrap">
 
-    <!-- HEADER DRINKS -->
     <div class="drinks-header">
       <div class="drinks-header-label">✈ LOVE AIRLINES · DL&TH-23.08.2026</div>
       <div class="drinks-header-title">🥂 Drinks Menu</div>
-      <div class="drinks-header-sub">Dalia & Theo · 23 August 2026 · Moonfields</div>
+      <div class="drinks-header-sub">Dalia &amp; Theo · 23 August 2026 · Moonfields</div>
+      <div class="drinks-header-tagline">Benvenuti a bordo — ogni sorso è un viaggio</div>
     </div>
 
-    <!-- APERITIVE -->
+    <!-- SPIRITS -->
     <div class="drinks-category">
-      <div class="drinks-cat-label">Aperitive</div>
+      <div class="drinks-cat-label">🥃 Spirits &amp; Distillati</div>
       <div class="drinks-items">
         <div class="drinks-item">
-          <div class="drinks-item-name">Prosecco DOC</div>
-          <div class="drinks-item-desc">Conegliano Valdobbiadene · Brut</div>
+          <div class="drinks-item-name">Vodka <span class="drinks-brand">Absolut</span></div>
+          <div class="drinks-item-desc">Distilată din grâu suedez · Curată, netedă, versatilă</div>
         </div>
         <div class="drinks-item">
+          <div class="drinks-item-name">Bourbon <span class="drinks-brand">Bulleit</span></div>
+          <div class="drinks-item-desc">Kentucky, SUA · Note de vanilie, miere și stejar afumat</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Cognac <span class="drinks-brand">Martell VS</span></div>
+          <div class="drinks-item-desc">Cognac, Franța · Fructat, floral, cu final cald și elegant</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Whisky <span class="drinks-brand">Chivas 12 y.o.</span></div>
+          <div class="drinks-item-desc">Scotch blended · Miere, fructe coapte și vanilie cremoasă</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Rum <span class="drinks-brand">Havana Club Añejo Especial</span></div>
+          <div class="drinks-item-desc">Cuba · Melasă de trestie, caramel, scorțișoară și cocos</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Gin <span class="drinks-brand">Tanqueray</span></div>
+          <div class="drinks-item-desc">Londra, UK · Ienupăr, coriandru, angelică — clasicul botanicelor</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Tequila <span class="drinks-brand">Olmeca</span></div>
+          <div class="drinks-item-desc">Blanco &amp; Gold · Agave albastră · Proaspătă sau cu nuanțe de caramel</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Vermouth <span class="drinks-brand">Cinzano</span></div>
+          <div class="drinks-item-desc">Bianco &amp; Rosso · Ierburi, condimente și vin italian</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Bitter <span class="drinks-brand">Campari &amp; Aperol</span></div>
+          <div class="drinks-item-desc">Milano · Portocale amare, rhubarb, ierburi alpine</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Digestiv <span class="drinks-brand">Jägermeister</span></div>
+          <div class="drinks-item-desc">Germania · 56 de ierburi și mirodenii · Perfect rece</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Whiskey Cream <span class="drinks-brand">Bailey's Irish Cream</span></div>
+          <div class="drinks-item-desc">Irlanda · Whiskey, smântână și ciocolată — catifelat și dulce</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WINES & BUBBLES -->
+    <div class="drinks-category">
+      <div class="drinks-cat-label">🍾 Wines &amp; Bubbles</div>
+      <div class="drinks-items">
+        <div class="drinks-item drinks-item-featured">
+          <div class="drinks-item-name">Sarica Niculițel <span class="drinks-brand">Caii de la Letea vol. 1</span></div>
+          <div class="drinks-item-desc">Dobrogea, România · Aligoté, Roze &amp; Fetească Neagră · Terroir unic, vinuri de caracter</div>
+          <div class="drinks-item-special">✦ Selecția serii</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Prosecco <span class="drinks-brand">Grande Vento</span></div>
+          <div class="drinks-item-desc">Veneto, Italia · Bule fine, mere verzi și flori de salcâm · Brut</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LONG DRINKS -->
+    <div class="drinks-category">
+      <div class="drinks-cat-label">🍹 Long Drinks</div>
+      <div class="drinks-items">
+        <div class="drinks-item">
+          <div class="drinks-item-name">Campari Orange</div>
+          <div class="drinks-item-desc">Campari · Suc de portocale · O amărăciune elegantă îmblânzită de citrice</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Gin Tonic</div>
+          <div class="drinks-item-desc">Tanqueray · Schweppes Tonic · Lămâie · Botanice proaspete</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Cuba Libre</div>
+          <div class="drinks-item-desc">Havana Club · Coca-Cola · Lime · Clasicul caribbean al serii</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Vodka Mix</div>
+          <div class="drinks-item-desc">Absolut · Cranberry / Apple / Orange / Tonic — alegerea ta</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Whisky Cola</div>
+          <div class="drinks-item-desc">Chivas 12 · Coca-Cola · Gheață · Simplu și satisfăcător</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COCKTAILS -->
+    <div class="drinks-category">
+      <div class="drinks-cat-label">🍸 Cocktails</div>
+      <div class="drinks-items">
+        <div class="drinks-item">
           <div class="drinks-item-name">Aperol Spritz</div>
-          <div class="drinks-item-desc">Aperol · Prosecco · Soda</div>
+          <div class="drinks-item-desc">Aperol · Grande Vento Prosecco · Soda · Portocală · Iconic italian</div>
         </div>
         <div class="drinks-item">
           <div class="drinks-item-name">Hugo Spritz</div>
-          <div class="drinks-item-desc">Elderflower · Prosecco · Mentă</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- VINURI ALBE -->
-    <div class="drinks-category">
-      <div class="drinks-cat-label">Vinuri Albe</div>
-      <div class="drinks-items">
-        <div class="drinks-item">
-          <div class="drinks-item-name">Pinot Grigio</div>
-          <div class="drinks-item-desc">Alto Adige DOC · Italia</div>
-        </div>
-        <div class="drinks-item">
-          <div class="drinks-item-name">Sauvignon Blanc</div>
-          <div class="drinks-item-desc">Cramele Recaș · România</div>
-        </div>
-        <div class="drinks-item">
-          <div class="drinks-item-name">Chardonnay</div>
-          <div class="drinks-item-desc">Budureasca Premium · Dealu Mare</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- VINURI ROȘII -->
-    <div class="drinks-category">
-      <div class="drinks-cat-label">Vinuri Roșii</div>
-      <div class="drinks-items">
-        <div class="drinks-item">
-          <div class="drinks-item-name">Chianti Classico</div>
-          <div class="drinks-item-desc">DOCG · Toscana · Italia</div>
-        </div>
-        <div class="drinks-item">
-          <div class="drinks-item-name">Fetească Neagră</div>
-          <div class="drinks-item-desc">Davino · Dealu Mare · România</div>
-        </div>
-        <div class="drinks-item">
-          <div class="drinks-item-name">Merlot</div>
-          <div class="drinks-item-desc">Cramele Halewood · Muntenia</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- VINURI ROSÉ -->
-    <div class="drinks-category">
-      <div class="drinks-cat-label">Rosé</div>
-      <div class="drinks-items">
-        <div class="drinks-item">
-          <div class="drinks-item-name">Rosé de Provence</div>
-          <div class="drinks-item-desc">AOP Provence · Franța</div>
-        </div>
-        <div class="drinks-item">
-          <div class="drinks-item-name">Busuioacă de Bohotin</div>
-          <div class="drinks-item-desc">Cotnari · Moldova · România</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- COCKTAILURI -->
-    <div class="drinks-category">
-      <div class="drinks-cat-label">Cocktailuri</div>
-      <div class="drinks-items">
-        <div class="drinks-item">
-          <div class="drinks-item-name">Love Airlines Signature</div>
-          <div class="drinks-item-desc">Gin · Lychee · Lime · Soda · Trandafir</div>
-          <div class="drinks-item-special">✦ Cocktailul casei</div>
+          <div class="drinks-item-desc">Liqueur de flori de soc · Prosecco · Soda · Mentă · Lămâie verde</div>
         </div>
         <div class="drinks-item">
           <div class="drinks-item-name">Negroni</div>
-          <div class="drinks-item-desc">Gin · Campari · Vermouth Rosso</div>
+          <div class="drinks-item-desc">Tanqueray · Campari · Cinzano Rosso · Coajă de portocală · Un clasic fără vârstă</div>
         </div>
         <div class="drinks-item">
           <div class="drinks-item-name">Mojito</div>
-          <div class="drinks-item-desc">Rum · Mentă · Lime · Soda</div>
+          <div class="drinks-item-desc">Havana Club · Mentă proaspătă · Lime · Zahăr brun · Soda</div>
         </div>
       </div>
     </div>
 
-    <!-- NON-ALCOOLICE -->
+    <!-- MOCKTAILS -->
     <div class="drinks-category">
-      <div class="drinks-cat-label">Non-Alcoolice</div>
+      <div class="drinks-cat-label">🌿 Mocktails</div>
       <div class="drinks-items">
         <div class="drinks-item">
-          <div class="drinks-item-name">Limonadă artizanală</div>
-          <div class="drinks-item-desc">Lămâie · Mentă · Rozmarin</div>
+          <div class="drinks-item-name">Green Apple</div>
+          <div class="drinks-item-desc">Suc de mere verzi · Lime · Ghimbir · Miere · Soda · Răcoritor și viu</div>
         </div>
         <div class="drinks-item">
-          <div class="drinks-item-name">Apă plată / minerală</div>
-          <div class="drinks-item-desc">Borsec · Bucovina</div>
-        </div>
-        <div class="drinks-item">
-          <div class="drinks-item-name">Sucuri naturale</div>
-          <div class="drinks-item-desc">Portocale · Mango · Piersică</div>
+          <div class="drinks-item-name">Berry Mojito</div>
+          <div class="drinks-item-desc">Fructe de pădure · Mentă · Lime · Soda · Zahăr brun · Fără alcool, cu tot gustul</div>
         </div>
       </div>
     </div>
 
-    <!-- DIGESTIVE -->
+    <!-- BEER -->
     <div class="drinks-category">
-      <div class="drinks-cat-label">Digestive & Spirtoase</div>
+      <div class="drinks-cat-label">🍺 Beer</div>
       <div class="drinks-items">
         <div class="drinks-item">
-          <div class="drinks-item-name">Limoncello</div>
-          <div class="drinks-item-desc">Sorrento · Italia</div>
+          <div class="drinks-item-name">Heineken</div>
+          <div class="drinks-item-desc">Olanda · Lager clasic · Proaspătă, ușoară, cu amărăciune fină de hamei</div>
         </div>
         <div class="drinks-item">
-          <div class="drinks-item-name">Grappa</div>
-          <div class="drinks-item-desc">Nonino · Friuli · Italia</div>
+          <div class="drinks-item-name">Heineken 0.00%</div>
+          <div class="drinks-item-desc">Fără alcool · Tot gustul Heineken, fără compromisuri</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SOFT DRINKS -->
+    <div class="drinks-category">
+      <div class="drinks-cat-label">💧 Soft Drinks &amp; Apă</div>
+      <div class="drinks-items">
+        <div class="drinks-item">
+          <div class="drinks-item-name">Apă <span class="drinks-brand">Dorna</span></div>
+          <div class="drinks-item-desc">Plată &amp; Carbogazoasă · Munții Călimani, România</div>
         </div>
         <div class="drinks-item">
-          <div class="drinks-item-name">Whisky Single Malt</div>
-          <div class="drinks-item-desc">Glenfiddich 12 · Speyside</div>
+          <div class="drinks-item-name">Coca-Cola, Zero, Fanta, Sprite</div>
+          <div class="drinks-item-desc">Clasicele răcoritoare pentru fiecare gust</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Schweppes Tonic</div>
+          <div class="drinks-item-desc">Tonic sec cu chinină · Partenerul perfect al gin-ului</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Ice Tea</div>
+          <div class="drinks-item-desc">Peach &amp; Lemon · Răcoritor, ușor, perfect pentru vară</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Santal</div>
+          <div class="drinks-item-desc">Orange · Apple · Cranberry · 100% suc de fructe</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HOT DRINKS -->
+    <div class="drinks-category">
+      <div class="drinks-cat-label">☕ Hot Drinks</div>
+      <div class="drinks-items">
+        <div class="drinks-item">
+          <div class="drinks-item-name">Espresso · Cappuccino · Macchiato · Decaf</div>
+          <div class="drinks-item-desc">Boabe arabica selecționate · Extrase la presiune perfectă</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Hot Tea</div>
+          <div class="drinks-item-desc">Selecție de ceaiuri de plante · Mușețel, mentă, fructe de pădure și nu numai</div>
         </div>
       </div>
     </div>
 
     <div class="drinks-footer">
-      ✈ Love Airlines · Zbor DL&TH-23.08.2026 · Vă mulțumim că zburați cu noi
+      ✈ Love Airlines · Zbor DL&TH-23.08.2026 · Ogni sorso è un viaggio · Vă mulțumim că zburați cu noi
     </div>
   </div>
 </div>
