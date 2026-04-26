@@ -87,13 +87,14 @@ body {
 .nav-tab .tab-icon { font-size: 14px; }
 .lang-switcher { display: flex; gap: 5px; align-items: center; }
 .lang-btn {
-  background: none; border: 1px solid transparent;
-  border-radius: 6px; padding: 4px 7px;
-  font-size: 17px; cursor: pointer;
-  transition: all 0.2s; opacity: 0.45; line-height: 1;
+  background: none; border: 1.5px solid transparent;
+  border-radius: 8px; padding: 3px 6px;
+  font-size: 22px; cursor: pointer;
+  transition: all 0.2s; opacity: 0.5; line-height: 1;
+  display: flex; align-items: center;
 }
-.lang-btn:hover { opacity: 0.8; border-color: var(--border); }
-.lang-btn.active { opacity: 1; border-color: var(--gold); background: rgba(201,168,76,0.12); }
+.lang-btn:hover { opacity: 0.9; border-color: var(--border); transform: scale(1.1); }
+.lang-btn.active { opacity: 1; border-color: var(--gold); background: rgba(201,168,76,0.15); transform: scale(1.08); }
 
 /* ── HEADER ───────────────────────────────────────────────────────────────── */
 .header {
@@ -955,16 +956,19 @@ function drawMap(g) {
 
   const allX = TABLES.map(t => t.x);
   const allY = TABLES.map(t => t.y);
-  const minX = Math.min(...allX) - 60;
-  const maxX = Math.max(...allX) + 150;
-  const minY = Math.min(...allY) - 50;
-  const maxY = Math.max(...allY) + 50;
+  const minX = Math.min(...allX) - 80;
+  const maxX = Math.max(...allX) + 180;
+  const minY = Math.min(...allY) - 130;
+  const maxY = Math.max(...allY) + 130;
   const worldW = maxX - minX;
   const worldH = maxY - minY;
 
   const cRect = container.getBoundingClientRect();
   const dispW = cRect.width > 10 ? cRect.width : (window.innerWidth - 32);
-  const sc = (dispW - 4) / worldW;
+  // Scale to fit width, but cap height at 520px to keep it readable
+  const scByW = (dispW - 4) / worldW;
+  const scByH = 520 / worldH;
+  const sc = Math.min(scByW, scByH);
 
   const cvW = Math.ceil(worldW * sc + 4);
   const cvH = Math.ceil(worldH * sc + 4);
