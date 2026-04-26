@@ -431,7 +431,7 @@ footer { text-align: center; padding: 1.5rem; font-size: 9px; letter-spacing: 2p
 <!-- HEADER -->
 <div class="header">
   <div class="header-airline" id="h-airline">✈ Love Airlines · Zbor DL&TH-23.08.2026</div>
-  <div class="header-title" id="h-title">Dalia & Theo</div>
+  <div class="header-title" id="h-title">🧳 Dalia &amp; Theo 🧳</div>
   <div class="header-subtitle">23 August 2026 · Moonfields, Tâncăbești</div>
   <div class="cities-row">
     <span class="city-tag" style="left:2%;top:10px;opacity:.38;animation:floatCity 6s ease-in-out infinite;">Roma</span>
@@ -958,8 +958,8 @@ function drawMap(g) {
   const allY = TABLES.map(t => t.y);
   const minX = Math.min(...allX) - 80;
   const maxX = Math.max(...allX) + 180;
-  const minY = Math.min(...allY) - 130;
-  const maxY = Math.max(...allY) + 130;
+  const minY = Math.min(...allY) - 160;
+  const maxY = Math.max(...allY) + 160;
   const worldW = maxX - minX;
   const worldH = maxY - minY;
 
@@ -967,7 +967,7 @@ function drawMap(g) {
   const dispW = cRect.width > 10 ? cRect.width : (window.innerWidth - 32);
   // Scale to fit width, but cap height at 520px to keep it readable
   const scByW = (dispW - 4) / worldW;
-  const scByH = 520 / worldH;
+  const scByH = 620 / worldH;
   const sc = Math.min(scByW, scByH);
 
   const cvW = Math.ceil(worldW * sc + 4);
