@@ -554,7 +554,9 @@ footer { text-align: center; padding: 1.5rem; font-size: 9px; letter-spacing: 2p
         <div class="boarding-sub" id="t-bp-sub">Maximum 10 fotografii per pasager · Ajută-ne să completăm albumul</div>
         <div class="form-group">
           <label class="form-label" id="t-name-label">Numele tău complet</label>
-          <input type="text" class="form-input" id="user-name" placeholder="ex. Maria Ionescu">
+          <input type="text" class="form-input" id="user-name" placeholder="ex. Maria Ionescu" 
+                 oninput="filterGuestNames(this.value)" autocomplete="off">
+          <div id="name-suggestions" style="display:none;background:#fff;border:1px solid rgba(26,58,42,0.15);border-top:none;border-radius:0 0 8px 8px;max-height:180px;overflow-y:auto;"></div>
         </div>
         <div class="form-group">
           <label class="form-label" id="t-photos-label">Fotografii (max. 10)</label>
@@ -613,13 +615,24 @@ footer { text-align: center; padding: 1.5rem; font-size: 9px; letter-spacing: 2p
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwcWiuZbhFn8ZKyIqVXcJ-LEEy3685Xm136naSTmhsUwcjrqkyLXeKXtK74D2NncDsa/exec';
 
 // ══════════════════════════════════════════════════════════════════════════════
-// PASSENGER MAP DATA — injected from invitati-planner export
-// Replace __GUESTS__, __TABLES__, __DECORS__ with the exported JSON
-// (generated via butonul "Pagină invitați" din planul de mese)
+// PASSENGER MAP DATA — citite din localStorage (publicate de admin.html)
 // ══════════════════════════════════════════════════════════════════════════════
-var GUESTS = typeof __GUESTS__ !== 'undefined' ? __GUESTS__ : [];
-var TABLES = typeof __TABLES__ !== 'undefined' ? __TABLES__ : [];
-var DECORS = typeof __DECORS__ !== 'undefined' ? __DECORS__ : [];
+var GUESTS = [], TABLES = [], DECORS = [], GUEST_NAMES = [];
+
+function loadSiteData() {
+  try {
+    const raw = localStorage.getItem('loveairlines_data');
+    if (!raw) return;
+    const d = JSON.parse(raw);
+    GUESTS      = d.guests  || [];
+    TABLES      = d.tables  || [];
+    DECORS      = d.decors  || [];
+    GUEST_NAMES = d.allNames || GUESTS.map(g => g.name);
+  } catch(e) {
+    console.warn('Nu s-au putut încărca datele site-ului:', e);
+  }
+}
+loadSiteData();
 
 // ══════════════════════════════════════════════════════════════════════════════
 // TRANSLATIONS
@@ -669,6 +682,7 @@ const LANG = {
     errGeneral: 'A apărut o eroare. Încearcă din nou.',
     confirmDelete: 'Ești sigur că vrei să ștergi această fotografie?',
     errNoName: 'Introdu mai întâi numele tău în secțiunea de upload.',
+    errNotInvited: 'Numele tău nu este în lista de invitați. Verifică ortografia.',
     errDelete: 'Eroare la ștergere.', errLoad: 'Eroare la încărcare. Verifică conexiunea.',
     photos: (n) => n + ' fotografi' + (n === 1 ? 'e' : 'i'),
     menuNormal: 'Normal', menuVeg: 'Vegetarian', menuVegan: 'Vegan', menuCopil: 'Copil',
@@ -755,6 +769,7 @@ const LANG = {
     errGeneral: 'An error occurred. Please try again.',
     confirmDelete: 'Are you sure you want to delete this photo?',
     errNoName: 'Please enter your name in the upload section first.',
+    errNotInvited: 'Your name is not in the guest list. Please check the spelling.',
     errDelete: 'Error deleting photo.', errLoad: 'Loading error. Check your connection.',
     photos: (n) => n + ' photo' + (n !== 1 ? 's' : ''),
     menuNormal: 'Normal', menuVeg: 'Vegetarian', menuVegan: 'Vegan', menuCopil: 'Child',
@@ -870,6 +885,10 @@ function pmSearch(v) {
   pmSuggest.innerHTML = '';
   pmSuggs = [];
   if (q.length < 2) return;
+  if (GUESTS.length === 0) {
+    pmNotF.textContent = 'Lista de invitați nu a fost încă publicată de organizatori.';
+    pmNotF.style.display = 'block'; return;
+  }
   pmSuggs = GUESTS.filter(g => g.name.toLowerCase().includes(q)).slice(0, 8);
   if (!pmSuggs.length) {
     if (q.length >= 3) { pmNotF.textContent = LANG[currentLang].pmNotFound; pmNotF.style.display = 'block'; }
@@ -1076,10 +1095,33 @@ async function fileToBase64(file) {
   });
 }
 
+function filterGuestNames(val) {
+  const box = document.getElementById('name-suggestions');
+  const q = val.trim().toLowerCase();
+  if (q.length < 2 || GUEST_NAMES.length === 0) { box.style.display = 'none'; return; }
+  const matches = GUEST_NAMES.filter(n => n.toLowerCase().includes(q)).slice(0, 8);
+  if (!matches.length) { box.style.display = 'none'; return; }
+  box.innerHTML = matches.map(n => 
+    `<div onclick="selectGuestName('${n.replace(/'/g, "\'")}')" style="padding:10px 14px;cursor:pointer;font-size:14px;color:#1a3a2a;border-bottom:1px solid rgba(26,58,42,0.08);transition:background 0.1s;" onmouseover="this.style.background='#f5f0e8'" onmouseout="this.style.background=''">${n}</div>`
+  ).join('');
+  box.style.display = 'block';
+}
+function selectGuestName(name) {
+  document.getElementById('user-name').value = name;
+  document.getElementById('name-suggestions').style.display = 'none';
+  setStatus('', '');
+}
+
 async function startUpload() {
   const t = LANG[currentLang];
   const name = document.getElementById('user-name').value.trim();
   if (!name) return setStatus(t.errName, 'error');
+  // Validare: numele trebuie să fie în lista de invitați
+  if (GUEST_NAMES.length > 0) {
+    const nameLower = name.toLowerCase();
+    const isInvited = GUEST_NAMES.some(n => n.toLowerCase() === nameLower);
+    if (!isInvited) return setStatus(t.errNotInvited, 'error');
+  }
   if (!selectedFiles.length) return setStatus(t.errPhoto, 'error');
   const btn = document.getElementById('upload-btn');
   btn.disabled = true;
