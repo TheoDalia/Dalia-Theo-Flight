@@ -36,20 +36,9 @@ body{font-family:'DM Sans',sans-serif;background:var(--green);color:var(--cream)
 .nav-tab:hover{color:var(--gold-light);}
 .nav-tab.active{color:var(--gold);border-bottom-color:var(--gold);}
 .lang-switcher{display:flex;gap:4px;align-items:center;}
-.lang-btn{background:none;border:1.5px solid transparent;border-radius:6px;padding:2px 5px;font-size:20px;cursor:pointer;transition:all .2s;opacity:.45;line-height:1;}
+.lang-btn{background:none;border:1.5px solid transparent;border-radius:7px;padding:3px 6px;font-size:21px;cursor:pointer;transition:all .2s;opacity:.45;line-height:1;}
 .lang-btn:hover{opacity:.85;border-color:var(--border);}
 .lang-btn.active{opacity:1;border-color:var(--gold);background:rgba(201,168,76,.12);}
-.lang-bar{display:none;}
-@media(max-width:640px){
-  .nav-logo{display:none;}
-  .nav-tabs{flex:1;justify-content:center;}
-  .nav-tab{padding:0 .5rem;font-size:9px;letter-spacing:1px;}
-  .nav-tab .tab-icon{display:none;}
-  .lang-switcher{display:none !important;}
-  .lang-bar{display:flex;justify-content:center;gap:10px;background:var(--green-dark);border-bottom:1px solid var(--border);padding:6px 0;position:sticky;top:52px;z-index:99;}
-  .lang-bar .lang-btn{font-size:22px;padding:3px 8px;opacity:.55;}
-  .lang-bar .lang-btn.active{opacity:1;border-color:var(--gold);background:rgba(201,168,76,.15);}
-}
 
 /* ── HEADER ── */
 .header{text-align:center;padding:2.5rem 1.25rem 1.75rem;position:relative;z-index:1;border-bottom:1px solid var(--border);}
@@ -266,11 +255,6 @@ footer{text-align:center;padding:1.5rem;font-size:9px;letter-spacing:2px;color:r
     <button class="lang-btn" onclick="setLang('en',this)" title="English">🇬🇧</button>
   </div>
 </nav>
-<div class="lang-bar" id="lang-bar">
-  <button class="lang-btn active" onclick="setLang('ro',this)" title="Română">🇷🇴</button>
-  <button class="lang-btn" onclick="setLang('it',this)" title="Italiano">🇮🇹</button>
-  <button class="lang-btn" onclick="setLang('en',this)" title="English">🇬🇧</button>
-</div>
 
 <!-- HEADER -->
 <div class="header">
@@ -303,15 +287,17 @@ footer{text-align:center;padding:1.5rem;font-size:9px;letter-spacing:2px;color:r
       <div class="ndb-label" id="ndb-label">✈ În așteptare</div>
       <div class="ndb-text" id="ndb-text">Lista de invitați nu a fost publicată încă.<br>Organizatorii vor activa harta în curând.</div>
     </div>
-    <!-- 1. HARTA — prima, mereu vizibilă -->
-    <div class="map-card show" id="map-card">
-      <div class="map-card-head">
-        <span id="map-title">✈ PLAN SALĂ · MOONFIELDS</span><span>NORD ↑</span>
+    <div class="search-card">
+      <div class="search-card-label">BOARDING PASS · PASAGER</div>
+      <div class="search-card-title" id="pm-title">Caută-ți locul la bord</div>
+      <div class="search-card-sub" id="pm-sub">Introdu numele tău pentru a-ți găsi masa</div>
+      <div class="search-wrap">
+        <input class="search-input" id="pm-input" type="text" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="ex: Ion Popescu">
+        <button class="search-btn" id="pm-btn">→</button>
       </div>
-      <div id="svg-container"></div>
-      <div class="map-card-foot"><span class="map-arrow">▼</span><span id="map-entrance"> INTRARE DREAPTA · ZONA CORTINA / PORTOFINO</span></div>
+      <div class="suggestions" id="pm-suggestions"></div>
+      <div class="not-found" id="pm-not-found"></div>
     </div>
-    <!-- 2. BOARDING PASS — apare după căutare -->
     <div class="bp-card" id="bp-card">
       <div class="bp-head">
         <div><div class="bp-head-label">BOARDING PASS</div><div class="bp-head-sub">✈ LOVE AIRLINES · DL&amp;TH-23.08.2026</div></div>
@@ -325,20 +311,15 @@ footer{text-align:center;padding:1.5rem;font-size:9px;letter-spacing:2px;color:r
           <div class="bp-field"><div class="bp-field-label" id="bp-fl3">MENIU</div><div class="bp-field-val" id="bp-menu">—</div></div>
         </div>
         <hr class="bp-divider">
-        <div class="bp-nav" id="bp-nav">↑ Urmărește linia roșie pe harta de mai sus</div>
+        <div class="bp-nav" id="bp-nav">↓ Urmărește linia roșie pe harta de mai jos</div>
       </div>
     </div>
-    <!-- 3. CAUTARE — ultima -->
-    <div class="search-card">
-      <div class="search-card-label">BOARDING PASS · PASAGER</div>
-      <div class="search-card-title" id="pm-title">Caută-ți locul la bord</div>
-      <div class="search-card-sub" id="pm-sub">Introdu numele tău pentru a-ți găsi masa</div>
-      <div class="search-wrap">
-        <input class="search-input" id="pm-input" type="text" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="ex: Ion Popescu">
-        <button class="search-btn" id="pm-btn">→</button>
+    <div class="map-card" id="map-card">
+      <div class="map-card-head">
+        <span id="map-title">✈ PLAN SALĂ · MOONFIELDS</span><span>NORD ↑</span>
       </div>
-      <div class="suggestions" id="pm-suggestions"></div>
-      <div class="not-found" id="pm-not-found"></div>
+      <div id="svg-container"></div>
+      <div class="map-card-foot"><span class="map-arrow">▼</span><span id="map-entrance"> INTRARE DREAPTA · ZONA CORTINA / PORTOFINO</span></div>
     </div>
   </div>
 </div>
@@ -358,149 +339,12 @@ footer{text-align:center;padding:1.5rem;font-size:9px;letter-spacing:2px;color:r
 <!-- ═══════════════════ TAB: DRINKS ═══════════════════ -->
 <div class="section" id="section-drinks">
   <div class="drinks-wrap">
+
     <div class="drinks-header">
       <div class="drinks-header-label">✈ LOVE AIRLINES · DL&TH-23.08.2026</div>
       <div class="drinks-header-title">🥂 Drinks Menu</div>
       <div class="drinks-header-sub">Dalia &amp; Theo · 23 August 2026 · Moonfields</div>
       <div class="drinks-header-tagline">Benvenuti a bordo — ogni sorso è un viaggio</div>
-    </div>
-
-    <!-- HOT DRINKS -->
-    <div class="drinks-category">
-      <div class="drinks-cat-label">☕ Hot Drinks</div>
-      <div class="drinks-items">
-        <div class="drinks-item">
-          <div class="drinks-item-name">Espresso · Cappuccino · Macchiato · Decaf</div>
-          <div class="drinks-item-desc">Boabe arabica selecționate · Extrase la presiune perfectă</div>
-        </div>
-        <div class="drinks-item">
-          <div class="drinks-item-name">Hot Tea</div>
-          <div class="drinks-item-desc">Selecție de ceaiuri de plante · Mușețel, mentă, fructe de pădure</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SOFT DRINKS -->
-    <div class="drinks-category">
-      <div class="drinks-cat-label">💧 Soft Drinks &amp; Apă</div>
-      <div class="drinks-items">
-        <div class="drinks-item">
-          <div class="drinks-item-name">Apă <span class="drinks-brand">Dorna</span></div>
-          <div class="drinks-item-desc">Plată &amp; Carbogazoasă · Munții Călimani, România</div>
-        </div>
-        <div class="drinks-item">
-          <div class="drinks-item-name">Coca-Cola, Zero, Fanta, Sprite</div>
-          <div class="drinks-item-desc">Clasicele răcoritoare pentru fiecare gust</div>
-        </div>
-        <div class="drinks-item">
-          <div class="drinks-item-name">Schweppes Tonic</div>
-          <div class="drinks-item-desc">Tonic sec cu chinină · Partenerul perfect al gin-ului</div>
-        </div>
-        <div class="drinks-item">
-          <div class="drinks-item-name">Ice Tea</div>
-          <div class="drinks-item-desc">Peach &amp; Lemon · Răcoritor, ușor, perfect pentru vară</div>
-        </div>
-        <div class="drinks-item">
-          <div class="drinks-item-name">Santal</div>
-          <div class="drinks-item-desc">Orange · Apple · Cranberry · 100% suc de fructe</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- BEER -->
-    <div class="drinks-category">
-      <div class="drinks-cat-label">🍺 Beer</div>
-      <div class="drinks-items">
-        <div class="drinks-item">
-          <div class="drinks-item-name">Heineken</div>
-          <div class="drinks-item-desc">Olanda · Lager clasic · Proaspătă, ușoară, cu amărăciune fină de hamei</div>
-        </div>
-        <div class="drinks-item">
-          <div class="drinks-item-name">Heineken 0.00%</div>
-          <div class="drinks-item-desc">Fără alcool · Tot gustul Heineken, fără compromisuri</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- MOCKTAILS -->
-    <div class="drinks-category">
-      <div class="drinks-cat-label">🌿 Mocktails</div>
-      <div class="drinks-items">
-        <div class="drinks-item">
-          <div class="drinks-item-name">Green Apple</div>
-          <div class="drinks-item-desc">Suc de mere verzi · Lime · Ghimbir · Miere · Soda</div>
-        </div>
-        <div class="drinks-item">
-          <div class="drinks-item-name">Berry Mojito</div>
-          <div class="drinks-item-desc">Fructe de pădure · Mentă · Lime · Soda · Zahăr brun</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- COCKTAILS -->
-    <div class="drinks-category">
-      <div class="drinks-cat-label">🍸 Cocktails</div>
-      <div class="drinks-items">
-        <div class="drinks-item">
-          <div class="drinks-item-name">Aperol Spritz</div>
-          <div class="drinks-item-desc">Aperol · Grande Vento Prosecco · Soda · Portocală · Iconic italian</div>
-        </div>
-        <div class="drinks-item">
-          <div class="drinks-item-name">Hugo Spritz</div>
-          <div class="drinks-item-desc">Liqueur de flori de soc · Prosecco · Soda · Mentă · Lămâie verde</div>
-        </div>
-        <div class="drinks-item">
-          <div class="drinks-item-name">Negroni</div>
-          <div class="drinks-item-desc">Tanqueray · Campari · Cinzano Rosso · Coajă de portocală</div>
-        </div>
-        <div class="drinks-item">
-          <div class="drinks-item-name">Mojito</div>
-          <div class="drinks-item-desc">Havana Club · Mentă proaspătă · Lime · Zahăr brun · Soda</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- LONG DRINKS -->
-    <div class="drinks-category">
-      <div class="drinks-cat-label">🍹 Long Drinks</div>
-      <div class="drinks-items">
-        <div class="drinks-item">
-          <div class="drinks-item-name">Campari Orange</div>
-          <div class="drinks-item-desc">Campari · Suc de portocale · O amărăciune elegantă îmblânzită de citrice</div>
-        </div>
-        <div class="drinks-item">
-          <div class="drinks-item-name">Gin Tonic</div>
-          <div class="drinks-item-desc">Tanqueray · Schweppes Tonic · Lămâie · Botanice proaspete</div>
-        </div>
-        <div class="drinks-item">
-          <div class="drinks-item-name">Cuba Libre</div>
-          <div class="drinks-item-desc">Havana Club · Coca-Cola · Lime · Clasicul caribbean al serii</div>
-        </div>
-        <div class="drinks-item">
-          <div class="drinks-item-name">Vodka Mix</div>
-          <div class="drinks-item-desc">Absolut · Cranberry / Apple / Orange / Tonic — alegerea ta</div>
-        </div>
-        <div class="drinks-item">
-          <div class="drinks-item-name">Whisky Cola</div>
-          <div class="drinks-item-desc">Chivas 12 · Coca-Cola · Gheață · Simplu și satisfăcător</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- WINES & BUBBLES -->
-    <div class="drinks-category">
-      <div class="drinks-cat-label">🍾 Wines &amp; Bubbles</div>
-      <div class="drinks-items">
-        <div class="drinks-item drinks-item-featured">
-          <div class="drinks-item-name">Sarica Niculițel <span class="drinks-brand">Caii de la Letea vol. 1</span></div>
-          <div class="drinks-item-desc">Dobrogea, România · Aligoté, Roze &amp; Fetească Neagră · Terroir unic, vinuri de caracter</div>
-          <div class="drinks-item-special">✦ Selecția serii</div>
-        </div>
-        <div class="drinks-item">
-          <div class="drinks-item-name">Prosecco <span class="drinks-brand">Grande Vento</span></div>
-          <div class="drinks-item-desc">Veneto, Italia · Bule fine, mere verzi și flori de salcâm · Brut</div>
-        </div>
-      </div>
     </div>
 
     <!-- SPIRITS -->
@@ -550,6 +394,144 @@ footer{text-align:center;padding:1.5rem;font-size:9px;letter-spacing:2px;color:r
         <div class="drinks-item">
           <div class="drinks-item-name">Whiskey Cream <span class="drinks-brand">Bailey's Irish Cream</span></div>
           <div class="drinks-item-desc">Irlanda · Whiskey, smântână și ciocolată — catifelat și dulce</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WINES & BUBBLES -->
+    <div class="drinks-category">
+      <div class="drinks-cat-label">🍾 Wines &amp; Bubbles</div>
+      <div class="drinks-items">
+        <div class="drinks-item drinks-item-featured">
+          <div class="drinks-item-name">Sarica Niculițel <span class="drinks-brand">Caii de la Letea vol. 1</span></div>
+          <div class="drinks-item-desc">Dobrogea, România · Aligoté, Roze &amp; Fetească Neagră · Terroir unic, vinuri de caracter</div>
+          <div class="drinks-item-special">✦ Selecția serii</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Prosecco <span class="drinks-brand">Grande Vento</span></div>
+          <div class="drinks-item-desc">Veneto, Italia · Bule fine, mere verzi și flori de salcâm · Brut</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LONG DRINKS -->
+    <div class="drinks-category">
+      <div class="drinks-cat-label">🍹 Long Drinks</div>
+      <div class="drinks-items">
+        <div class="drinks-item">
+          <div class="drinks-item-name">Campari Orange</div>
+          <div class="drinks-item-desc">Campari · Suc de portocale · O amărăciune elegantă îmblânzită de citrice</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Gin Tonic</div>
+          <div class="drinks-item-desc">Tanqueray · Schweppes Tonic · Lămâie · Botanice proaspete</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Cuba Libre</div>
+          <div class="drinks-item-desc">Havana Club · Coca-Cola · Lime · Clasicul caribbean al serii</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Vodka Mix</div>
+          <div class="drinks-item-desc">Absolut · Cranberry / Apple / Orange / Tonic — alegerea ta</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Whisky Cola</div>
+          <div class="drinks-item-desc">Chivas 12 · Coca-Cola · Gheață · Simplu și satisfăcător</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COCKTAILS -->
+    <div class="drinks-category">
+      <div class="drinks-cat-label">🍸 Cocktails</div>
+      <div class="drinks-items">
+        <div class="drinks-item">
+          <div class="drinks-item-name">Aperol Spritz</div>
+          <div class="drinks-item-desc">Aperol · Grande Vento Prosecco · Soda · Portocală · Iconic italian</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Hugo Spritz</div>
+          <div class="drinks-item-desc">Liqueur de flori de soc · Prosecco · Soda · Mentă · Lămâie verde</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Negroni</div>
+          <div class="drinks-item-desc">Tanqueray · Campari · Cinzano Rosso · Coajă de portocală · Un clasic fără vârstă</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Mojito</div>
+          <div class="drinks-item-desc">Havana Club · Mentă proaspătă · Lime · Zahăr brun · Soda</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOCKTAILS -->
+    <div class="drinks-category">
+      <div class="drinks-cat-label">🌿 Mocktails</div>
+      <div class="drinks-items">
+        <div class="drinks-item">
+          <div class="drinks-item-name">Green Apple</div>
+          <div class="drinks-item-desc">Suc de mere verzi · Lime · Ghimbir · Miere · Soda · Răcoritor și viu</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Berry Mojito</div>
+          <div class="drinks-item-desc">Fructe de pădure · Mentă · Lime · Soda · Zahăr brun · Fără alcool, cu tot gustul</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BEER -->
+    <div class="drinks-category">
+      <div class="drinks-cat-label">🍺 Beer</div>
+      <div class="drinks-items">
+        <div class="drinks-item">
+          <div class="drinks-item-name">Heineken</div>
+          <div class="drinks-item-desc">Olanda · Lager clasic · Proaspătă, ușoară, cu amărăciune fină de hamei</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Heineken 0.00%</div>
+          <div class="drinks-item-desc">Fără alcool · Tot gustul Heineken, fără compromisuri</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SOFT DRINKS -->
+    <div class="drinks-category">
+      <div class="drinks-cat-label">💧 Soft Drinks &amp; Apă</div>
+      <div class="drinks-items">
+        <div class="drinks-item">
+          <div class="drinks-item-name">Apă <span class="drinks-brand">Dorna</span></div>
+          <div class="drinks-item-desc">Plată &amp; Carbogazoasă · Munții Călimani, România</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Coca-Cola, Zero, Fanta, Sprite</div>
+          <div class="drinks-item-desc">Clasicele răcoritoare pentru fiecare gust</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Schweppes Tonic</div>
+          <div class="drinks-item-desc">Tonic sec cu chinină · Partenerul perfect al gin-ului</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Ice Tea</div>
+          <div class="drinks-item-desc">Peach &amp; Lemon · Răcoritor, ușor, perfect pentru vară</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Santal</div>
+          <div class="drinks-item-desc">Orange · Apple · Cranberry · 100% suc de fructe</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HOT DRINKS -->
+    <div class="drinks-category">
+      <div class="drinks-cat-label">☕ Hot Drinks</div>
+      <div class="drinks-items">
+        <div class="drinks-item">
+          <div class="drinks-item-name">Espresso · Cappuccino · Macchiato · Decaf</div>
+          <div class="drinks-item-desc">Boabe arabica selecționate · Extrase la presiune perfectă</div>
+        </div>
+        <div class="drinks-item">
+          <div class="drinks-item-name">Hot Tea</div>
+          <div class="drinks-item-desc">Selecție de ceaiuri de plante · Mușețel, mentă, fructe de pădure și nu numai</div>
         </div>
       </div>
     </div>
@@ -615,10 +597,10 @@ footer{text-align:center;padding:1.5rem;font-size:9px;letter-spacing:2px;color:r
 // ══════════════════════════════════════════════════════════════════════════════
 // DATE INVITAȚI — înlocuite la export din admin
 // ══════════════════════════════════════════════════════════════════════════════
-var GUESTS      = typeof __LA_GUESTS__      !== 'undefined' ? __LA_GUESTS__      : [];
-var TABLES      = typeof __LA_TABLES__      !== 'undefined' ? __LA_TABLES__      : [];
-var DECORS      = typeof __LA_DECORS__      !== 'undefined' ? __LA_DECORS__      : [];
-var GUEST_NAMES = typeof __LA_GUEST_NAMES__ !== 'undefined' ? __LA_GUEST_NAMES__ : [];
+var GUESTS      = [{"name":"Dalia","table":"Roma","tableId":1,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Theo","table":"Roma","tableId":1,"seatIdx":1,"menu":"normal","cazare":"nu"},{"name":"Nasa","table":"Roma","tableId":1,"seatIdx":2,"menu":"normal","cazare":"nu"},{"name":"Nasu","table":"Roma","tableId":1,"seatIdx":3,"menu":"normal","cazare":"nu"},{"name":"Alessandra Chiariello","table":"Milano","tableId":3,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Fabio Cerullo","table":"Verona","tableId":7,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Latis Simina","table":"Firenze","tableId":11,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Latis Rares","table":"Bergamo","tableId":4,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Margherita Malaspina","table":"Trieste","tableId":8,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Giuseppe Iacomino","table":"Siena","tableId":12,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Alin Bobeica","table":"Venezia","tableId":6,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Irina Bobeica","table":"Perugia","tableId":13,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Alina Vreju","table":"Amalfi","tableId":15,"seatIdx":0,"menu":"normal","cazare":"nu"}];
+var TABLES      = [{"id":1,"name":"Roma","x":-105.60178115508401,"y":-1.7240712462033514,"tw":65,"th":481,"miri":true,"seats":4},{"id":2,"name":"Torino","x":80,"y":-175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":3,"name":"Milano","x":80,"y":-58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":4,"name":"Bergamo","x":80,"y":58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":5,"name":"Como","x":80,"y":175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":6,"name":"Venezia","x":355,"y":-175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":7,"name":"Verona","x":355,"y":-58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":8,"name":"Trieste","x":355,"y":58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":9,"name":"Padova","x":355,"y":175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":10,"name":"Bologna","x":630,"y":-175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":11,"name":"Firenze","x":630,"y":-58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":12,"name":"Siena","x":630,"y":58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":13,"name":"Perugia","x":630,"y":175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":14,"name":"Napoli","x":905,"y":-175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":15,"name":"Amalfi","x":905,"y":-58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":16,"name":"Positano","x":905,"y":58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":17,"name":"Capri","x":905,"y":175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":18,"name":"Palermo","x":1495,"y":-175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":19,"name":"Agrigento","x":1495,"y":-58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":20,"name":"Siracusa","x":1495,"y":58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":21,"name":"Taormina","x":1495,"y":175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":22,"name":"Cagliari","x":1770,"y":-175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":23,"name":"Alghero","x":1770,"y":-58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":24,"name":"Olbia","x":1770,"y":58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":25,"name":"Costa Smeralda","x":1770,"y":175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":26,"name":"Torino","x":2045,"y":-175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":27,"name":"Milano","x":2045,"y":-58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":28,"name":"Bergamo","x":2045,"y":58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":29,"name":"Como","x":2045,"y":175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":30,"name":"Venezia","x":2320,"y":-175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":31,"name":"Verona","x":2320,"y":-58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":32,"name":"Trieste","x":2320,"y":58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":33,"name":"Padova","x":2320,"y":175.5,"tw":220,"th":65,"miri":false,"seats":8}];
+var DECORS      = [{"type":"ring","x":1218.968651428442,"y":-77.58320607915124,"w":190,"h":260,"label":"Ring dans"},{"type":"stage","x":1206.9001527050186,"y":-286.2035623101681,"w":190,"h":100,"label":"Scenă / Formație"},{"type":"bar","x":1206.9001527050184,"y":248.27399489369412,"w":190,"h":100,"label":"Bar"}];
+var GUEST_NAMES = ["Dalia","Theo","Nasa","Nasu","Alessandra Chiariello","Fabio Cerullo","Latis Simina","Latis Rares","Margherita Malaspina","Giuseppe Iacomino","Alin Bobeica","Irina Bobeica","Alina Vreju"];
 
 // ══════════════════════════════════════════════════════════════════════════════
 // TRADUCERI
@@ -754,9 +736,8 @@ function setLang(lang, btn) {
   document.getElementById('t-refresh').textContent      = t.refresh;
   document.getElementById('ndb-label').textContent      = t.ndbLabel;
   document.getElementById('ndb-text').innerHTML         = t.ndbText;
-  document.querySelectorAll('.lang-btn').forEach(b => {
-    b.classList.toggle('active', b.title === btn.title);
-  });
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
   updateBanner();
   if (selG) showBP(selG);
 }
@@ -838,10 +819,9 @@ function pmPick(i) {
   pmSuggest.innerHTML = '';
   pmNotF.style.display = 'none';
   showBP(g);
-  setTimeout(() => {
-    drawMap(g);
-    setTimeout(() => document.getElementById('map-card').scrollIntoView({behavior:'smooth',block:'start'}), 200);
-  }, 100);
+  document.getElementById('map-card').className = 'map-card show';
+  setTimeout(() => { document.getElementById('bp-card').scrollIntoView({behavior:'smooth',block:'nearest'}); }, 100);
+  setTimeout(() => drawMap(g), 350);
 }
 
 function showBP(g) {
@@ -876,10 +856,6 @@ function applyMapTransform() {
   if (svg) { svg.style.transform=`translate(${mapTransX}px,${mapTransY}px) scale(${mapScale})`; svg.style.transformOrigin='50% 50%'; }
 }
 
-function drawMapOverview() {
-  drawMap(null);
-}
-
 function drawMap(g) {
   if (!TABLES || !TABLES.length) return;
   const container = document.getElementById('svg-container');
@@ -893,12 +869,11 @@ function drawMap(g) {
   const svgH = Math.min(Math.round(contW*(worldH/worldW)), 580);
   const vb = `${minX} ${minY} ${worldW} ${worldH}`;
 
-  const noGuest = !g || g.tableId === null;
-  const tbl = noGuest ? null : (TABLES.find(t=>String(t.id)===String(g.tableId)) || null);
+  const tbl = TABLES.find(t=>String(t.id)===String(g.tableId)) || null;
   const entX = maxX-20;
   const entY = (Math.min(...allY)+Math.max(...allY))/2;
   let pathD = '';
-  if (!noGuest && tbl) {
+  if (tbl) {
     const th = tbl.th||65;
     pathD = `M ${entX} ${entY} C ${entX-(entX-tbl.x)*0.3} ${entY}, ${tbl.x} ${entY+(tbl.y-entY)*0.5}, ${tbl.x} ${tbl.y+th/2+5}`;
   }
@@ -919,7 +894,7 @@ function drawMap(g) {
   });
 
   TABLES.forEach(t => {
-    const isT = !noGuest && String(t.id)===String(g.tableId);
+    const isT = String(t.id)===String(g.tableId);
     const tw = t.tw||(t.miri?65:220), th = t.th||(t.miri?121:65);
     const fill  = isT?'#fff3e8':(t.miri?'#fffcf0':'#fff');
     const stroke= isT?'#c03010':(t.miri?'#c9a84c':'#d0c4b0');
@@ -945,7 +920,7 @@ function drawMap(g) {
     }
   });
 
-  if(!noGuest&&pathD&&tbl){
+  if(pathD&&tbl){
     svg+=`<path d="${pathD}" fill="none" stroke="#c03010" stroke-width="2.5" stroke-dasharray="8,5" stroke-linecap="round" opacity="0.85"/>`;
     svg+=`<circle cx="${entX}" cy="${entY}" r="10" fill="#1a3a2a" stroke="#c9a84c" stroke-width="2"/><circle cx="${entX}" cy="${entY}" r="5" fill="#c9a84c"/>`;
     const lbl = {ro:'INTRARE',en:'ENTRANCE',it:'INGRESSO'}[currentLang]||'INTRARE';
@@ -975,7 +950,7 @@ function drawMap(g) {
   },{passive:false});
   svgEl.addEventListener('touchend', e=>{if(e.touches.length<2)mapPinching=false;if(e.touches.length===0)mapPanning=false;});
 }
-window.addEventListener('resize', ()=>{ if(selG) setTimeout(()=>drawMap(selG),100); else setTimeout(()=>drawMapOverview(),100); });
+window.addEventListener('resize', ()=>{if(selG) setTimeout(()=>drawMap(selG),100);});
 
 // ══════════════════════════════════════════════════════════════════════════════
 // ALBUM FOTO
@@ -1094,9 +1069,6 @@ function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;',
 
 // ── INIT ──
 updateBanner();
-if (TABLES && TABLES.length > 0) {
-  setTimeout(() => drawMapOverview(), 300);
-}
 </script>
 </body>
 </html>
