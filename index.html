@@ -306,7 +306,7 @@ footer{text-align:center;padding:1.5rem;font-size:9px;letter-spacing:2px;color:r
     <!-- 1. HARTA — prima, mereu vizibilă -->
     <div class="map-card show" id="map-card">
       <div class="map-card-head">
-        <span id="map-title">✈ LOVE AIRLINES SEATS</span><span>NORD ↑</span>
+        <span id="map-title">✈ PLAN SALĂ · MOONFIELDS</span><span>NORD ↑</span>
       </div>
       <div id="svg-container"></div>
       <div class="map-card-foot"><span class="map-arrow">▼</span><span id="map-entrance"> INTRARE DREAPTA · ZONA CORTINA / PORTOFINO</span></div>
@@ -615,10 +615,10 @@ footer{text-align:center;padding:1.5rem;font-size:9px;letter-spacing:2px;color:r
 // ══════════════════════════════════════════════════════════════════════════════
 // DATE INVITAȚI — înlocuite la export din admin
 // ══════════════════════════════════════════════════════════════════════════════
-var GUESTS      = typeof __LA_GUESTS__      !== 'undefined' ? __LA_GUESTS__      : [];
-var TABLES      = typeof __LA_TABLES__      !== 'undefined' ? __LA_TABLES__      : [];
-var DECORS      = typeof __LA_DECORS__      !== 'undefined' ? __LA_DECORS__      : [];
-var GUEST_NAMES = typeof __LA_GUEST_NAMES__ !== 'undefined' ? __LA_GUEST_NAMES__ : [];
+var GUESTS      = [{"name":"Dalia","table":"Roma","tableId":1,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Theo","table":"Roma","tableId":1,"seatIdx":1,"menu":"normal","cazare":"nu"},{"name":"Nasa","table":"Roma","tableId":1,"seatIdx":2,"menu":"normal","cazare":"nu"},{"name":"Nasu","table":"Roma","tableId":1,"seatIdx":3,"menu":"normal","cazare":"nu"},{"name":"Alessandra Chiariello","table":"Milano","tableId":3,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Fabio Cerullo","table":"Verona","tableId":7,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Latis Simina","table":"Firenze","tableId":11,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Latis Rares","table":"Bergamo","tableId":4,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Margherita Malaspina","table":"Trieste","tableId":8,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Giuseppe Iacomino","table":"Siena","tableId":12,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Alin Bobeica","table":"Venezia","tableId":6,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Irina Bobeica","table":"Perugia","tableId":13,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Alina Vreju","table":"Amalfi","tableId":15,"seatIdx":0,"menu":"normal","cazare":"nu"}];
+var TABLES      = [{"id":1,"name":"Roma","x":-105.60178115508401,"y":-1.7240712462033514,"tw":65,"th":481,"miri":true,"seats":4},{"id":2,"name":"Torino","x":80,"y":-175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":3,"name":"Milano","x":80,"y":-58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":4,"name":"Bergamo","x":80,"y":58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":5,"name":"Como","x":80,"y":175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":6,"name":"Venezia","x":355,"y":-175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":7,"name":"Verona","x":355,"y":-58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":8,"name":"Trieste","x":355,"y":58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":9,"name":"Padova","x":355,"y":175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":10,"name":"Bologna","x":630,"y":-175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":11,"name":"Firenze","x":630,"y":-58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":12,"name":"Siena","x":630,"y":58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":13,"name":"Perugia","x":630,"y":175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":14,"name":"Napoli","x":905,"y":-175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":15,"name":"Amalfi","x":905,"y":-58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":16,"name":"Positano","x":905,"y":58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":17,"name":"Capri","x":905,"y":175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":18,"name":"Palermo","x":1495,"y":-175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":19,"name":"Agrigento","x":1495,"y":-58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":20,"name":"Siracusa","x":1495,"y":58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":21,"name":"Taormina","x":1495,"y":175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":22,"name":"Cagliari","x":1770,"y":-175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":23,"name":"Alghero","x":1770,"y":-58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":24,"name":"Olbia","x":1770,"y":58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":25,"name":"Costa Smeralda","x":1770,"y":175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":26,"name":"Torino","x":2045,"y":-175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":27,"name":"Milano","x":2045,"y":-58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":28,"name":"Bergamo","x":2045,"y":58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":29,"name":"Como","x":2045,"y":175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":30,"name":"Venezia","x":2320,"y":-175.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":31,"name":"Verona","x":2320,"y":-58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":32,"name":"Trieste","x":2320,"y":58.5,"tw":220,"th":65,"miri":false,"seats":8},{"id":33,"name":"Padova","x":2320,"y":175.5,"tw":220,"th":65,"miri":false,"seats":8}];
+var DECORS      = [{"type":"ring","x":1218.968651428442,"y":-77.58320607915124,"w":190,"h":260,"label":"Ring dans"},{"type":"stage","x":1206.9001527050186,"y":-286.2035623101681,"w":190,"h":100,"label":"Scenă / Formație"},{"type":"bar","x":1206.9001527050184,"y":248.27399489369412,"w":190,"h":100,"label":"Bar"}];
+var GUEST_NAMES = ["Dalia","Theo","Nasa","Nasu","Alessandra Chiariello","Fabio Cerullo","Latis Simina","Latis Rares","Margherita Malaspina","Giuseppe Iacomino","Alin Bobeica","Irina Bobeica","Alina Vreju"];
 
 // ══════════════════════════════════════════════════════════════════════════════
 // TRADUCERI
@@ -881,156 +881,102 @@ function drawMapOverview() {
 }
 
 function drawMap(g) {
-  var container = document.getElementById('svg-container');
+  if (!TABLES || !TABLES.length) return;
+  const container = document.getElementById('svg-container');
   if (!container) return;
-  var noGuest = !g || g.tableId === null;
-  var selName = (!noGuest && g && g.table) ? g.table : null;
 
-  var FIXED = [{x:200,y:282,n:"Torino"},{x:270,y:282,n:"Milano"},{x:340,y:282,n:"Bergamo"},{x:410,y:282,n:"Como"},{x:480,y:282,n:"Venezia"},{x:550,y:282,n:"Verona"},{x:800,y:282,n:"Trieste"},{x:870,y:282,n:"Padova"},{x:940,y:282,n:"Bologna"},{x:1010,y:282,n:"Firenze"},{x:1080,y:282,n:"Siena"},{x:1150,y:282,n:"Perugia"},{x:200,y:418,n:"Napoli"},{x:270,y:418,n:"Amalfi"},{x:340,y:418,n:"Positano"},{x:410,y:418,n:"Capri"},{x:480,y:418,n:"Palermo"},{x:550,y:418,n:"Agrigento"},{x:800,y:418,n:"Siracusa"},{x:870,y:418,n:"Taormina"},{x:940,y:418,n:"Cagliari"},{x:1010,y:418,n:"Alghero"},{x:1080,y:418,n:"Olbia"},{x:1150,y:418,n:"Costa Smeralda"}];
-  var RX=265, RY=350;
+  const allX = TABLES.map(t=>t.x), allY = TABLES.map(t=>t.y);
+  const minX = Math.min(...allX)-100, maxX = Math.max(...allX)+200;
+  const minY = Math.min(...allY)-180, maxY = Math.max(...allY)+180;
+  const worldW = maxX-minX, worldH = maxY-minY;
+  const contW = container.clientWidth || (window.innerWidth-32);
+  const svgH = Math.min(Math.round(contW*(worldH/worldW)), 580);
+  const vb = `${minX} ${minY} ${worldW} ${worldH}`;
 
-  var W=1400,H=700,CY=350,FL=100,FR=1200,FT=220,FB=480;
-  var FRY=130, WCX=550, WHW=200, WSP=290;
-  var nS=FRY*0.15, tW=FRY*0.38;
-
-  var fuselage='M '+FL+' '+CY+' C '+(FL+nS*2)+' '+(CY-nS)+','+(FL+200)+' '+FT+','+(FL+310)+' '+FT+' L '+(FR-40)+' '+FT+' C '+(FR+5)+' '+FT+','+(FR+5)+' '+(FT+tW)+','+FR+' '+(CY-tW)+' L '+FR+' '+(CY+tW)+' C '+(FR+5)+' '+(FB-tW)+','+(FR+5)+' '+FB+','+(FR-40)+' '+FB+' L '+(FL+310)+' '+FB+' C '+(FL+200)+' '+FB+','+(FL+nS*2)+' '+(CY+nS)+','+FL+' '+CY+' Z';
-  var wT='M '+(WCX-WHW)+' '+FT+' L '+(WCX-WHW*1.5)+' '+(CY-WSP)+' L '+(WCX+WHW*0.8)+' '+(CY-WSP*0.5)+' L '+(WCX+WHW)+' '+FT+' Z';
-  var wB='M '+(WCX-WHW)+' '+FB+' L '+(WCX-WHW*1.5)+' '+(CY+WSP)+' L '+(WCX+WHW*0.8)+' '+(CY+WSP*0.5)+' L '+(WCX+WHW)+' '+FB+' Z';
-  var fT='M '+(FR-80)+' '+FT+' L '+(FR-140)+' '+(CY-80)+' L '+(FR-10)+' '+(CY-35)+' L '+FR+' '+FT+' Z';
-  var fB='M '+(FR-80)+' '+FB+' L '+(FR-140)+' '+(CY+80)+' L '+(FR-10)+' '+(CY+35)+' L '+FR+' '+FB+' Z';
-
-  var windows='';
-  var wsX=FL+230,weX=FR-90,wSt=(weX-wsX)/13;
-  for(var i=0;i<14;i++){
-    var wx=Math.round(wsX+i*wSt);
-    var inW=(wx>WCX-210&&wx<WCX+210);
-    if(!inW){
-      windows+='<ellipse cx="'+wx+'" cy="'+(FT+22)+'" rx="8" ry="7" fill="rgba(180,220,240,0.7)" stroke="rgba(26,42,74,0.4)" stroke-width="0.8"/>';
-      windows+='<ellipse cx="'+wx+'" cy="'+(FB-22)+'" rx="8" ry="7" fill="rgba(180,220,240,0.7)" stroke="rgba(26,42,74,0.4)" stroke-width="0.8"/>';
-    }
+  const noGuest = !g || g.tableId === null;
+  const tbl = noGuest ? null : (TABLES.find(t=>String(t.id)===String(g.tableId)) || null);
+  const entX = maxX-20;
+  const entY = (Math.min(...allY)+Math.max(...allY))/2;
+  let pathD = '';
+  if (!noGuest && tbl) {
+    const th = tbl.th||65;
+    pathD = `M ${entX} ${entY} C ${entX-(entX-tbl.x)*0.3} ${entY}, ${tbl.x} ${entY+(tbl.y-entY)*0.5}, ${tbl.x} ${tbl.y+th/2+5}`;
   }
 
-  var contW=container.clientWidth||(window.innerWidth-32);
-  var svgH=Math.min(Math.round(700*(contW/1400)),560);
+  let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}" width="100%" height="${svgH}" id="pm-svg" style="display:block;cursor:grab;">
+<defs>
+  <filter id="shad"><feDropShadow dx="0" dy="1" stdDeviation="3" flood-color="rgba(0,0,0,0.12)"/></filter>
+  <pattern id="grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0L0 0 0 40" fill="none" stroke="rgba(184,146,74,0.07)" stroke-width="0.5"/></pattern>
+</defs>
+<rect x="${minX}" y="${minY}" width="${worldW}" height="${worldH}" fill="url(#grid)"/>`;
 
-  var svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 700" width="100%" height="'+svgH+'" id="pm-svg" style="display:block;cursor:grab;background:#e8f0f8;">'
-  +'<defs>'
-  +'<pattern id="grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0L0 0 0 40" fill="none" stroke="rgba(26,42,100,0.07)" stroke-width="0.5"/></pattern>'
-  +'<filter id="shad"><feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="rgba(0,0,0,0.18)"/></filter>'
-  +'<linearGradient id="fuseG" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#dce8f5"/><stop offset="50%" style="stop-color:#c8dcea"/><stop offset="100%" style="stop-color:#b8ccda"/></linearGradient>'
-  +'<linearGradient id="wingG" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#96aaba"/><stop offset="100%" style="stop-color:#c0d0e0"/></linearGradient>'
-  +'</defs>'
-  +'<rect width="1400" height="700" fill="url(#grid)"/>'
-  +'<text x="700" y="36" text-anchor="middle" font-family="Playfair Display,serif" font-size="24" font-weight="700" fill="#1a2a4a" letter-spacing="3">&#9992; LOVE AIRLINES SEATS &#9992;</text>'
-  +'<path d="'+wT+'" fill="url(#wingG)" stroke="#1a2a4a" stroke-width="2.5"/>'
-  +'<path d="'+wB+'" fill="url(#wingG)" stroke="#1a2a4a" stroke-width="2.5"/>'
-  +'<ellipse cx="480" cy="'+(CY-WSP*0.72)+'" rx="46" ry="20" fill="#7a8898" stroke="#1a2a4a" stroke-width="1.5"/>'
-  +'<ellipse cx="480" cy="'+(CY+WSP*0.72)+'" rx="46" ry="20" fill="#7a8898" stroke="#1a2a4a" stroke-width="1.5"/>'
-  +'<text x="550" y="54" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="700" fill="#1a2a4a" letter-spacing="2">WING</text>'
-  +'<text x="550" y="668" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="700" fill="#1a2a4a" letter-spacing="2">WING</text>'
-  +'<path d="'+fT+'" fill="#a8baca" stroke="#1a2a4a" stroke-width="2"/>'
-  +'<path d="'+fB+'" fill="#a8baca" stroke="#1a2a4a" stroke-width="2"/>'
-  +'<path d="'+fuselage+'" fill="url(#fuseG)" stroke="#1a2a4a" stroke-width="3" filter="url(#shad)"/>'
-  +'<line x1="280" y1="350" x2="1140" y2="350" stroke="#c9a84c" stroke-width="3" opacity="0.4"/>'
-  +windows
-  +'<ellipse cx="190" cy="350" rx="62" ry="68" fill="#2a3a5a" stroke="#1a2a4a" stroke-width="2.5"/>'
-  +'<ellipse cx="187" cy="340" rx="34" ry="38" fill="#3a4a6a" opacity="0.55"/>'
-  +'<text x="190" y="432" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" font-weight="700" fill="#1a2a4a">COCKPIT</text>'
-  +'<text x="190" y="444" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="#3a4a6a">(botul avionului)</text>'
-  +'<text x="190" y="206" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" font-weight="700" fill="#8b3010">HEAD TABLE</text>'
-  +'<text x="190" y="218" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="#8b3010">ROMA - MASA MIRILOR</text>'
-  +'<rect x="430" y="66" width="200" height="118" rx="8" fill="#1a5c30" stroke="#c9a84c" stroke-width="1.5"/>'
-  +'<text x="530" y="122" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="15" font-weight="800" fill="white" letter-spacing="2">SCEN&#258;</text>'
-  +'<text x="530" y="140" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="rgba(255,255,255,0.8)">(BAND / DJ)</text>'
-  +'<text x="580" y="100" font-size="14" fill="rgba(255,255,255,0.5)">&#9834; &#9835;</text>'
-  +'<rect x="430" y="516" width="200" height="118" rx="8" fill="#0d3a1e" stroke="#c9a84c" stroke-width="1.5"/>'
-  +'<text x="530" y="578" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="17" font-weight="800" fill="white" letter-spacing="3">BAR</text>'
-  +'<text x="504" y="558" font-size="13" fill="rgba(255,255,255,0.5)">&#127870; &#129346;</text>'
-  +'<rect x="580" y="274" width="190" height="152" rx="6" fill="rgba(255,255,255,0.93)" stroke="#c9a84c" stroke-width="2.5"/>'
-  +'<text x="675" y="342" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" font-weight="700" fill="#1a2a4a">&#10022;</text>'
-  +'<text x="675" y="358" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" font-weight="700" fill="#1a2a4a">RING DE DANS</text>'
-  +'<text x="340" y="208" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#3a4a6a" font-style="italic">Cabins</text>'
-  +'<text x="340" y="506" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#3a4a6a" font-style="italic">Cabins</text>'
-  +'<text x="900" y="208" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#3a4a6a" font-style="italic">Cabins</text>'
-  +'<text x="900" y="506" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="11" fill="#3a4a6a" font-style="italic">Cabins</text>'
-  +'<rect x="1138" y="315" width="62" height="70" rx="4" fill="#c9a84c" stroke="#1a2a4a" stroke-width="2"/>'
-  +'<text x="1169" y="344" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" font-weight="700" fill="#1a1a14">INTRARE</text>'
-  +'<text x="1169" y="360" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="13" font-weight="700" fill="#1a1a14">&#8596;</text>'
-  +'<text x="1200" y="504" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="10" font-weight="700" fill="#1a2a4a">INTRARE</text>'
-  +'<text x="1200" y="516" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" fill="#3a4a6a">(Carpet)</text>';
+  (DECORS||[]).forEach(d => {
+    let fill='#ede8f8',stroke='#9080c0';
+    if(d.type==='bar'){fill='#e0f0e8';stroke='#3a7a54';}
+    else if(d.type==='stage'){fill='#f0e8d8';stroke='#b8924a';}
+    svg+=`<rect x="${d.x-d.w/2}" y="${d.y-d.h/2}" width="${d.w}" height="${d.h}" rx="5" fill="${fill}" stroke="${stroke}" stroke-width="1.5" stroke-dasharray="6,4"/>`;
+    svg+=`<text x="${d.x}" y="${d.y}" text-anchor="middle" dominant-baseline="middle" font-family="DM Sans,sans-serif" font-size="14" font-weight="700" fill="${stroke}">${d.label||d.type}</text>`;
+  });
 
-  // City tables
-  FIXED.forEach(function(p){
-    var isSel=(p.n===selName);
-    var fill=isSel?'#fff3e8':'rgba(255,255,255,0.92)';
-    var stk=isSel?'#c03010':'#1a2a4a';
-    var sw=isSel?3:1.5;
-    var tc=isSel?'#c03010':'#1a2a4a';
-    var cf=isSel?'#c03010':'#2a3a5a';
-    // Chairs
-    for(var ci=0;ci<8;ci++){
-      var a=ci*Math.PI*2/8-Math.PI/2;
-      svg+='<circle cx="'+Math.round(p.x+50*Math.cos(a))+'" cy="'+Math.round(p.y+50*Math.sin(a))+'" r="8" fill="'+cf+'" opacity="0.75"/>';
+  TABLES.forEach(t => {
+    const isT = !noGuest && String(t.id)===String(g.tableId);
+    const tw = t.tw||(t.miri?65:220), th = t.th||(t.miri?121:65);
+    const fill  = isT?'#fff3e8':(t.miri?'#fffcf0':'#fff');
+    const stroke= isT?'#c03010':(t.miri?'#c9a84c':'#d0c4b0');
+    const sw    = isT?2.5:(t.miri?1.5:0.8);
+    const dash  = (t.miri&&!isT)?'stroke-dasharray="4,3"':'';
+    const rot   = t.miri?`transform="rotate(-90,${t.x},${t.y})"` : '';
+    const filt  = isT?'filter="url(#shad)"':'';
+    svg+=`<g ${filt}><rect x="${t.x-tw/2}" y="${t.y-th/2}" width="${tw}" height="${th}" rx="3" fill="${fill}" stroke="${stroke}" stroke-width="${sw}" ${dash}/>`;
+    // White background behind text for readability
+    const fs = isT ? 15 : (t.miri ? 13 : 13);
+    const fw = isT ? 700 : (t.miri ? 600 : 500);
+    const fc = isT ? '#c03010' : '#5a3a20';
+    const approxW = t.name.length * fs * 0.62;
+    const approxH = fs * 1.35;
+    if(!t.miri){
+      svg+=`<rect x="${t.x-approxW/2-2}" y="${t.y-approxH/2-1}" width="${approxW+4}" height="${approxH+2}" rx="2" fill="white" opacity="0.85"/>`;
     }
-    svg+='<circle cx="'+p.x+'" cy="'+p.y+'" r="38" fill="'+fill+'" stroke="'+stk+'" stroke-width="'+sw+'"/>';
-    var parts=p.n.split(' ');
-    if(parts.length>1&&p.n.length>8){
-      svg+='<text x="'+p.x+'" y="'+(p.y-5)+'" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" font-weight="600" fill="'+tc+'">'+parts[0]+'</text>';
-      svg+='<text x="'+p.x+'" y="'+(p.y+7)+'" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" font-weight="600" fill="'+tc+'">'+parts.slice(1).join(' ')+'</text>';
-    } else {
-      var fs=p.n.length<=5?11:(p.n.length<=7?9:8);
-      svg+='<text x="'+p.x+'" y="'+(p.y+4)+'" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="'+fs+'" font-weight="600" fill="'+tc+'">'+p.n+'</text>';
-    }
-    if(isSel){
-      svg+='<circle cx="'+p.x+'" cy="'+p.y+'" r="50" fill="rgba(192,48,16,0.08)" stroke="#c03010" stroke-width="1.5" stroke-dasharray="5,4"><animate attributeName="r" values="48;56;48" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.5;0.1;0.5" dur="2s" repeatCount="indefinite"/></circle>';
-      svg+='<polygon points="'+p.x+','+(p.y-54)+' '+(p.x-9)+','+(p.y-42)+' '+(p.x+9)+','+(p.y-42)+'" fill="#c03010"><animate attributeName="points" values="'+p.x+','+(p.y-58)+' '+(p.x-9)+','+(p.y-46)+' '+(p.x+9)+','+(p.y-46)+';'+p.x+','+(p.y-50)+' '+(p.x-9)+','+(p.y-38)+' '+(p.x+9)+','+(p.y-38)+';'+p.x+','+(p.y-58)+' '+(p.x-9)+','+(p.y-46)+' '+(p.x+9)+','+(p.y-46)+'" dur="1.2s" repeatCount="indefinite"/></polygon>';
+    svg+=`<text x="${t.x}" y="${t.y}" text-anchor="middle" dominant-baseline="middle" font-family="DM Sans,sans-serif" font-size="${fs}" font-weight="${fw}" fill="${fc}" ${rot}>${t.name}</text></g>`;
+    if(isT){
+      const r=Math.max(th,tw)/2;
+      svg+=`<circle cx="${t.x}" cy="${t.y}" r="${r+12}" fill="rgba(192,48,16,0.08)" stroke="#c03010" stroke-width="1.5" stroke-dasharray="5,4"><animate attributeName="r" values="${r+10};${r+18};${r+10}" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.6;0.2;0.6" dur="2s" repeatCount="indefinite"/></circle>`;
+      svg+=`<polygon points="${t.x},${t.y-th/2-18} ${t.x-9},${t.y-th/2-4} ${t.x+9},${t.y-th/2-4}" fill="#c03010"><animate attributeName="points" values="${t.x},${t.y-th/2-22} ${t.x-9},${t.y-th/2-8} ${t.x+9},${t.y-th/2-8};${t.x},${t.y-th/2-15} ${t.x-9},${t.y-th/2-1} ${t.x+9},${t.y-th/2-1};${t.x},${t.y-th/2-22} ${t.x-9},${t.y-th/2-8} ${t.x+9},${t.y-th/2-8}" dur="1.2s" repeatCount="indefinite"/></polygon>`;
     }
   });
 
-  // Roma
-  var isRS=(selName==='Roma');
-  for(var ci=0;ci<8;ci++){
-    var a2=ci*Math.PI*2/8-Math.PI/2;
-    svg+='<circle cx="'+Math.round(RX+50*Math.cos(a2))+'" cy="'+Math.round(RY+50*Math.sin(a2))+'" r="8" fill="'+(isRS?'#c03010':'#c9a84c')+'" opacity="0.75"/>';
+  if(!noGuest&&pathD&&tbl){
+    svg+=`<path d="${pathD}" fill="none" stroke="#c03010" stroke-width="2.5" stroke-dasharray="8,5" stroke-linecap="round" opacity="0.85"/>`;
+    svg+=`<circle cx="${entX}" cy="${entY}" r="10" fill="#1a3a2a" stroke="#c9a84c" stroke-width="2"/><circle cx="${entX}" cy="${entY}" r="5" fill="#c9a84c"/>`;
+    const lbl = {ro:'INTRARE',en:'ENTRANCE',it:'INGRESSO'}[currentLang]||'INTRARE';
+    svg+=`<rect x="${entX-52}" y="${entY-11}" width="50" height="22" rx="3" fill="#c9a84c"/>`;
+    svg+=`<text x="${entX-27}" y="${entY}" text-anchor="middle" dominant-baseline="middle" font-family="DM Sans,sans-serif" font-size="9" font-weight="700" fill="#1a1a14">▶ ${lbl}</text>`;
   }
-  svg+='<circle cx="'+RX+'" cy="'+RY+'" r="38" fill="'+(isRS?'#fff3e8':'#fffcf0')+'" stroke="'+(isRS?'#c03010':'#c9a84c')+'" stroke-width="'+(isRS?3:2)+'"/>';
-  svg+='<text x="'+RX+'" y="'+(RY-5)+'" text-anchor="middle" font-family="Playfair Display,serif" font-size="11" font-weight="700" fill="'+(isRS?'#c03010':'#7a5010')+'">Roma</text>';
-  svg+='<text x="'+RX+'" y="'+(RY+8)+'" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="8" fill="'+(isRS?'#c03010':'#7a5010')+'">Miri</text>';
-  if(isRS){
-    svg+='<circle cx="'+RX+'" cy="'+RY+'" r="50" fill="rgba(192,48,16,0.08)" stroke="#c03010" stroke-width="1.5" stroke-dasharray="5,4"><animate attributeName="r" values="48;56;48" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.5;0.1;0.5" dur="2s" repeatCount="indefinite"/></circle>';
-    svg+='<polygon points="'+RX+','+(RY-54)+' '+(RX-9)+','+(RY-42)+' '+(RX+9)+','+(RY-42)+'" fill="#c03010"/>';
-  }
+  svg+='\n</svg>';
 
-  svg+='</svg>';
-  container.innerHTML=svg;
-  mapTransX=0;mapTransY=0;mapScale=1;
+  container.innerHTML = svg;
+  mapTransX=0; mapTransY=0; mapScale=1;
 
-  if(!noGuest&&g){
-    document.getElementById('bp-card').className='bp-card show';
-    document.getElementById('bp-first').textContent=(g.name||'').split(' ')[0];
-    document.getElementById('bp-table').textContent=g.table||'&#8212;';
-    document.getElementById('bp-seat').textContent='#'+((g.seatIdx||0)+1);
-    document.getElementById('bp-menu').textContent=g.menu||'&#8212;';
-  }
+  const svgEl = document.getElementById('pm-svg');
+  if(!svgEl) return;
 
-  var svgEl=document.getElementById('pm-svg');
-  if(!svgEl)return;
-  svgEl.addEventListener('mousedown',function(e){mapPanning=true;mapStartX=e.clientX-mapTransX;mapStartY=e.clientY-mapTransY;svgEl.style.cursor='grabbing';});
-  window.addEventListener('mousemove',function(e){if(!mapPanning)return;mapTransX=e.clientX-mapStartX;mapTransY=e.clientY-mapStartY;applyMapTransform();});
-  window.addEventListener('mouseup',function(){mapPanning=false;if(svgEl)svgEl.style.cursor='grab';});
-  svgEl.addEventListener('wheel',function(e){e.preventDefault();mapScale=Math.min(Math.max(mapScale*(e.deltaY>0?.88:1.14),.5),4);applyMapTransform();},{passive:false});
-  svgEl.addEventListener('touchstart',function(e){
+  svgEl.addEventListener('mousedown', e=>{mapPanning=true;mapStartX=e.clientX-mapTransX;mapStartY=e.clientY-mapTransY;svgEl.style.cursor='grabbing';});
+  window.addEventListener('mousemove', e=>{if(!mapPanning)return;mapTransX=e.clientX-mapStartX;mapTransY=e.clientY-mapStartY;applyMapTransform();});
+  window.addEventListener('mouseup', ()=>{mapPanning=false;if(svgEl)svgEl.style.cursor='grab';});
+  svgEl.addEventListener('wheel', e=>{e.preventDefault();mapScale=Math.min(Math.max(mapScale*(e.deltaY>0?.88:1.14),.5),4);applyMapTransform();},{passive:false});
+  svgEl.addEventListener('touchstart', e=>{
     if(e.touches.length===1){mapPanning=true;mapPinching=false;mapStartX=e.touches[0].clientX-mapTransX;mapStartY=e.touches[0].clientY-mapTransY;}
     else if(e.touches.length===2){mapPinching=true;mapPanning=false;mapLastDist=Math.hypot(e.touches[1].clientX-e.touches[0].clientX,e.touches[1].clientY-e.touches[0].clientY);}
   },{passive:true});
-  svgEl.addEventListener('touchmove',function(e){
+  svgEl.addEventListener('touchmove', e=>{
     e.preventDefault();
     if(e.touches.length===1&&mapPanning&&!mapPinching){mapTransX=e.touches[0].clientX-mapStartX;mapTransY=e.touches[0].clientY-mapStartY;applyMapTransform();}
-    else if(e.touches.length===2&&mapPinching){var d=Math.hypot(e.touches[1].clientX-e.touches[0].clientX,e.touches[1].clientY-e.touches[0].clientY);mapScale=Math.min(Math.max(mapScale*(d/mapLastDist),.5),4);mapLastDist=d;applyMapTransform();}
+    else if(e.touches.length===2&&mapPinching){const d=Math.hypot(e.touches[1].clientX-e.touches[0].clientX,e.touches[1].clientY-e.touches[0].clientY);mapScale=Math.min(Math.max(mapScale*(d/mapLastDist),.5),4);mapLastDist=d;applyMapTransform();}
   },{passive:false});
-  svgEl.addEventListener('touchend',function(e){if(e.touches.length<2)mapPinching=false;if(e.touches.length===0)mapPanning=false;});
+  svgEl.addEventListener('touchend', e=>{if(e.touches.length<2)mapPinching=false;if(e.touches.length===0)mapPanning=false;});
 }
-window.addEventListener('resize',function(){if(selG)setTimeout(function(){drawMap(selG);},100);else setTimeout(function(){drawMapOverview();},100);});
+window.addEventListener('resize', ()=>{ if(selG) setTimeout(()=>drawMap(selG),100); else setTimeout(()=>drawMapOverview(),100); });
+
 // ══════════════════════════════════════════════════════════════════════════════
 // ALBUM FOTO
 // ══════════════════════════════════════════════════════════════════════════════
