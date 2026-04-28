@@ -155,6 +155,7 @@ header{background:var(--deep);padding:7px 14px;display:flex;align-items:center;g
         <button class="btn btn-outline" onclick="exportGuestPage()" style="background:#3a5c44;color:white;border-color:#3a5c44;width:100%;margin-top:4px;justify-content:center;" title="Generează pagina pentru invitați cu QR">📍 Pagină invitați</button>
         <button class="btn btn-outline" onclick="exportFullSite()" style="background:#1a3a2a;color:#c9a84c;border:1px solid #c9a84c;width:100%;margin-top:4px;justify-content:center;" title="Generează index.html cu invitații incluși">📥 Exportă site complet</button>
         <button class="btn btn-outline btn-sm" onclick="forceRenameAllTables()" style="background:#5a3a10;color:#f0d090;border-color:#b8924a;width:100%;margin-top:4px;justify-content:center;" title="Reaplică noile nume pe toate mesele">✎ Redenumește mese</button>
+        <button onclick="resetToNewLayout()" style="background:#c9a84c;color:#1a1a14;border:none;width:100%;padding:10px;margin-top:6px;border-radius:6px;font-weight:700;font-size:12px;cursor:pointer;letter-spacing:1px;">🗺️ APLICĂ LAYOUT NOU</button>
         <button class="btn btn-red btn-sm" onclick="confirmReset()" style="width:100%;margin-top:4px;justify-content:center;">⟳ Reset complet</button>
       </div>
     </div>
@@ -2660,6 +2661,63 @@ function exportFullSite(){
       alert('✓ index.html generat cu ' + allNames.length + ' invitați (' + gD.length + ' asignați)!\n\nUploadează pe GitHub → repo Dalia-Theo-Flight.');
     })
     .catch(e => alert('Eroare: ' + e.message + '\nAsigură-te că index.html e în același folder cu admin.html pe GitHub.'));
+}
+
+// ══════════════════════════════════════════
+// RESET + NOU LAYOUT — buton de urgență
+// ══════════════════════════════════════════
+function resetToNewLayout(){
+  if(!confirm('Șterge tot și aplică noul layout (ca în seating-map)? Invitații nesalvați se pierd.')) return;
+  
+  // 1. Curăță localStorage
+  try{ localStorage.removeItem('mp11'); localStorage.removeItem('mp10'); localStorage.removeItem('loveairlines_data'); }catch(e){}
+  
+  // 2. Resetează toate variabilele
+  tables=[]; guests=[]; decorElements=[];
+  nextTid=1; nextGid=1; cityIdx=0;
+  sc=1; ox=0; oy=0;
+  
+  // 3. Aplică noul layout direct
+  const GAP_COL = 300;
+  const GAP_ROW = 145;
+  const rowsY = [];
+  for(let i=0; i<6; i++) rowsY.push(-375 + i*GAP_ROW);
+  const colsX = [-GAP_COL*1.5, -GAP_COL*0.5, GAP_COL*0.5, GAP_COL*1.5];
+  const ringY = (rowsY[2] + rowsY[3]) / 2;
+
+  // Masa mirilor
+  tables.push({id:nextTid++, name:'Roma', seats:8,
+    x:0, y:rowsY[0]-200, miri:true,
+    tw:TH_DEF, th:Math.round(TW_DEF*0.45)});
+
+  // Decors
+  decorElements.push({type:'stage', x: GAP_COL*2.4, y: rowsY[0]-100, w:280, h:210, label:'Scenă / Formație'});
+  decorElements.push({type:'ring',  x: 0,            y: ringY,         w:270, h:185, label:'Ring dans'});
+  decorElements.push({type:'bar',   x:-GAP_COL*2.4, y: rowsY[4]+80,   w:250, h:185, label:'Bar'});
+
+  // 6 rânduri × 4 mese cu noile nume
+  const names = [
+    'Torino','Milano','Verona','Firenze',
+    'Bergamo','Como','Trieste','Bologna',
+    'Venezia','Genova','Padova','Siena',
+    'Perugia','Napoli','Amalfi','Positano',
+    'Bari','Capri','Palermo','Siracusa',
+    'Agrigento','Taormina','Cagliari','Alghero'
+  ];
+  let ni = 0;
+  for(let r=0; r<6; r++){
+    for(let col=0; col<4; col++){
+      tables.push({id:nextTid++, name:names[ni++], seats:8,
+        x:colsX[col], y:rowsY[r], miri:false});
+    }
+  }
+
+  // 4. Salvează, redesenează
+  save();
+  renderGuests();
+  updateStats();
+  setTimeout(function(){ fitView(); draw(); }, 80);
+  alert('✓ Layout nou aplicat! ' + tables.length + ' mese create.');
 }
 
 </script>
