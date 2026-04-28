@@ -460,18 +460,18 @@ const XLSXMini = (() => {
 // ITALIAN CITY NAMES for tables
 // ══════════════════════════════════════════
 const CITY_NAMES = [
-  // Stânga Col 1 — Nord-Vest → Sud-Vest (de sus în jos)
-  'Torino','Milano','Genova','Pisa',
-  // Stânga Col 2 — Nord → Centru (de sus în jos)
-  'Venezia','Verona','Bologna','Firenze',
-  // Stânga Col 3 — Centru → Sud-Vest (de sus în jos)
-  'Bergamo','Como','Siena','Perugia',
-  // Dreapta Col 4 — Centru-Est → Sud (de sus în jos)
-  'Napoli','Bari','Amalfi','Positano',
-  // Dreapta Col 5 — Sud → Sicilia (de sus în jos)
-  'Capri','Palermo','Agrigento','Siracusa',
-  // Dreapta Col 6 — Sicilia-Est → Sardinia (de sus în jos)
-  'Taormina','Cagliari','Alghero','Costa Smeralda',
+  // Rând 1 — Nord (aproape de Roma / cockpit)
+  'Torino', 'Milano', 'Verona', 'Firenze',
+  // Rând 2
+  'Bergamo', 'Como', 'Trieste', 'Bologna',
+  // Rând 3
+  'Venezia', 'Genova', 'Padova', 'Siena',
+  // Rând 4
+  'Perugia', 'Napoli', 'Amalfi', 'Positano',
+  // Rând 5
+  'Bari', 'Capri', 'Palermo', 'Siracusa',
+  // Rând 6 — Sud (aproape de intrare)
+  'Agrigento', 'Taormina', 'Cagliari', 'Alghero',
 ];
 let cityIdx = 0;
 function nextCity() { return CITY_NAMES[cityIdx++ % CITY_NAMES.length]; }
@@ -1594,41 +1594,65 @@ function confirmReset(){
 }
 
 function initDefaultLayout(){
-  cityIdx=0;
-  const rowGap=TH_DEF+52;
-  const colGap=TW_DEF+55;
-  const rows=4;
-  const cols=3;
-  const totalH=(rows-1)*rowGap;
-  const startY=-totalH/2;
-  const miriH=totalH+TH_DEF*2;
+  cityIdx = 0;
 
-  // Masa mirilor Roma — stânga, verticală
-  tables.push({id:nextTid++,name:'Roma',seats:4,x:-TH_DEF/2-30,y:0,miri:true,tw:TH_DEF,th:miriH});
+  // ── COORDONATE FIXE — layout exact ca seating-map.png ──────────────────
+  // Orientare: cockpit SUS (Roma), intrare JOS
+  // Culoar central vertical la X=0
+  // Mese: 2 coloane stânga + 2 coloane dreapta de culoar, 6 rânduri
 
-  // Grup stânga: 3 coloane × 4 rânduri (parcurs coloană cu coloană)
-  const g1startX=80;
-  for(let col=0;col<cols;col++){
-    for(let row=0;row<rows;row++){
-      tables.push({id:nextTid++,name:nextCity(),seats:8,
-        x:g1startX+col*colGap, y:startY+row*rowGap, miri:false});
-    }
-  }
+  const CX = 0;      // centru culoar X
+  const GAP_COL = 280; // distanta intre coloane stg/dr
+  const GAP_ROW = 140; // distanta intre randuri
 
-  // Ring, Scenă, Bar — centrate
-  const ringX=g1startX+cols*colGap+120;
-  const ringW=190, ringH=260;
-  const stageH=100, barH=100, gap=20;
-  decorElements.push({type:'ring',  x:ringX, y:0,                          w:ringW,  h:ringH,  label:'Ring dans'});
-  decorElements.push({type:'stage', x:ringX, y:-(ringH/2+gap+stageH/2),    w:ringW,  h:stageH, label:'Scenă / Formație'});
-  decorElements.push({type:'bar',   x:ringX, y: (ringH/2+gap+barH/2),      w:ringW,  h:barH,   label:'Bar'});
+  // Rânduri Y (de sus în jos: Roma sus, intrare jos)
+  const rows = [-370, -220, -80, 60, 200, 340];
 
-  // Grup dreapta: 3 coloane × 4 rânduri
-  const g2startX=ringX+ringW/2+100;
-  for(let col=0;col<cols;col++){
-    for(let row=0;row<rows;row++){
-      tables.push({id:nextTid++,name:nextCity(),seats:8,
-        x:g2startX+col*colGap, y:startY+row*rowGap, miri:false});
+  // Coloane X (stânga: negative, dreapta: positive)
+  // Fiecare parte are 2 coloane
+  const cols_left  = [-GAP_COL*1.5, -GAP_COL*0.5];
+  const cols_right = [ GAP_COL*0.5,  GAP_COL*1.5];
+
+  // Masa mirilor — sus centru (cockpit)
+  tables.push({
+    id: nextTid++, name: 'Roma', seats: 8,
+    x: CX, y: -530, miri: true,
+    tw: TH_DEF, th: TW_DEF * 0.5
+  });
+
+  // Decors
+  const stageX = GAP_COL * 2.2;
+  const barX   = -GAP_COL * 2.2;
+  const ringY  = (rows[2] + rows[3]) / 2; // intre randul 3 si 4
+
+  decorElements.push({
+    type: 'stage', x: stageX, y: rows[0] - 60,
+    w: 280, h: 200, label: 'Scenă / Formație'
+  });
+  decorElements.push({
+    type: 'ring', x: CX, y: ringY,
+    w: 260, h: 180, label: 'Ring dans'
+  });
+  decorElements.push({
+    type: 'bar', x: barX, y: rows[4] + 20,
+    w: 240, h: 180, label: 'Bar'
+  });
+
+  // Mese — 6 rânduri × 4 mese per rând
+  // Ordinea cityNames: rang cu rang, stânga la dreapta
+  // Stânga interior, Stânga exterior, Dreapta interior, Dreapta exterior
+  for (var row = 0; row < rows.length; row++) {
+    var y = rows[row];
+    var rowCols = [cols_left[1], cols_left[0], cols_right[0], cols_right[1]];
+    for (var col = 0; col < 4; col++) {
+      tables.push({
+        id: nextTid++,
+        name: nextCity(),
+        seats: 8,
+        x: rowCols[col],
+        y: y,
+        miri: false
+      });
     }
   }
 }
@@ -2642,10 +2666,10 @@ function exportFullSite(){
     .then(r => r.text())
     .then(html => {
       html = html
-        .replace("typeof __LA_GUESTS__      !== 'undefined' ? __LA_GUESTS__      : []", JSON.stringify(gD))
-        .replace("typeof __LA_TABLES__      !== 'undefined' ? __LA_TABLES__      : []", JSON.stringify(tD))
-        .replace("typeof __LA_DECORS__      !== 'undefined' ? __LA_DECORS__      : []", JSON.stringify(dD))
-        .replace("typeof __LA_GUEST_NAMES__ !== 'undefined' ? __LA_GUEST_NAMES__ : []", JSON.stringify(allNames));
+        .replace("typeof __LA_GUESTS__!=='undefined'?__LA_GUESTS__:[]", JSON.stringify(gD))
+        .replace("typeof __LA_TABLES__!=='undefined'?__LA_TABLES__:[]", JSON.stringify(tD))
+        .replace("typeof __LA_DECORS__!=='undefined'?__LA_DECORS__:[]", JSON.stringify(dD))
+        .replace("typeof __LA_GUEST_NAMES__!=='undefined'?__LA_GUEST_NAMES__:[]", JSON.stringify(allNames));
       const blob = new Blob([html], {type:'text/html;charset=utf-8'});
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
