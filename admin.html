@@ -1695,10 +1695,9 @@ function load(){
 // Stage above ring, Bar below ring
 // ══════════════════════════════════════════
 load();
-if(tables.length===0) initDefaultLayout();
+// layout initialized by second block below
 renderGuests();
 updateStats();
-setTimeout(()=>{ fitView(); draw(); }, 60);
 
 
 
@@ -2175,31 +2174,31 @@ function confirmReset(){
 }
 
 function initDefaultLayout(){
-  cityIdx=0;
-  const rowGap=TH_DEF+52;
-  const colGap=TW_DEF+55;
-  const rows=4;
-  const totalH=(rows-1)*rowGap;
-  const startY=-totalH/2;
-  const miriH=totalH+TH_DEF*2;
-  tables.push({id:nextTid++,name:'Roma',seats:4,x:-TH_DEF/2-30,y:0,miri:true,tw:TH_DEF,th:miriH});
-  const g1startX=80;
-  for(let col=0;col<4;col++){
-    for(let row=0;row<4;row++){
-      tables.push({id:nextTid++,name:nextCity(),seats:8,x:g1startX+col*colGap,y:startY+row*rowGap,miri:false});
-    }
-  }
-  const ringX=g1startX+4*colGap+120;
-  const ringW=190, ringH=260;
-  const stageH=100, barH=100, gap=20;
-  // Toate centrate pe ringX, stacked vertical
-  decorElements.push({type:'ring',  x:ringX, y:0,                                   w:ringW,   h:ringH,  label:'Ring dans'});
-  decorElements.push({type:'stage', x:ringX, y:-(ringH/2 + gap + stageH/2),         w:ringW,   h:stageH, label:'Scenă / Formație'});
-  decorElements.push({type:'bar',   x:ringX, y: (ringH/2 + gap + barH/2),           w:ringW,   h:barH,   label:'Bar'});
-  const g2startX=ringX+ringW/2+100;
-  for(let col=0;col<4;col++){
-    for(let row=0;row<4;row++){
-      tables.push({id:nextTid++,name:nextCity(),seats:8,x:g2startX+col*colGap,y:startY+row*rowGap,miri:false});
+  cityIdx = 0;
+
+  // ── LAYOUT CA SEATING-MAP.PNG ──────────────────────────────────────────
+  // Roma (cockpit) = sus-centru
+  // 6 rânduri × 4 mese (2 stânga + 2 dreapta de culoar central)
+  // Ring dans = centru, Scenă = dreapta-sus, Bar = stânga-jos
+
+  const GAP_COL = 290;
+  const rows = [-370, -220, -80, 60, 200, 340];
+  const cols = [-GAP_COL*1.5, -GAP_COL*0.5, GAP_COL*0.5, GAP_COL*1.5];
+
+  // Masa mirilor — cockpit
+  tables.push({id:nextTid++, name:'Roma', seats:8,
+    x:0, y:-530, miri:true, tw:TH_DEF, th:Math.round(TW_DEF*0.5)});
+
+  // Decors
+  decorElements.push({type:'stage', x: GAP_COL*2.3, y:-440,  w:280, h:200, label:'Scenă / Formație'});
+  decorElements.push({type:'ring',  x: 0,            y:-10,   w:260, h:180, label:'Ring dans'});
+  decorElements.push({type:'bar',   x:-GAP_COL*2.3, y: 220,  w:240, h:180, label:'Bar'});
+
+  // 6 rânduri × 4 mese
+  for(var r=0; r<rows.length; r++){
+    for(var col=0; col<4; col++){
+      tables.push({id:nextTid++, name:nextCity(), seats:8,
+        x:cols[col], y:rows[r], miri:false});
     }
   }
 }
