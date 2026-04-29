@@ -153,7 +153,7 @@ header{background:var(--deep);padding:7px 14px;display:flex;align-items:center;g
         <button class="btn btn-outline" onclick="exportExcelTemplate()">↓ CSV</button>
         <button class="btn btn-outline" onclick="openImport()">↑ Excel</button>
         <button class="btn btn-outline" onclick="exportGuestPage()" style="background:#3a5c44;color:white;border-color:#3a5c44;width:100%;margin-top:4px;justify-content:center;" title="Generează pagina pentru invitați cu QR">📍 Pagină invitați</button>
-        <button onclick="exportFullSite()" style="background:#1a3a2a;color:#c9a84c;border:1px solid #c9a84c;width:100%;margin-top:4px;padding:8px;border-radius:5px;cursor:pointer;font-size:11px;font-weight:600;">📥 Exportă site complet</button>
+        <button onclick="exportFullSite()" style="background:#1a3a2a;color:#c9a84c;border:1px solid #c9a84c;width:100%;margin-top:4px;padding:8px;border-radius:5px;cursor:pointer;font-size:11px;font-weight:600;letter-spacing:1px;">📥 Exportă site complet</button>
         <button onclick="forceRenameAllTables()" style="background:#5a3a10;color:#f0d090;border:1px solid #b8924a;width:100%;margin-top:4px;padding:8px;border-radius:5px;cursor:pointer;font-size:11px;">✎ Redenumește mese</button>
         <button class="btn btn-red btn-sm" onclick="confirmReset()" style="width:100%;margin-top:4px;justify-content:center;font-size:.72rem;" title="Șterge tot și resetează la layout default">⟳ Reset complet</button>
       </div>
@@ -2599,201 +2599,180 @@ initPage();
 
 
 </script>
-</body>
-</html>
 
 <script>
+/* ═══════════════════════════════════════════════════════════════
+   LOVE AIRLINES ADMIN — Image background + Fixed table positions
+   ═══════════════════════════════════════════════════════════════ */
 (function() {
-  // ── LOAD BACKGROUND IMAGE ──────────────────────────────────────────────
-  var bgImg = new Image();
-  bgImg.src = 'seating-map.png';
-  bgImg.onload = function() {
-    window._bgImg = bgImg;
-    window._bgLoaded = true;
-    console.log('[Admin] Background image loaded:', bgImg.width, 'x', bgImg.height);
-  };
-  bgImg.onerror = function() {
-    console.warn('[Admin] Background image not found - using canvas layout');
-    window._bgLoaded = false;
-  };
+  var IMG_W = 1408, IMG_H = 768;
+  var _img = null;
+  var _ready = false;
 
-  // ── OVERRIDE DRAW GRID TO DRAW IMAGE INSTEAD ────────────────────────────
-  var _origDrawGrid;
-  var _patched = false;
-  
-  function patchDraw() {
-    if (_patched) return;
-    if (typeof drawGrid === 'undefined' || typeof draw === 'undefined') {
-      setTimeout(patchDraw, 100);
-      return;
-    }
-    
-    _origDrawGrid = drawGrid;
-    
-    // Override drawGrid to draw background image first
-    window.drawGrid = function() {
-      var canvas = document.getElementById('cv');
-      var context = canvas.getContext('2d');
-      
-      if (window._bgLoaded && window._bgImg) {
-        // Draw image scaled to fill the visible canvas area
-        // Calculate image position based on current pan/zoom
-        var imgW = 1408;
-        var imgH = 768;
-        
-        // Center of image in canvas space
-        var imgCX = canvas.width/2 + (typeof ox !== 'undefined' ? ox*sc : 0) - imgW/2 * (typeof sc !== 'undefined' ? sc : 1);
-        var imgCY = canvas.height/2 + (typeof oy !== 'undefined' ? oy*sc : 0) - imgH/2 * (typeof sc !== 'undefined' ? sc : 1);
-        var scale = typeof sc !== 'undefined' ? sc : 1;
-        
-        // Save context
-        context.save();
-        
-        // Draw the image
-        context.globalAlpha = 1.0;
-        context.drawImage(window._bgImg, imgCX, imgCY, imgW * scale, imgH * scale);
-        
-        context.restore();
-      } else {
-        // Fallback: draw original grid
-        _origDrawGrid();
-      }
-    };
-    
-    _patched = true;
-    console.log('[Admin] draw() patched with background image');
-    
-    // Redraw
+  // 1. Load the background image
+  var img = new Image();
+  img.onload = function() {
+    _img = img;
     if (typeof draw === 'function') draw();
+    console.log('[Admin] Image loaded OK');
+  };
+  img.onerror = function() {
+    console.warn('[Admin] seating-map.png not found!');
+  };
+  img.src = 'seating-map.png';
+
+  // 2. Override drawGrid to draw image instead of grid
+  function patchDrawGrid() {
+    if (typeof drawGrid === 'undefined') { setTimeout(patchDrawGrid, 50); return; }
+    window.drawGrid = function() {
+      if (!_img) return;
+      // Draw image centered at world(0,0), size = IMG_W x IMG_H world units
+      // w2s(wx,wy) = {x: wx*sc+ox, y: wy*sc+oy}
+      var sx = (-IMG_W/2) * sc + ox;
+      var sy = (-IMG_H/2) * sc + oy;
+      var sw = IMG_W * sc;
+      var sh = IMG_H * sc;
+      ctx.save();
+      ctx.drawImage(_img, sx, sy, sw, sh);
+      ctx.restore();
+    };
+    console.log('[Admin] drawGrid patched');
   }
-  
-  // ── APPLY FIXED TABLE LAYOUT ────────────────────────────────────────────
-  var _layoutApplied = false;
-  
-  function applyLayout() {
-    if (_layoutApplied) return;
-    if (typeof tables === 'undefined' || typeof draw === 'undefined') {
-      setTimeout(applyLayout, 100);
+  patchDrawGrid();
+
+  // 3. Set fixed table layout matching image positions
+  var FIXED_TABLES = [
+    {name:"Roma",x:0,y:-254,miri:true},
+      {name:"Torino",x:-164,y:-166,miri:false},
+      {name:"Verona",x:-77,y:-171,miri:false},
+      {name:"Firenze",x:66,y:-171,miri:false},
+      {name:"Siena",x:153,y:-166,miri:false},
+      {name:"Milano",x:-189,y:-136,miri:false},
+      {name:"Trieste",x:-94,y:-141,miri:false},
+      {name:"Padova",x:81,y:-141,miri:false},
+      {name:"Bergamo",x:174,y:-136,miri:false},
+      {name:"Como",x:-214,y:-106,miri:false},
+      {name:"Genova",x:-108,y:-111,miri:false},
+      {name:"Perugia",x:96,y:-111,miri:false},
+      {name:"Bologna",x:200,y:-106,miri:false},
+      {name:"Venezia",x:-242,y:-76,miri:false},
+      {name:"Napoli",x:-122,y:-81,miri:false},
+      {name:"Amalfi",x:109,y:-81,miri:false},
+      {name:"Positano",x:228,y:-76,miri:false},
+      {name:"Bari",x:-467,y:143,miri:false},
+      {name:"Capri",x:-234,y:143,miri:false},
+      {name:"Siracusa",x:201,y:143,miri:false},
+      {name:"Palermo",x:444,y:143,miri:false},
+      {name:"Taormina",x:-510,y:190,miri:false},
+      {name:"Cagliari",x:-274,y:190,miri:false},
+      {name:"Agrigento",x:242,y:190,miri:false},
+      {name:"Alghero",x:486,y:190,miri:false}
+  ];
+
+  function applyImageLayout() {
+    if (typeof tables === 'undefined' || typeof save === 'undefined') {
+      setTimeout(applyImageLayout, 100); return;
+    }
+    // Only apply if not already set correctly
+    var isCorrect = tables.length === 25 &&
+      tables.some(function(t){ return t.name === 'Torino'; });
+    if (isCorrect) {
+      console.log('[Admin] Layout already correct');
       return;
     }
-    
-    // Clear everything
-    try { localStorage.removeItem('mp11'); localStorage.removeItem('mp10'); } catch(e) {}
-    
+
+    console.log('[Admin] Applying image layout...');
     tables.length = 0;
     if (typeof decorElements !== 'undefined') decorElements.length = 0;
-    if (typeof guests !== 'undefined') guests.length = 0;
-    nextTid = 1; nextGid = 1; cityIdx = 0;
-    
-    var TW = typeof TW_DEF !== 'undefined' ? TW_DEF : 220;
-    var TH = typeof TH_DEF !== 'undefined' ? TH_DEF : 65;
-    
-    // Fixed table positions matching seating-map.png
-    var FIXED = [
-      {name:"Roma",x:0,y:-254,miri:true},
-    {name:"Torino",x:-164,y:-166,miri:false},
-    {name:"Verona",x:-76,y:-171,miri:false},
-    {name:"Firenze",x:64,y:-171,miri:false},
-    {name:"Siena",x:152,y:-166,miri:false},
-    {name:"Milano",x:-188,y:-136,miri:false},
-    {name:"Trieste",x:-92,y:-141,miri:false},
-    {name:"Padova",x:80,y:-141,miri:false},
-    {name:"Bergamo",x:176,y:-136,miri:false},
-    {name:"Como",x:-212,y:-106,miri:false},
-    {name:"Genova",x:-106,y:-111,miri:false},
-    {name:"Perugia",x:94,y:-111,miri:false},
-    {name:"Bologna",x:200,y:-106,miri:false},
-    {name:"Venezia",x:-240,y:-76,miri:false},
-    {name:"Napoli",x:-120,y:-81,miri:false},
-    {name:"Amalfi",x:108,y:-81,miri:false},
-    {name:"Positano",x:228,y:-76,miri:false},
-    {name:"Bari",x:-466,y:143,miri:false},
-    {name:"Capri",x:-232,y:143,miri:false},
-    {name:"Siracusa",x:202,y:143,miri:false},
-    {name:"Palermo",x:446,y:143,miri:false},
-    {name:"Taormina",x:-508,y:190,miri:false},
-    {name:"Cagliari",x:-272,y:190,miri:false},
-    {name:"Agrigento",x:244,y:190,miri:false},
-    {name:"Alghero",x:488,y:190,miri:false}
-    ];
-    
-    FIXED.forEach(function(t) {
+    nextTid = 1; cityIdx = 0;
+
+    var TW = TW_DEF || 220;
+    var TH = TH_DEF || 65;
+
+    FIXED_TABLES.forEach(function(t) {
+      var tw, th;
       if (t.miri) {
-        tables.push({
-          id: nextTid++, name: t.name, seats: 8,
-          x: t.x, y: t.y, miri: true,
-          tw: Math.round(TH * 0.8), th: Math.round(TW * 0.35)
-        });
+        // Roma - small table matching image
+        tw = Math.round(TH * 0.9);
+        th = Math.round(TW * 0.38);
       } else {
-        tables.push({
-          id: nextTid++, name: t.name, seats: 8,
-          x: t.x, y: t.y, miri: false
-        });
+        tw = TW; th = TH;
       }
+      tables.push({
+        id: nextTid++, name: t.name, seats: 8,
+        x: t.x, y: t.y, miri: t.miri, tw: tw, th: th
+      });
     });
-    
-    // Save to localStorage so it persists
-    if (typeof save === 'function') save();
+
+    // Set zoom so image fills the canvas perfectly
+    sc = cv.clientWidth / IMG_W;
+    ox = cv.clientWidth / 2;
+    oy = cv.clientHeight / 2;
+
+    save();
     if (typeof renderGuests === 'function') renderGuests();
     if (typeof updateStats === 'function') updateStats();
-    
-    // Set zoom to show full image
-    sc = 1;
-    ox = 0; oy = 0;
-    
     setTimeout(function() {
-      if (typeof fitView === 'function') fitView();
       if (typeof draw === 'function') draw();
-      console.log('[Admin] Layout applied:', tables.length, 'tables');
-    }, 150);
-    
-    _layoutApplied = true;
+    }, 100);
+    console.log('[Admin] Layout applied: ' + tables.length + ' tables');
+    _ready = true;
   }
-  
-  // Start both patches with a small delay
-  setTimeout(function() {
-    patchDraw();
-    applyLayout();
-  }, 300);
-  
+
+  setTimeout(applyImageLayout, 400);
+
 })();
 
-// Extra functions
-function forceRenameAllTables(){
-  var names=['Torino','Verona','Firenze','Siena','Milano','Trieste','Padova','Bergamo',
-    'Como','Genova','Perugia','Bologna','Venezia','Napoli','Amalfi','Positano',
-    'Bari','Capri','Siracusa','Palermo','Taormina','Cagliari','Agrigento','Alghero'];
-  var nonMiri=tables.filter(function(t){return !t.miri;});
-  nonMiri.forEach(function(t,i){if(names[i]) t.name=names[i];});
+/* ─── Extra functions ──────────────────────────────────────────── */
+function forceRenameAllTables() {
+  var names = ['Torino','Verona','Firenze','Siena',
+    'Milano','Trieste','Padova','Bergamo',
+    'Como','Genova','Perugia','Bologna',
+    'Venezia','Napoli','Amalfi','Positano',
+    'Bari','Capri','Siracusa','Palermo',
+    'Taormina','Cagliari','Agrigento','Alghero'];
+  var nm = tables.filter(function(t){return !t.miri;});
+  nm.forEach(function(t,i){ if(names[i]) t.name = names[i]; });
   guests.forEach(function(g){
-    if(g.tableId!=null){var t=tables.find(function(x){return x.id===g.tableId;});if(t) g.table=t.name;}
+    if(g.tableId != null){
+      var t = tables.find(function(x){return x.id===g.tableId;});
+      if(t) g.table = t.name;
+    }
   });
   draw(); renderGuests(); updateStats(); save();
-  alert('Redenumite: '+nonMiri.length+' mese');
+  alert('✓ ' + nm.length + ' mese redenumite!');
 }
 
-function exportFullSite(){
-  if(!guests.length){alert('Importa invitatii mai intai!');return;}
-  var gD=guests.filter(function(g){return g.tableId!=null;}).map(function(g){
-    var t=tables.find(function(x){return x.id==g.tableId;});
-    return {name:g.name,table:t?t.name:'',tableId:g.tableId,
-            seatIdx:g.seatIdx!=null?g.seatIdx:0,menu:g.menu||'normal',cazare:g.cazare||'nu'};
+function exportFullSite() {
+  if (!guests.length) { alert('Importa invitatii mai intai!'); return; }
+  var gD = guests.filter(function(g){return g.tableId!=null;}).map(function(g){
+    var t = tables.find(function(x){return x.id==g.tableId;});
+    return {name:g.name, table:t?t.name:'', tableId:g.tableId,
+            seatIdx:g.seatIdx!=null?g.seatIdx:0, menu:g.menu||'normal', cazare:g.cazare||'nu'};
   });
-  var allNames=guests.map(function(g){return g.name;}).filter(Boolean);
-  var tD=tables.map(function(t){return {id:t.id,name:t.name,x:t.x,y:t.y,
-    tw:t.tw||220,th:t.th||65,miri:!!t.miri,seats:t.seats};});
-  var dD=(decorElements||[]).map(function(d){return {type:d.type,x:d.x,y:d.y,w:d.w,h:d.h,label:d.label};});
+  var allNames = guests.map(function(g){return g.name;}).filter(Boolean);
+  var tD = tables.map(function(t){
+    return {id:t.id, name:t.name, x:t.x, y:t.y,
+            tw:t.tw||220, th:t.th||65, miri:!!t.miri, seats:t.seats};
+  });
+  var dD = (decorElements||[]).map(function(d){
+    return {type:d.type, x:d.x, y:d.y, w:d.w, h:d.h, label:d.label};
+  });
   fetch('index.html').then(function(r){return r.text();}).then(function(html){
-    html=html
-      .replace("typeof __LA_GUESTS__!=='undefined'?__LA_GUESTS__:[]",JSON.stringify(gD))
-      .replace("typeof __LA_TABLES__!=='undefined'?__LA_TABLES__:[]",JSON.stringify(tD))
-      .replace("typeof __LA_DECORS__!=='undefined'?__LA_DECORS__:[]",JSON.stringify(dD))
-      .replace("typeof __LA_GUEST_NAMES__!=='undefined'?__LA_GUEST_NAMES__:[]",JSON.stringify(allNames));
-    var blob=new Blob([html],{type:'text/html;charset=utf-8'});
-    var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='index.html';
-    document.body.appendChild(a);a.click();
-    setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(a.href);},1000);
-    alert('index.html generat cu '+allNames.length+' invatati!\nUploadeaza pe GitHub.');
-  }).catch(function(e){alert('Eroare: '+e.message);});
+    html = html
+      .replace("typeof __LA_GUESTS__!=='undefined'?__LA_GUESTS__:[]", JSON.stringify(gD))
+      .replace("typeof __LA_TABLES__!=='undefined'?__LA_TABLES__:[]", JSON.stringify(tD))
+      .replace("typeof __LA_DECORS__!=='undefined'?__LA_DECORS__:[]", JSON.stringify(dD))
+      .replace("typeof __LA_GUEST_NAMES__!=='undefined'?__LA_GUEST_NAMES__:[]", JSON.stringify(allNames));
+    var blob = new Blob([html], {type:'text/html;charset=utf-8'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = 'index.html';
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(a.href);}, 1000);
+    alert('✓ index.html generat cu ' + allNames.length + ' invatati!\nUploadeaza pe GitHub.');
+  }).catch(function(e){ alert('Eroare: ' + e.message); });
 }
 </script>
+
+</body>
+</html>
