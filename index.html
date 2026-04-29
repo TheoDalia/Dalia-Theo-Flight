@@ -353,10 +353,10 @@ footer{text-align:center;padding:1.5rem;font-size:9px;letter-spacing:2px;color:r
 // ══════════════════════════════════════════════════════
 // DATE — din data.js (uploadat pe GitHub de admin)
 // ══════════════════════════════════════════════════════
-var GUESTS=[];
-var TABLES=[];
-var DECORS=[];
-var GUEST_NAMES=["Dalia","Theo","Nasa","Nasu","Alessandra Chiariello","Fabio Cerullo","Latis Simina","Latis Rares","Margherita Malaspina","Giuseppe Iacomino","Alin Bobeica","Irina Bobeica","Alina Vreju"];
+var GUESTS=typeof __LA_GUESTS__!=='undefined'?__LA_GUESTS__:[];
+var TABLES=typeof __LA_TABLES__!=='undefined'?__LA_TABLES__:[];
+var DECORS=typeof __LA_DECORS__!=='undefined'?__LA_DECORS__:[];
+var GUEST_NAMES=typeof __LA_GUEST_NAMES__!=='undefined'?__LA_GUEST_NAMES__:[];
 if(typeof LA_DATA !== 'undefined' && LA_DATA){
   GUESTS      = LA_DATA.guests     || [];
   TABLES      = LA_DATA.tables     || [];
@@ -617,36 +617,54 @@ function drawMapOverview(){drawMap(null);}
 function drawMap(g){
   var container=document.getElementById('svg-container');
   if(!container)return;
-  var noGuest=!g||g.tableId===null;
-  var selName=(!noGuest&&g&&g.table)?g.table:null;
-  var TBLS=[{n:"Roma",cx:50.0,cy:17.0,r:3.8},{n:"Torino",cx:38.5,cy:27.5,r:3.5},{n:"Verona",cx:47.0,cy:27.0,r:3.5},{n:"Firenze",cx:55.0,cy:27.0,r:3.5},{n:"Siena",cx:63.5,cy:27.5,r:3.5},{n:"Milano",cx:36.0,cy:33.0,r:3.5},{n:"Trieste",cx:46.5,cy:33.0,r:3.5},{n:"Bologna",cx:55.5,cy:33.0,r:3.5},{n:"Perugia",cx:65.5,cy:33.0,r:3.5},{n:"Bergamo",cx:34.0,cy:38.5,r:3.5},{n:"Padova",cx:46.0,cy:38.5,r:3.5},{n:"Como",cx:56.5,cy:38.5,r:3.5},{n:"Venezia",cx:67.0,cy:38.5,r:3.5},{n:"Genova",cx:32.0,cy:44.0,r:3.8},{n:"Napoli",cx:46.5,cy:44.0,r:3.8},{n:"Amalfi",cx:57.5,cy:44.0,r:3.8},{n:"Positano",cx:68.5,cy:44.0,r:3.8},{n:"Bari",cx:18.0,cy:67.0,r:5.0},{n:"Capri",cx:14.5,cy:75.0,r:5.5},{n:"Palermo",cx:10.5,cy:83.0,r:6.0},{n:"Taormina",cx:7.0,cy:91.0,r:6.5},{n:"Siracusa",cx:83.0,cy:67.0,r:5.0},{n:"Agrigento",cx:87.5,cy:75.0,r:5.5},{n:"Cagliari",cx:91.5,cy:83.0,r:6.0},{n:"Alghero",cx:95.0,cy:91.0,r:6.5}];
+  var noGuest=!g||!g.table;
+  var selName=noGuest?null:g.table;
+
+  // Table positions as % of image (cx%, cy%, r%)
+  var TBLS=[{n:"Roma",cx:50.0,cy:16.9,r:3.0},{n:"Torino",cx:38.4,cy:28.4,r:3.2},{n:"Verona",cx:44.5,cy:27.7,r:3.2},{n:"Firenze",cx:54.7,cy:27.7,r:3.2},{n:"Siena",cx:60.9,cy:28.4,r:3.2},{n:"Milano",cx:36.6,cy:32.3,r:3.2},{n:"Trieste",cx:43.3,cy:31.6,r:3.2},{n:"Padova",cx:55.8,cy:31.6,r:3.2},{n:"Bergamo",cx:62.4,cy:32.3,r:3.2},{n:"Como",cx:34.8,cy:36.2,r:3.2},{n:"Genova",cx:42.3,cy:35.5,r:3.2},{n:"Perugia",cx:56.8,cy:35.5,r:3.2},{n:"Bologna",cx:64.2,cy:36.2,r:3.2},{n:"Venezia",cx:32.8,cy:40.1,r:3.2},{n:"Napoli",cx:41.3,cy:39.5,r:3.2},{n:"Amalfi",cx:57.7,cy:39.5,r:3.2},{n:"Positano",cx:66.2,cy:40.1,r:3.2},{n:"Bari",cx:16.8,cy:47.8,r:5.5},{n:"Capri",cx:33.4,cy:47.8,r:5.5},{n:"Siracusa",cx:64.3,cy:47.8,r:5.5},{n:"Palermo",cx:81.5,cy:47.8,r:5.5},{n:"Taormina",cx:13.8,cy:53.9,r:5.5},{n:"Cagliari",cx:30.5,cy:53.9,r:5.5},{n:"Agrigento",cx:67.2,cy:53.9,r:5.5},{n:"Alghero",cx:84.5,cy:53.9,r:5.5}];
+
   var contW=container.clientWidth||(window.innerWidth-32);
-  var svgH=Math.round(contW*787/1400);
-  var AR=(100*787/1400).toFixed(2);
+  var svgH=Math.round(contW*768/1408);
+  var AR=(100*768/1408).toFixed(2);
+
   var svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 '+AR+'" width="100%" height="'+svgH+'" id="pm-svg" style="display:block;cursor:grab;" preserveAspectRatio="xMidYMid meet">'
     +'<image href="seating-map.png" x="0" y="0" width="100" height="'+AR+'" preserveAspectRatio="xMidYMid meet"/>';
+
   TBLS.forEach(function(t){
     var isSel=(t.n===selName);
     if(isSel){
-      svg+='<circle cx="'+t.cx+'" cy="'+t.cy+'" r="'+(t.r*1.5)+'" fill="rgba(192,48,16,0.22)" stroke="#c03010" stroke-width="0.35"><animate attributeName="r" values="'+(t.r*1.2)+';'+(t.r*2.0)+';'+(t.r*1.2)+'" dur="1.8s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.7;0.15;0.7" dur="1.8s" repeatCount="indefinite"/></circle>';
-      svg+='<circle cx="'+t.cx+'" cy="'+t.cy+'" r="'+t.r+'" fill="rgba(255,80,40,0.28)" stroke="#c03010" stroke-width="0.5"/>';
-      svg+='<polygon points="'+t.cx+','+(t.cy-t.r-3.5)+' '+(t.cx-1.8)+','+(t.cy-t.r-1.0)+' '+(t.cx+1.8)+','+(t.cy-t.r-1.0)+'" fill="#c03010"><animate attributeName="points" values="'+t.cx+','+(t.cy-t.r-4.5)+' '+(t.cx-1.8)+','+(t.cy-t.r-2.0)+' '+(t.cx+1.8)+','+(t.cy-t.r-2.0)+';'+t.cx+','+(t.cy-t.r-2.5)+' '+(t.cx-1.8)+','+(t.cy-t.r)+' '+(t.cx+1.8)+','+(t.cy-t.r)+';'+t.cx+','+(t.cy-t.r-4.5)+' '+(t.cx-1.8)+','+(t.cy-t.r-2.0)+' '+(t.cx+1.8)+','+(t.cy-t.r-2.0)+'" dur="1s" repeatCount="indefinite"/></polygon>';
-      svg+='<rect x="'+(t.cx-5.5)+'" y="'+(t.cy-t.r-8.5)+'" width="11" height="3.8" rx="1" fill="#c03010"/>';
-      svg+='<text x="'+t.cx+'" y="'+(t.cy-t.r-5.8)+'" text-anchor="middle" font-family="sans-serif" font-size="2.2" font-weight="700" fill="white">'+t.n+'</text>';
+      // Pulsing ring
+      svg+='<circle cx="'+t.cx+'" cy="'+t.cy+'" r="'+(t.r*1.6)+'" fill="rgba(192,48,16,0.2)" stroke="#c03010" stroke-width="0.4">'
+        +'<animate attributeName="r" values="'+(t.r*1.2)+';'+(t.r*2.2)+';'+(t.r*1.2)+'" dur="1.8s" repeatCount="indefinite"/>'
+        +'<animate attributeName="opacity" values="0.7;0.15;0.7" dur="1.8s" repeatCount="indefinite"/>'
+        +'</circle>';
+      // Solid highlight
+      svg+='<circle cx="'+t.cx+'" cy="'+t.cy+'" r="'+t.r+'" fill="rgba(255,60,30,0.35)" stroke="#c03010" stroke-width="0.5"/>';
+      // Bouncing arrow
+      svg+='<polygon points="'+t.cx+','+(t.cy-t.r-3.5)+' '+(t.cx-1.8)+','+(t.cy-t.r-1.0)+' '+(t.cx+1.8)+','+(t.cy-t.r-1.0)+'" fill="#c03010">'
+        +'<animate attributeName="points" values="'+t.cx+','+(t.cy-t.r-4.5)+' '+(t.cx-1.8)+','+(t.cy-t.r-2.0)+' '+(t.cx+1.8)+','+(t.cy-t.r-2.0)+';'+t.cx+','+(t.cy-t.r-2.5)+' '+(t.cx-1.8)+','+(t.cy-t.r)+' '+(t.cx+1.8)+','+(t.cy-t.r)+';'+t.cx+','+(t.cy-t.r-4.5)+' '+(t.cx-1.8)+','+(t.cy-t.r-2.0)+' '+(t.cx+1.8)+','+(t.cy-t.r-2.0)+'" dur="1s" repeatCount="indefinite"/>'
+        +'</polygon>';
+      // Name badge
+      svg+='<rect x="'+(t.cx-6)+'" y="'+(t.cy-t.r-9)+'" width="12" height="4" rx="1" fill="#c03010"/>';
+      svg+='<text x="'+t.cx+'" y="'+(t.cy-t.r-6.2)+'" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="2.5" font-weight="700" fill="white">'+t.n+'</text>';
     }
   });
+
   svg+='</svg>';
   container.innerHTML=svg;
   mapTransX=0;mapTransY=0;mapScale=1;
+
+  // Update boarding pass
   if(!noGuest&&g){
-    var bpCard=document.getElementById('bp-card');
-    if(bpCard)bpCard.className='bp-card show';
+    var bpEl=document.getElementById('bp-card');
+    if(bpEl) bpEl.className='bp-card show';
     var el;
-    if((el=document.getElementById('bp-first')))el.textContent=(g.name||'').split(' ')[0];
-    if((el=document.getElementById('bp-table')))el.textContent=g.table||'—';
-    if((el=document.getElementById('bp-seat')))el.textContent='#'+((g.seatIdx||0)+1);
-    if((el=document.getElementById('bp-menu')))el.textContent=g.menu||'—';
+    if((el=document.getElementById('bp-first'))) el.textContent=(g.name||'').split(' ')[0];
+    if((el=document.getElementById('bp-table'))) el.textContent=g.table||'—';
+    if((el=document.getElementById('bp-seat')))  el.textContent='#'+((g.seatIdx||0)+1);
+    if((el=document.getElementById('bp-menu')))  el.textContent=g.menu||'—';
   }
+
   var svgEl=document.getElementById('pm-svg');
   if(!svgEl)return;
   svgEl.addEventListener('mousedown',function(e){mapPanning=true;mapStartX=e.clientX-mapTransX;mapStartY=e.clientY-mapTransY;svgEl.style.cursor='grabbing';});
