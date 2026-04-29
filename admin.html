@@ -153,10 +153,9 @@ header{background:var(--deep);padding:7px 14px;display:flex;align-items:center;g
         <button class="btn btn-outline" onclick="exportExcelTemplate()">↓ CSV</button>
         <button class="btn btn-outline" onclick="openImport()">↑ Excel</button>
         <button class="btn btn-outline" onclick="exportGuestPage()" style="background:#3a5c44;color:white;border-color:#3a5c44;width:100%;margin-top:4px;justify-content:center;" title="Generează pagina pentru invitați cu QR">📍 Pagină invitați</button>
-        <button class="btn btn-outline" onclick="exportFullSite()" style="background:#1a3a2a;color:#c9a84c;border:1px solid #c9a84c;width:100%;margin-top:4px;justify-content:center;" title="Generează index.html cu invitații incluși">📥 Exportă site complet</button>
-        <button class="btn btn-outline btn-sm" onclick="forceRenameAllTables()" style="background:#5a3a10;color:#f0d090;border-color:#b8924a;width:100%;margin-top:4px;justify-content:center;" title="Reaplică noile nume pe toate mesele">✎ Redenumește mese</button>
-        <button onclick="resetToNewLayout()" style="background:#c9a84c;color:#1a1a14;border:none;width:100%;padding:10px;margin-top:6px;border-radius:6px;font-weight:700;font-size:12px;cursor:pointer;letter-spacing:1px;">🗺️ APLICĂ LAYOUT NOU</button>
-        <button class="btn btn-red btn-sm" onclick="confirmReset()" style="width:100%;margin-top:4px;justify-content:center;">⟳ Reset complet</button>
+        <button onclick="exportFullSite()" style="background:#1a3a2a;color:#c9a84c;border:1px solid #c9a84c;width:100%;margin-top:4px;padding:7px;border-radius:5px;cursor:pointer;font-size:11px;font-weight:600;letter-spacing:1px;">📥 Exportă site complet</button>
+        <button onclick="forceRenameAllTables()" style="background:#5a3a10;color:#f0d090;border:1px solid #b8924a;width:100%;margin-top:4px;padding:7px;border-radius:5px;cursor:pointer;font-size:11px;">✎ Redenumește mese</button>
+        <button class="btn btn-red btn-sm" onclick="confirmReset()" style="width:100%;margin-top:4px;justify-content:center;font-size:.72rem;" title="Șterge tot și resetează la layout default">⟳ Reset complet</button>
       </div>
     </div>
     <div class="sb">
@@ -461,18 +460,18 @@ const XLSXMini = (() => {
 // ITALIAN CITY NAMES for tables
 // ══════════════════════════════════════════
 const CITY_NAMES = [
-  // Rând 1 — Nord
-  'Torino','Milano','Verona','Firenze',
-  // Rând 2
-  'Bergamo','Como','Trieste','Bologna',
-  // Rând 3
-  'Venezia','Genova','Padova','Siena',
-  // Rând 4
-  'Perugia','Napoli','Amalfi','Positano',
-  // Rând 5
-  'Bari','Capri','Palermo','Siracusa',
-  // Rând 6 — Sud
-  'Agrigento','Taormina','Cagliari','Alghero',
+  // Stânga grup 1 — Col 1 (Nord-Vest)
+  'Torino','Milano','Como','Genova',
+  // Stânga grup 1 — Col 2 (Nord-Est)
+  'Venezia','Verona','Padova','Trieste',
+  // Stânga grup 1 — Col 3 (Centru-Nord)
+  'Bologna','Firenze','Siena','Perugia',
+  // Dreapta grup 2 — Col 4 (Sud)
+  'Napoli','Amalfi','Positano','Capri',
+  // Dreapta grup 2 — Col 5 (Sicilia)
+  'Palermo','Taormina','Siracusa','Agrigento',
+  // Dreapta grup 2 — Col 6 (Sardinia)
+  'Cagliari','Alghero','Olbia','Costa Smeralda',
 ];
 let cityIdx = 0;
 function nextCity() { return CITY_NAMES[cityIdx++ % CITY_NAMES.length]; }
@@ -1584,7 +1583,7 @@ function exportExcelTemplate(){
 // ══════════════════════════════════════════
 function confirmReset(){
   if(!confirm('Ești sigur? Se vor șterge TOATE mesele, invitații și configurația salvată.')) return;
-  try{ localStorage.removeItem('mp11'); localStorage.removeItem('loveairlines_data'); }catch(e){}
+  try{ localStorage.removeItem('mp11'); }catch(e){}
   tables=[]; guests=[]; decorElements=[];
   nextTid=1; nextGid=1; cityIdx=0;
   sc=1; ox=0; oy=0;
@@ -1671,11 +1670,11 @@ function load(){
 // 4 cols × 4 rows of horizontal tables → Ring → 4 cols × 4 rows
 // Stage above ring, Bar below ring
 // ══════════════════════════════════════════
-// First load - only reads localStorage, layout init handled below
 load();
-// Note: initDefaultLayout called below after new layout is defined
+if(tables.length===0) initDefaultLayout();
 renderGuests();
 updateStats();
+setTimeout(()=>{ fitView(); draw(); }, 60);
 
 
 
@@ -2152,36 +2151,31 @@ function confirmReset(){
 }
 
 function initDefaultLayout(){
-  cityIdx = 0;
-
-  // ── LAYOUT CA SEATING-MAP.PNG ──────────────────────────────────
-  // Roma (cockpit) = sus-centru, Intrare = jos
-  // 6 rânduri × 4 mese (2 col stânga + 2 col dreapta de culoar)
-  // Scenă = dreapta-sus, Bar = stânga-jos, Ring = centru
-
-  const GAP_COL = 300;
-  const GAP_ROW = 145;
-  const rowsY = [];
-  for(let i=0; i<6; i++) rowsY.push(-375 + i*GAP_ROW);
-
-  const colsX = [-GAP_COL*1.5, -GAP_COL*0.5, GAP_COL*0.5, GAP_COL*1.5];
-  const ringY = (rowsY[2] + rowsY[3]) / 2;
-
-  // Masa mirilor — cockpit sus
-  tables.push({id:nextTid++, name:'Roma', seats:8,
-    x:0, y:rowsY[0]-200, miri:true,
-    tw:TH_DEF, th:Math.round(TW_DEF*0.45)});
-
-  // Decors
-  decorElements.push({type:'stage', x: GAP_COL*2.4, y: rowsY[0]-100, w:280, h:210, label:'Scenă / Formație'});
-  decorElements.push({type:'ring',  x: 0,            y: ringY,         w:270, h:185, label:'Ring dans'});
-  decorElements.push({type:'bar',   x:-GAP_COL*2.4, y: rowsY[4]+80,   w:250, h:185, label:'Bar'});
-
-  // 6 rânduri × 4 mese
-  for(let r=0; r<6; r++){
-    for(let col=0; col<4; col++){
-      tables.push({id:nextTid++, name:nextCity(), seats:8,
-        x:colsX[col], y:rowsY[r], miri:false});
+  cityIdx=0;
+  const rowGap=TH_DEF+52;
+  const colGap=TW_DEF+55;
+  const rows=4;
+  const totalH=(rows-1)*rowGap;
+  const startY=-totalH/2;
+  const miriH=totalH+TH_DEF*2;
+  tables.push({id:nextTid++,name:'Roma',seats:4,x:-TH_DEF/2-30,y:0,miri:true,tw:TH_DEF,th:miriH});
+  const g1startX=80;
+  for(let col=0;col<4;col++){
+    for(let row=0;row<4;row++){
+      tables.push({id:nextTid++,name:nextCity(),seats:8,x:g1startX+col*colGap,y:startY+row*rowGap,miri:false});
+    }
+  }
+  const ringX=g1startX+4*colGap+120;
+  const ringW=190, ringH=260;
+  const stageH=100, barH=100, gap=20;
+  // Toate centrate pe ringX, stacked vertical
+  decorElements.push({type:'ring',  x:ringX, y:0,                                   w:ringW,   h:ringH,  label:'Ring dans'});
+  decorElements.push({type:'stage', x:ringX, y:-(ringH/2 + gap + stageH/2),         w:ringW,   h:stageH, label:'Scenă / Formație'});
+  decorElements.push({type:'bar',   x:ringX, y: (ringH/2 + gap + barH/2),           w:ringW,   h:barH,   label:'Bar'});
+  const g2startX=ringX+ringW/2+100;
+  for(let col=0;col<4;col++){
+    for(let row=0;row<4;row++){
+      tables.push({id:nextTid++,name:nextCity(),seats:8,x:g2startX+col*colGap,y:startY+row*rowGap,miri:false});
     }
   }
 }
@@ -2604,122 +2598,146 @@ initPage();
 
 
 
+</script>
 
-// ══════════════════════════════════════════
-// REDENUMIRE FORȚATĂ MESE
-// ══════════════════════════════════════════
-function forceRenameAllTables(){
-  if(!confirm('Redenumești toate mesele cu noile nume italiene? Invitații rămân la aceleași mese.')) return;
-  const nonMiri = tables.filter(t => !t.miri);
-  nonMiri.forEach((t, idx) => { if(CITY_NAMES[idx]) t.name = CITY_NAMES[idx]; });
-  guests.forEach(g => {
-    if(g.tableId != null){
-      const t = tables.find(x => x.id === g.tableId);
-      if(t) g.table = t.name;
+<script>
+// Override layout - runs after main admin script
+(function() {
+  var MAX_WAIT = 3000; // wait up to 3 seconds for canvas to be ready
+  var CHECK_INTERVAL = 100;
+  var waited = 0;
+  
+  function applyNewLayout() {
+    // Check if the admin JS variables are available
+    if (typeof tables === 'undefined' || typeof draw === 'undefined') {
+      waited += CHECK_INTERVAL;
+      if (waited < MAX_WAIT) setTimeout(applyNewLayout, CHECK_INTERVAL);
+      return;
     }
+    
+    // Check if we need to apply new layout
+    // We need new layout if: tables is empty OR all non-miri tables have old names
+    var nonMiri = tables.filter(function(t){ return !t.miri; });
+    var OLD_NAMES = ['Genova','Padova','Taormina','Agrigento','Siracusa',
+                     'Costa Smeralda','Olbia','Capri','Como'];
+    var hasOldLayout = nonMiri.length === 0 || 
+      nonMiri.some(function(t){ return OLD_NAMES.indexOf(t.name) >= 0; });
+    
+    // Always apply if button hasn't been pressed yet
+    // Check localStorage flag
+    var layoutApplied = localStorage.getItem('layout_v3');
+    if (layoutApplied === 'new2026' && tables.length > 0) return;
+    
+    applyLayout();
+  }
+  
+  function applyLayout() {
+    // Clear everything
+    try { localStorage.removeItem('mp11'); localStorage.removeItem('mp10'); } catch(e){}
+    
+    tables.length = 0;
+    if (typeof decorElements !== 'undefined') decorElements.length = 0;
+    if (typeof guests !== 'undefined') guests.length = 0;
+    nextTid = 1; nextGid = 1; cityIdx = 0;
+    sc = 1; ox = 0; oy = 0;
+    
+    var TW = typeof TW_DEF !== 'undefined' ? TW_DEF : 220;
+    var TH = typeof TH_DEF !== 'undefined' ? TH_DEF : 65;
+    
+    var GAP_COL = 300;
+    var GAP_ROW = 145;
+    var rowsY = [];
+    for (var i = 0; i < 6; i++) rowsY.push(-375 + i * GAP_ROW);
+    var colsX = [-GAP_COL*1.5, -GAP_COL*0.5, GAP_COL*0.5, GAP_COL*1.5];
+    var ringY = (rowsY[2] + rowsY[3]) / 2;
+    
+    // Roma - masa mirilor
+    tables.push({id: nextTid++, name: 'Roma', seats: 8,
+      x: 0, y: rowsY[0] - 200, miri: true,
+      tw: TH, th: Math.round(TW * 0.45)});
+    
+    // Decors
+    decorElements.push({type:'stage', x: GAP_COL*2.4, y: rowsY[0]-100, w:280, h:210, label:'Scena / Formatie'});
+    decorElements.push({type:'ring',  x: 0,            y: ringY,         w:270, h:185, label:'Ring dans'});
+    decorElements.push({type:'bar',   x:-GAP_COL*2.4,  y: rowsY[4]+80,  w:250, h:185, label:'Bar'});
+    
+    // 24 city tables - 6 rows x 4 cols
+    var names = [
+      'Torino','Milano','Verona','Firenze',
+      'Bergamo','Como','Trieste','Bologna',
+      'Venezia','Genova','Padova','Siena',
+      'Perugia','Napoli','Amalfi','Positano',
+      'Bari','Capri','Palermo','Siracusa',
+      'Agrigento','Taormina','Cagliari','Alghero'
+    ];
+    var ni = 0;
+    for (var r = 0; r < 6; r++) {
+      for (var col = 0; col < 4; col++) {
+        tables.push({id: nextTid++, name: names[ni++], seats: 8,
+          x: colsX[col], y: rowsY[r], miri: false});
+      }
+    }
+    
+    // Save and render
+    localStorage.setItem('layout_v3', 'new2026');
+    if (typeof save === 'function') save();
+    if (typeof renderGuests === 'function') renderGuests();
+    if (typeof updateStats === 'function') updateStats();
+    setTimeout(function() {
+      if (typeof fitView === 'function') fitView();
+      if (typeof draw === 'function') draw();
+    }, 100);
+    
+    console.log('[Layout] Applied new seating-map layout: ' + tables.length + ' tables');
+  }
+  
+  // Start checking
+  setTimeout(applyNewLayout, 200);
+})();
+</script>
+
+
+<script>
+function forceRenameAllTables(){
+  if(!confirm('Redenumesti toate mesele cu noile nume italiene?')) return;
+  var names=['Torino','Milano','Verona','Firenze','Bergamo','Como','Trieste','Bologna',
+    'Venezia','Genova','Padova','Siena','Perugia','Napoli','Amalfi','Positano',
+    'Bari','Capri','Palermo','Siracusa','Agrigento','Taormina','Cagliari','Alghero'];
+  var nonMiri=tables.filter(function(t){return !t.miri;});
+  nonMiri.forEach(function(t,idx){if(names[idx])t.name=names[idx];});
+  guests.forEach(function(g){
+    if(g.tableId!=null){var t=tables.find(function(x){return x.id===g.tableId;});if(t)g.table=t.name;}
   });
   draw(); renderGuests(); updateStats(); save();
-  alert('✓ ' + nonMiri.length + ' mese redenumite!');
+  alert('✓ '+nonMiri.length+' mese redenumite!');
 }
 
-// ══════════════════════════════════════════
-// EXPORTĂ SITE COMPLET
-// ══════════════════════════════════════════
 function exportFullSite(){
-  if(guests.length === 0){
-    alert('Nu există invitați. Importă Excel-ul mai întâi.');
-    return;
-  }
-  const gD = guests.filter(g => g.tableId != null).map(g => {
-    const t = tables.find(x => x.id == g.tableId);
-    return { name:g.name, table:t?t.name:'', tableId:g.tableId,
-             seatIdx:g.seatIdx!=null?g.seatIdx:0, menu:g.menu||'normal', cazare:g.cazare||'nu' };
+  if(guests.length===0){alert('Nu exista invatati. Importa Excel-ul mai intai.');return;}
+  var gD=guests.filter(function(g){return g.tableId!=null;}).map(function(g){
+    var t=tables.find(function(x){return x.id==g.tableId;});
+    return {name:g.name,table:t?t.name:'',tableId:g.tableId,
+            seatIdx:g.seatIdx!=null?g.seatIdx:0,menu:g.menu||'normal',cazare:g.cazare||'nu'};
   });
-  const allNames = guests.map(g => g.name).filter(n => n && n.trim());
-  const tD = tables.map(t => ({
-    id:t.id, name:t.name, x:t.x, y:t.y,
+  var allNames=guests.map(function(g){return g.name;}).filter(function(n){return n&&n.trim();});
+  var tD=tables.map(function(t){return {id:t.id,name:t.name,x:t.x,y:t.y,
     tw:t.tw!==undefined?t.tw:(t.miri?65:220),
-    th:t.th!==undefined?t.th:(t.miri?121:65),
-    miri:!!t.miri, seats:t.seats
-  }));
-  const dD = decorElements.map(d => ({type:d.type,x:d.x,y:d.y,w:d.w,h:d.h,label:d.label}));
-
-  fetch('index.html')
-    .then(r => r.text())
-    .then(html => {
-      html = html
-        .replace("typeof __LA_GUESTS__!=='undefined'?__LA_GUESTS__:[]", JSON.stringify(gD))
-        .replace("typeof __LA_TABLES__!=='undefined'?__LA_TABLES__:[]", JSON.stringify(tD))
-        .replace("typeof __LA_DECORS__!=='undefined'?__LA_DECORS__:[]", JSON.stringify(dD))
-        .replace("typeof __LA_GUEST_NAMES__!=='undefined'?__LA_GUEST_NAMES__:[]", JSON.stringify(allNames));
-      const blob = new Blob([html], {type:'text/html;charset=utf-8'});
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'index.html';
-      document.body.appendChild(a); a.click();
-      setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(a.href); }, 1000);
-      alert('✓ index.html generat cu ' + allNames.length + ' invitați (' + gD.length + ' asignați)!\n\nUploadează pe GitHub → repo Dalia-Theo-Flight.');
-    })
-    .catch(e => alert('Eroare: ' + e.message + '\nAsigură-te că index.html e în același folder cu admin.html pe GitHub.'));
+    th:t.th!==undefined?t.th:(t.miri?121:65),miri:!!t.miri,seats:t.seats};});
+  var dD=decorElements.map(function(d){return {type:d.type,x:d.x,y:d.y,w:d.w,h:d.h,label:d.label};});
+  fetch('index.html').then(function(r){return r.text();}).then(function(html){
+    html=html
+      .replace("typeof __LA_GUESTS__!=='undefined'?__LA_GUESTS__:[]",JSON.stringify(gD))
+      .replace("typeof __LA_TABLES__!=='undefined'?__LA_TABLES__:[]",JSON.stringify(tD))
+      .replace("typeof __LA_DECORS__!=='undefined'?__LA_DECORS__:[]",JSON.stringify(dD))
+      .replace("typeof __LA_GUEST_NAMES__!=='undefined'?__LA_GUEST_NAMES__:[]",JSON.stringify(allNames));
+    var blob=new Blob([html],{type:'text/html;charset=utf-8'});
+    var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='index.html';
+    document.body.appendChild(a);a.click();
+    setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(a.href);},1000);
+    alert('✓ index.html generat cu '+allNames.length+' invatati ('+gD.length+' asignati)!\n\nUploadeaza pe GitHub.');
+  }).catch(function(e){alert('Eroare: '+e.message);});
 }
-
-// ══════════════════════════════════════════
-// RESET + NOU LAYOUT — buton de urgență
-// ══════════════════════════════════════════
-function resetToNewLayout(){
-  if(!confirm('Șterge tot și aplică noul layout (ca în seating-map)? Invitații nesalvați se pierd.')) return;
-  
-  // 1. Curăță localStorage
-  try{ localStorage.removeItem('mp11'); localStorage.removeItem('mp10'); localStorage.removeItem('loveairlines_data'); }catch(e){}
-  
-  // 2. Resetează toate variabilele
-  tables=[]; guests=[]; decorElements=[];
-  nextTid=1; nextGid=1; cityIdx=0;
-  sc=1; ox=0; oy=0;
-  
-  // 3. Aplică noul layout direct
-  const GAP_COL = 300;
-  const GAP_ROW = 145;
-  const rowsY = [];
-  for(let i=0; i<6; i++) rowsY.push(-375 + i*GAP_ROW);
-  const colsX = [-GAP_COL*1.5, -GAP_COL*0.5, GAP_COL*0.5, GAP_COL*1.5];
-  const ringY = (rowsY[2] + rowsY[3]) / 2;
-
-  // Masa mirilor
-  tables.push({id:nextTid++, name:'Roma', seats:8,
-    x:0, y:rowsY[0]-200, miri:true,
-    tw:TH_DEF, th:Math.round(TW_DEF*0.45)});
-
-  // Decors
-  decorElements.push({type:'stage', x: GAP_COL*2.4, y: rowsY[0]-100, w:280, h:210, label:'Scenă / Formație'});
-  decorElements.push({type:'ring',  x: 0,            y: ringY,         w:270, h:185, label:'Ring dans'});
-  decorElements.push({type:'bar',   x:-GAP_COL*2.4, y: rowsY[4]+80,   w:250, h:185, label:'Bar'});
-
-  // 6 rânduri × 4 mese cu noile nume
-  const names = [
-    'Torino','Milano','Verona','Firenze',
-    'Bergamo','Como','Trieste','Bologna',
-    'Venezia','Genova','Padova','Siena',
-    'Perugia','Napoli','Amalfi','Positano',
-    'Bari','Capri','Palermo','Siracusa',
-    'Agrigento','Taormina','Cagliari','Alghero'
-  ];
-  let ni = 0;
-  for(let r=0; r<6; r++){
-    for(let col=0; col<4; col++){
-      tables.push({id:nextTid++, name:names[ni++], seats:8,
-        x:colsX[col], y:rowsY[r], miri:false});
-    }
-  }
-
-  // 4. Salvează, redesenează
-  save();
-  renderGuests();
-  updateStats();
-  setTimeout(function(){ fitView(); draw(); }, 80);
-  alert('✓ Layout nou aplicat! ' + tables.length + ' mese create.');
-}
-
 </script>
+
 </body>
 </html>
