@@ -2599,190 +2599,201 @@ initPage();
 
 
 </script>
-</body>
-</html>
 
 <script>
-/* LOVE AIRLINES ADMIN — Round tables on seating-map.png */
-var TABLE_DATA = [
-    {name:"Roma",x:0,y:-251,miri:true,r:35},
-    {name:"Torino",x:-161,y:-166,miri:false,r:30},
-    {name:"Verona",x:-75,y:-171,miri:false,r:30},
-    {name:"Firenze",x:69,y:-171,miri:false,r:30},
-    {name:"Siena",x:156,y:-166,miri:false,r:30},
-    {name:"Milano",x:-185,y:-136,miri:false,r:30},
-    {name:"Trieste",x:-90,y:-141,miri:false,r:30},
-    {name:"Padova",x:83,y:-141,miri:false,r:30},
-    {name:"Bergamo",x:178,y:-136,miri:false,r:30},
-    {name:"Como",x:-210,y:-106,miri:false,r:38},
-    {name:"Genova",x:-104,y:-111,miri:false,r:38},
-    {name:"Perugia",x:97,y:-111,miri:false,r:38},
-    {name:"Bologna",x:204,y:-106,miri:false,r:38},
-    {name:"Venezia",x:-238,y:-76,miri:false,r:40},
-    {name:"Napoli",x:-119,y:-81,miri:false,r:38},
-    {name:"Amalfi",x:111,y:-81,miri:false,r:38},
-    {name:"Positano",x:230,y:-76,miri:false,r:40},
-    {name:"Bari",x:-466,y:143,miri:false,r:68},
-    {name:"Capri",x:-230,y:143,miri:false,r:68},
-    {name:"Siracusa",x:204,y:143,miri:false,r:68},
-    {name:"Palermo",x:448,y:143,miri:false,r:68},
-    {name:"Taormina",x:-507,y:191,miri:false,r:78},
-    {name:"Cagliari",x:-272,y:191,miri:false,r:78},
-    {name:"Agrigento",x:246,y:191,miri:false,r:78},
-    {name:"Alghero",x:489,y:191,miri:false,r:78}
+/* ═══════════════════════════════════════════════
+   LOVE AIRLINES — Admin cu imagine + mese rotunde
+   ═══════════════════════════════════════════════ */
+
+var LA_TABLES = [
+{name:"Roma",x:0,y:-251,miri:true,r:35},
+{name:"Torino",x:-161,y:-166,miri:false,r:30},
+{name:"Verona",x:-75,y:-171,miri:false,r:30},
+{name:"Firenze",x:69,y:-171,miri:false,r:30},
+{name:"Siena",x:156,y:-166,miri:false,r:30},
+{name:"Milano",x:-185,y:-136,miri:false,r:32},
+{name:"Trieste",x:-90,y:-141,miri:false,r:32},
+{name:"Padova",x:83,y:-141,miri:false,r:32},
+{name:"Bergamo",x:178,y:-136,miri:false,r:32},
+{name:"Como",x:-210,y:-106,miri:false,r:36},
+{name:"Genova",x:-104,y:-111,miri:false,r:36},
+{name:"Perugia",x:97,y:-111,miri:false,r:36},
+{name:"Bologna",x:204,y:-106,miri:false,r:36},
+{name:"Venezia",x:-238,y:-76,miri:false,r:40},
+{name:"Napoli",x:-119,y:-81,miri:false,r:38},
+{name:"Amalfi",x:111,y:-81,miri:false,r:38},
+{name:"Positano",x:230,y:-76,miri:false,r:40},
+{name:"Bari",x:-466,y:143,miri:false,r:65},
+{name:"Capri",x:-230,y:143,miri:false,r:65},
+{name:"Siracusa",x:204,y:143,miri:false,r:65},
+{name:"Palermo",x:448,y:143,miri:false,r:65},
+{name:"Taormina",x:-507,y:191,miri:false,r:75},
+{name:"Cagliari",x:-272,y:191,miri:false,r:75},
+{name:"Agrigento",x:246,y:191,miri:false,r:75},
+{name:"Alghero",x:489,y:191,miri:false,r:75}
 ];
 
-var _bgImg = new Image();
-_bgImg.onload = function(){ window.__bgLoaded=true; if(typeof draw==='function') draw(); };
-_bgImg.src = 'seating-map.png';
+// ── Imagine fundal ──────────────────────────────
+var _img = new Image();
+_img.onload = function(){ window._imgOk=true; if(typeof draw==='function') draw(); };
+_img.src = 'seating-map.png';
 
-function getR(t){
-  var d=TABLE_DATA.find(function(td){return td.name===t.name;});
-  return d?d.r:(t.miri?35:45);
-}
+// ── Patch principal ─────────────────────────────
+function laPatch(){
+  if(typeof drawGrid==='undefined'||typeof w2s==='undefined'){
+    return setTimeout(laPatch,80);
+  }
 
-function patchAll(){
-  if(typeof drawGrid==='undefined'||typeof w2s==='undefined'||
-     typeof getSeatPositions==='undefined'){setTimeout(patchAll,80);return;}
-
-  // Image background
-  window.drawGrid=function(){
-    if(!window.__bgLoaded)return;
-    var iW=1408,iH=768;
-    ctx.save();
-    ctx.drawImage(_bgImg,-iW/2*sc+ox,-iH/2*sc+oy,iW*sc,iH*sc);
-    ctx.restore();
+  // 1. Fundal = imaginea (înlocuiește grila)
+  window.drawGrid = function(){
+    if(!window._imgOk) return;
+    // Desenăm imaginea 1408x768 centrată la world(0,0)
+    var sx = -704*sc+ox, sy = -384*sc+oy;
+    ctx.drawImage(_img, sx, sy, 1408*sc, 768*sc);
   };
 
-  // Round table
-  window.drawTable=function(t){
-    var s=w2s(t.x,t.y),r=getR(t)*sc;
+  // 2. Masă rotundă normală
+  window.drawTable = function(t){
+    var s=w2s(t.x,t.y), r=laR(t)*sc;
     var isAct=activeTid===t.id;
     var filled=guests.filter(function(g){return g.tableId==t.id;}).length;
     ctx.save();
-    ctx.shadowColor='rgba(0,0,0,0.18)';ctx.shadowBlur=7*sc;ctx.shadowOffsetY=2*sc;
-    ctx.beginPath();ctx.arc(s.x,s.y,r,0,Math.PI*2);
-    var gr=ctx.createRadialGradient(s.x,s.y-r*0.25,r*0.05,s.x,s.y,r);
-    gr.addColorStop(0,'rgba(255,250,238,0.80)');
-    gr.addColorStop(1,'rgba(238,222,196,0.72)');
-    ctx.fillStyle=gr;ctx.fill();
-    ctx.shadowColor='transparent';
-    ctx.strokeStyle=isAct?'#b8924a':'rgba(175,150,105,0.90)';
-    ctx.lineWidth=(isAct?2.5:1.6)*sc;ctx.stroke();
-    ctx.beginPath();ctx.arc(s.x,s.y,r*0.75,0,Math.PI*2);
-    ctx.strokeStyle='rgba(195,175,140,0.35)';ctx.lineWidth=0.6*sc;ctx.stroke();
-    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.beginPath(); ctx.arc(s.x,s.y,r,0,Math.PI*2);
+    var gr=ctx.createRadialGradient(s.x,s.y-r*.25,r*.05,s.x,s.y,r);
+    gr.addColorStop(0,'rgba(255,250,238,0.82)');
+    gr.addColorStop(1,'rgba(235,218,192,0.74)');
+    ctx.fillStyle=gr; ctx.fill();
+    ctx.strokeStyle=isAct?'#b8924a':'rgba(170,145,100,0.88)';
+    ctx.lineWidth=(isAct?2.5:1.6)*sc; ctx.stroke();
+    ctx.beginPath(); ctx.arc(s.x,s.y,r*.74,0,Math.PI*2);
+    ctx.strokeStyle='rgba(190,168,130,0.32)'; ctx.lineWidth=.6*sc; ctx.stroke();
+    ctx.textAlign='center'; ctx.textBaseline='middle';
     var fz=Math.max(7,Math.round(10*sc));
     ctx.font='italic '+fz+'px "Cormorant Garamond",serif';
     ctx.fillStyle=isAct?'#8b5e20':'#4a2e10';
-    ctx.fillText(t.name,s.x,s.y-fz*0.35);
-    var cz=Math.max(5,Math.round(7.5*sc));
-    ctx.font=cz+'px "Jost",sans-serif';ctx.fillStyle='#9a7848';
-    ctx.fillText(filled+'/'+t.seats,s.x,s.y+fz*0.72);
+    ctx.fillText(t.name,s.x,s.y-fz*.38);
+    ctx.font=Math.max(5,Math.round(7.5*sc))+'px "Jost",sans-serif';
+    ctx.fillStyle='#9a7848';
+    ctx.fillText(filled+'/'+t.seats,s.x,s.y+fz*.72);
     getSeatPositions(t).forEach(function(sp,i){drawSeat(s.x+sp.x*sc,s.y+sp.y*sc,t.id,i);});
-    if(isAct)drawCornerHandles(t);
+    if(isAct) drawCornerHandles(t);
     ctx.restore();
   };
 
-  // Roma - gold
-  window.drawMiriTable=function(t){
-    var s=w2s(t.x,t.y),r=getR(t)*sc;
+  // 3. Masa mirilor (Roma) - aurie
+  window.drawMiriTable = function(t){
+    var s=w2s(t.x,t.y), r=laR(t)*sc;
     var isAct=activeTid===t.id;
     var filled=guests.filter(function(g){return g.tableId==t.id;}).length;
     ctx.save();
-    ctx.shadowColor='rgba(184,146,74,0.45)';ctx.shadowBlur=12*sc;ctx.shadowOffsetY=2*sc;
-    ctx.beginPath();ctx.arc(s.x,s.y,r,0,Math.PI*2);
-    var gr=ctx.createRadialGradient(s.x,s.y-r*0.3,r*0.1,s.x,s.y,r);
-    gr.addColorStop(0,'rgba(255,252,228,0.92)');
-    gr.addColorStop(1,'rgba(245,230,180,0.84)');
-    ctx.fillStyle=gr;ctx.fill();ctx.shadowColor='transparent';
+    ctx.beginPath(); ctx.arc(s.x,s.y,r,0,Math.PI*2);
+    var gr=ctx.createRadialGradient(s.x,s.y-r*.28,r*.08,s.x,s.y,r);
+    gr.addColorStop(0,'rgba(255,252,225,0.94)');
+    gr.addColorStop(1,'rgba(245,228,175,0.86)');
+    ctx.fillStyle=gr; ctx.fill();
     ctx.setLineDash([5*sc,3*sc]);
     ctx.strokeStyle=isAct?'#c9a84c':'#b8924a';
-    ctx.lineWidth=(isAct?3:2.2)*sc;ctx.stroke();ctx.setLineDash([]);
-    ctx.beginPath();ctx.arc(s.x,s.y,r*0.72,0,Math.PI*2);
-    ctx.strokeStyle='rgba(184,146,74,0.3)';ctx.lineWidth=0.7*sc;ctx.stroke();
-    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.lineWidth=(isAct?3:2.2)*sc; ctx.stroke(); ctx.setLineDash([]);
+    ctx.beginPath(); ctx.arc(s.x,s.y,r*.72,0,Math.PI*2);
+    ctx.strokeStyle='rgba(184,146,74,0.28)'; ctx.lineWidth=.7*sc; ctx.stroke();
+    ctx.textAlign='center'; ctx.textBaseline='middle';
     var fz=Math.max(7,Math.round(11*sc));
     ctx.font='bold italic '+fz+'px "Cormorant Garamond",serif';
     ctx.fillStyle='#7a4e08';
-    ctx.fillText(t.name,s.x,s.y-fz*0.35);
-    var cz=Math.max(5,Math.round(7.5*sc));
-    ctx.font=cz+'px "Jost",sans-serif';ctx.fillStyle='#b8924a';
-    ctx.fillText(filled+'/'+t.seats,s.x,s.y+fz*0.72);
+    ctx.fillText(t.name,s.x,s.y-fz*.38);
+    ctx.font=Math.max(5,Math.round(7.5*sc))+'px "Jost",sans-serif';
+    ctx.fillStyle='#b8924a';
+    ctx.fillText(filled+'/'+t.seats,s.x,s.y+fz*.72);
     getSeatPositions(t).forEach(function(sp,i){drawSeat(s.x+sp.x*sc,s.y+sp.y*sc,t.id,i);});
-    if(isAct)drawCornerHandles(t);
+    if(isAct) drawCornerHandles(t);
     ctx.restore();
   };
 
-  // Seats in circle
-  window.getSeatPositions=function(t){
-    var r=getR(t),orbitR=r+(SEAT_R||9)+3,n=t.seats||8,pos=[];
+  // 4. Scaune în cerc în jurul mesei
+  window.getSeatPositions = function(t){
+    var r=laR(t), orb=r+(SEAT_R||9)+3, n=t.seats||8, pos=[];
     for(var i=0;i<n;i++){
-      var a=(i/n)*Math.PI*2-Math.PI/2;
-      pos.push({x:orbitR*Math.cos(a),y:orbitR*Math.sin(a)});
+      var a=i/n*Math.PI*2-Math.PI/2;
+      pos.push({x:orb*Math.cos(a), y:orb*Math.sin(a)});
     }
     return pos;
   };
 
-  // Hit test circle
-  window.getTableAt=function(sx,sy){
+  // 5. Hit-test cerc
+  window.getTableAt = function(sx,sy){
     for(var i=tables.length-1;i>=0;i--){
-      var t=tables[i],s=w2s(t.x,t.y);
-      var r=(getR(t)+(SEAT_R||9)+5)*sc;
-      var dx=sx-s.x,dy=sy-s.y;
-      if(dx*dx+dy*dy<=r*r)return t;
+      var t=tables[i], s=w2s(t.x,t.y);
+      var r=(laR(t)+(SEAT_R||9)+5)*sc;
+      var dx=sx-s.x, dy=sy-s.y;
+      if(dx*dx+dy*dy<=r*r) return t;
     }
     return null;
   };
 
-  applyLayout();
+  // 6. Aplică layout nou
+  laApply();
+  console.log('[LA] Patch OK');
 }
 
-function applyLayout(){
-  if(typeof tables==='undefined'){setTimeout(applyLayout,100);return;}
-  // Already correct?
-  if(tables.length===25&&tables.some(function(t){return t.name==='Torino'&&Math.abs(t.x+161)<5;})){
-    setTimeout(function(){setImageZoom();if(typeof draw==='function')draw();},100);
-    return;
-  }
-  try{localStorage.removeItem('mp11');localStorage.removeItem('mp10');}catch(e){}
+function laR(t){
+  var d=LA_TABLES.find(function(x){return x.name===t.name;});
+  return d?d.r:(t.miri?35:42);
+}
+
+function laApply(){
+  if(typeof tables==='undefined'){return setTimeout(laApply,100);}
+
+  // Șterge tot din localStorage + date vechi
+  try{
+    localStorage.removeItem('mp11');
+    localStorage.removeItem('mp10');
+    localStorage.removeItem('loveairlines_data');
+  }catch(e){}
+
+  // Resetează arrays
   tables.length=0;
-  if(typeof decorElements!=='undefined')decorElements.length=0;
-  nextTid=1;
-  TABLE_DATA.forEach(function(d){
-    tables.push({id:nextTid++,name:d.name,seats:8,x:d.x,y:d.y,miri:d.miri});
+  if(typeof decorElements!=='undefined') decorElements.length=0;
+  if(typeof guests!=='undefined') guests.length=0;
+  nextTid=1; nextGid=1; cityIdx=0;
+
+  // Adaugă mesele noi
+  LA_TABLES.forEach(function(d){
+    tables.push({
+      id:nextTid++, name:d.name,
+      seats:8, x:d.x, y:d.y, miri:d.miri
+    });
   });
-  if(typeof save==='function')save();
-  if(typeof renderGuests==='function')renderGuests();
-  if(typeof updateStats==='function')updateStats();
-  setTimeout(function(){setImageZoom();if(typeof draw==='function')draw();},200);
+
+  // Salvează
+  if(typeof save==='function') save();
+  if(typeof renderGuests==='function') renderGuests();
+  if(typeof updateStats==='function') updateStats();
+
+  // Zoom: imaginea umple lățimea canvas-ului, centrată
+  setTimeout(function(){
+    if(typeof cv==='undefined') return;
+    sc = cv.clientWidth / 1408;
+    ox = cv.clientWidth  / 2;
+    oy = cv.clientHeight / 2;
+    if(typeof draw==='function') draw();
+    console.log('[LA] Layout applied: '+tables.length+' tables, sc='+sc.toFixed(3));
+  }, 200);
 }
 
-function setImageZoom(){
-  if(typeof cv==='undefined')return;
-  var cW=cv.clientWidth,cH=cv.clientHeight;
-  // Scale so image fits width, centered vertically
-  sc=cW/1408;
-  ox=cW/2;
-  // Center image vertically - image height = 768*sc
-  oy=cH/2;
-  // If image is taller than canvas, align top
-  if(768*sc>cH) oy=384*sc;
-}
-
-setTimeout(patchAll,350);
-</script><script>
+// Rulează după ce tot codul original s-a încărcat
+setTimeout(laPatch, 400);
+</script>
+<script>
 function forceRenameAllTables(){
-  var names=['Torino','Verona','Firenze','Siena','Milano','Trieste','Padova','Bergamo',
+  var N=['Torino','Verona','Firenze','Siena','Milano','Trieste','Padova','Bergamo',
     'Como','Genova','Perugia','Bologna','Venezia','Napoli','Amalfi','Positano',
     'Bari','Capri','Siracusa','Palermo','Taormina','Cagliari','Agrigento','Alghero'];
-  var nm=tables.filter(function(t){return !t.miri;});
-  nm.forEach(function(t,i){if(names[i])t.name=names[i];});
+  tables.filter(function(t){return !t.miri;}).forEach(function(t,i){if(N[i])t.name=N[i];});
   guests.forEach(function(g){
     if(g.tableId!=null){var t=tables.find(function(x){return x.id===g.tableId;});if(t)g.table=t.name;}
   });
   draw();renderGuests();updateStats();save();
-  alert('Redenumite: '+nm.length+' mese');
+  alert('Redenumite!');
 }
 function exportFullSite(){
   if(!guests.length){alert('Importa invitatii mai intai!');return;}
@@ -2794,18 +2805,19 @@ function exportFullSite(){
   var allNames=guests.map(function(g){return g.name;}).filter(Boolean);
   var tD=tables.map(function(t){return{id:t.id,name:t.name,x:t.x,y:t.y,
     tw:t.tw||220,th:t.th||65,miri:!!t.miri,seats:t.seats};});
-  var dD=(decorElements||[]).map(function(d){return{type:d.type,x:d.x,y:d.y,w:d.w,h:d.h,label:d.label};});
   fetch('index.html').then(function(r){return r.text();}).then(function(html){
     html=html
       .replace("typeof __LA_GUESTS__!=='undefined'?__LA_GUESTS__:[]",JSON.stringify(gD))
       .replace("typeof __LA_TABLES__!=='undefined'?__LA_TABLES__:[]",JSON.stringify(tD))
-      .replace("typeof __LA_DECORS__!=='undefined'?__LA_DECORS__:[]",JSON.stringify(dD))
+      .replace("typeof __LA_DECORS__!=='undefined'?__LA_DECORS__:[]",JSON.stringify([])) 
       .replace("typeof __LA_GUEST_NAMES__!=='undefined'?__LA_GUEST_NAMES__:[]",JSON.stringify(allNames));
-    var blob=new Blob([html],{type:'text/html;charset=utf-8'});
-    var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='index.html';
+    var b=new Blob([html],{type:'text/html;charset=utf-8'});
+    var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='index.html';
     document.body.appendChild(a);a.click();
     setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(a.href);},1000);
-    alert('index.html generat cu '+allNames.length+' invatati!\nUploadeaza pe GitHub.');
+    alert('Exportat cu '+allNames.length+' invatati! Uploadeaza pe GitHub.');
   }).catch(function(e){alert('Eroare: '+e.message);});
 }
 </script>
+</body>
+</html>
