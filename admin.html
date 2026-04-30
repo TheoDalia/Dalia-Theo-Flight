@@ -153,7 +153,7 @@ header{background:var(--deep);padding:7px 14px;display:flex;align-items:center;g
         <button class="btn btn-outline" onclick="exportExcelTemplate()">↓ CSV</button>
         <button class="btn btn-outline" onclick="openImport()">↑ Excel</button>
         <button class="btn btn-outline" onclick="exportGuestPage()" style="background:#3a5c44;color:white;border-color:#3a5c44;width:100%;margin-top:4px;justify-content:center;" title="Generează pagina pentru invitați cu QR">📍 Pagină invitați</button>
-        <button onclick="exportFullSite()" style="background:#1a3a2a;color:#c9a84c;border:1px solid #c9a84c;width:100%;margin-top:4px;padding:8px;border-radius:5px;cursor:pointer;font-size:11px;font-weight:600;letter-spacing:1px;">📥 Exportă site complet</button>
+        <button onclick="exportFullSite()" style="background:#1a3a2a;color:#c9a84c;border:1px solid #c9a84c;width:100%;margin-top:4px;padding:8px;border-radius:5px;cursor:pointer;font-size:11px;font-weight:600;">📥 Exportă site complet</button>
         <button onclick="forceRenameAllTables()" style="background:#5a3a10;color:#f0d090;border:1px solid #b8924a;width:100%;margin-top:4px;padding:8px;border-radius:5px;cursor:pointer;font-size:11px;">✎ Redenumește mese</button>
         <button class="btn btn-red btn-sm" onclick="confirmReset()" style="width:100%;margin-top:4px;justify-content:center;font-size:.72rem;" title="Șterge tot și resetează la layout default">⟳ Reset complet</button>
       </div>
@@ -2599,180 +2599,287 @@ initPage();
 
 
 </script>
+<script>
+function forceRenameAllTables(){
+  var names=['Torino','Verona','Firenze','Siena','Milano','Trieste','Padova','Bergamo',
+    'Como','Genova','Perugia','Bologna','Venezia','Napoli','Amalfi','Positano',
+    'Bari','Capri','Siracusa','Palermo','Taormina','Cagliari','Agrigento','Alghero'];
+  var nm=tables.filter(function(t){return !t.miri;});
+  nm.forEach(function(t,i){if(names[i])t.name=names[i];});
+  guests.forEach(function(g){
+    if(g.tableId!=null){var t=tables.find(function(x){return x.id===g.tableId;});if(t)g.table=t.name;}
+  });
+  draw(); renderGuests(); updateStats(); save();
+  alert('✓ '+nm.length+' mese redenumite!');
+}
+function exportFullSite(){
+  if(!guests.length){alert('Importa invitatii mai intai!');return;}
+  var gD=guests.filter(function(g){return g.tableId!=null;}).map(function(g){
+    var t=tables.find(function(x){return x.id==g.tableId;});
+    return{name:g.name,table:t?t.name:'',tableId:g.tableId,
+           seatIdx:g.seatIdx!=null?g.seatIdx:0,menu:g.menu||'normal',cazare:g.cazare||'nu'};
+  });
+  var allNames=guests.map(function(g){return g.name;}).filter(Boolean);
+  var tD=tables.map(function(t){return{id:t.id,name:t.name,x:t.x,y:t.y,
+    tw:t.tw||220,th:t.th||65,miri:!!t.miri,seats:t.seats};});
+  var dD=(decorElements||[]).map(function(d){return{type:d.type,x:d.x,y:d.y,w:d.w,h:d.h,label:d.label};});
+  fetch('index.html').then(function(r){return r.text();}).then(function(html){
+    html=html
+      .replace("typeof __LA_GUESTS__!=='undefined'?__LA_GUESTS__:[]",JSON.stringify(gD))
+      .replace("typeof __LA_TABLES__!=='undefined'?__LA_TABLES__:[]",JSON.stringify(tD))
+      .replace("typeof __LA_DECORS__!=='undefined'?__LA_DECORS__:[]",JSON.stringify(dD))
+      .replace("typeof __LA_GUEST_NAMES__!=='undefined'?__LA_GUEST_NAMES__:[]",JSON.stringify(allNames));
+    var blob=new Blob([html],{type:'text/html;charset=utf-8'});
+    var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='index.html';
+    document.body.appendChild(a);a.click();
+    setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(a.href);},1000);
+    alert('✓ index.html generat cu '+allNames.length+' invatati!\nUploadeaza pe GitHub.');
+  }).catch(function(e){alert('Eroare: '+e.message);});
+}
+</script>
+</body>
+</html>
 
 <script>
 /* ═══════════════════════════════════════════════════════════════
-   LOVE AIRLINES ADMIN — Image background + Fixed table positions
+   LOVE AIRLINES — Round tables overlay on seating-map.png
    ═══════════════════════════════════════════════════════════════ */
-(function() {
-  var IMG_W = 1408, IMG_H = 768;
-  var _img = null;
-  var _ready = false;
 
-  // 1. Load the background image
-  var img = new Image();
-  img.onload = function() {
-    _img = img;
-    if (typeof draw === 'function') draw();
-    console.log('[Admin] Image loaded OK');
-  };
-  img.onerror = function() {
-    console.warn('[Admin] seating-map.png not found!');
-  };
-  img.src = 'seating-map.png';
+// ── 1. BACKGROUND IMAGE ──────────────────────────────────────────
+var _bgImg = new Image();
+_bgImg.onload = function() {
+  window.__bgLoaded = true;
+  if (typeof draw === 'function') draw();
+};
+_bgImg.src = 'seating-map.png';
 
-  // 2. Override drawGrid to draw image instead of grid
-  function patchDrawGrid() {
-    if (typeof drawGrid === 'undefined') { setTimeout(patchDrawGrid, 50); return; }
-    window.drawGrid = function() {
-      if (!_img) return;
-      // Draw image centered at world(0,0), size = IMG_W x IMG_H world units
-      // w2s(wx,wy) = {x: wx*sc+ox, y: wy*sc+oy}
-      var sx = (-IMG_W/2) * sc + ox;
-      var sy = (-IMG_H/2) * sc + oy;
-      var sw = IMG_W * sc;
-      var sh = IMG_H * sc;
-      ctx.save();
-      ctx.drawImage(_img, sx, sy, sw, sh);
-      ctx.restore();
-    };
-    console.log('[Admin] drawGrid patched');
+// ── 2. OVERRIDE drawGrid → draw image as background ───────────────
+function patchAll() {
+  if (typeof drawGrid === 'undefined' || typeof draw === 'undefined') {
+    setTimeout(patchAll, 80); return;
   }
-  patchDrawGrid();
 
-  // 3. Set fixed table layout matching image positions
-  var FIXED_TABLES = [
-    {name:"Roma",x:0,y:-254,miri:true},
-      {name:"Torino",x:-164,y:-166,miri:false},
-      {name:"Verona",x:-77,y:-171,miri:false},
-      {name:"Firenze",x:66,y:-171,miri:false},
-      {name:"Siena",x:153,y:-166,miri:false},
-      {name:"Milano",x:-189,y:-136,miri:false},
-      {name:"Trieste",x:-94,y:-141,miri:false},
-      {name:"Padova",x:81,y:-141,miri:false},
-      {name:"Bergamo",x:174,y:-136,miri:false},
-      {name:"Como",x:-214,y:-106,miri:false},
-      {name:"Genova",x:-108,y:-111,miri:false},
-      {name:"Perugia",x:96,y:-111,miri:false},
-      {name:"Bologna",x:200,y:-106,miri:false},
-      {name:"Venezia",x:-242,y:-76,miri:false},
-      {name:"Napoli",x:-122,y:-81,miri:false},
-      {name:"Amalfi",x:109,y:-81,miri:false},
-      {name:"Positano",x:228,y:-76,miri:false},
-      {name:"Bari",x:-467,y:143,miri:false},
-      {name:"Capri",x:-234,y:143,miri:false},
-      {name:"Siracusa",x:201,y:143,miri:false},
-      {name:"Palermo",x:444,y:143,miri:false},
-      {name:"Taormina",x:-510,y:190,miri:false},
-      {name:"Cagliari",x:-274,y:190,miri:false},
-      {name:"Agrigento",x:242,y:190,miri:false},
-      {name:"Alghero",x:486,y:190,miri:false}
-  ];
+  // Draw background image
+  window.drawGrid = function() {
+    if (!window.__bgLoaded) return;
+    var imgW = 1408, imgH = 768;
+    var sx = -imgW/2 * sc + ox;
+    var sy = -imgH/2 * sc + oy;
+    ctx.save();
+    ctx.drawImage(_bgImg, sx, sy, imgW*sc, imgH*sc);
+    ctx.restore();
+  };
 
-  function applyImageLayout() {
-    if (typeof tables === 'undefined' || typeof save === 'undefined') {
-      setTimeout(applyImageLayout, 100); return;
-    }
-    // Only apply if not already set correctly
-    var isCorrect = tables.length === 25 &&
-      tables.some(function(t){ return t.name === 'Torino'; });
-    if (isCorrect) {
-      console.log('[Admin] Layout already correct');
-      return;
-    }
+  // ── 3. Round table drawing ────────────────────────────────────
+  window.drawTable = function(t) {
+    var s = w2s(t.x, t.y);
+    var r = tableRadius(t) * sc;
+    var isAct = activeTid === t.id;
+    var gHere = guests.filter(function(g){ return g.tableId == t.id; });
+    var filled = gHere.length;
 
-    console.log('[Admin] Applying image layout...');
-    tables.length = 0;
-    if (typeof decorElements !== 'undefined') decorElements.length = 0;
-    nextTid = 1; cityIdx = 0;
+    ctx.save();
 
-    var TW = TW_DEF || 220;
-    var TH = TH_DEF || 65;
+    // Shadow
+    ctx.shadowColor = 'rgba(26,20,16,.2)';
+    ctx.shadowBlur = 8*sc;
+    ctx.shadowOffsetY = 2*sc;
 
-    FIXED_TABLES.forEach(function(t) {
-      var tw, th;
-      if (t.miri) {
-        // Roma - small table matching image
-        tw = Math.round(TH * 0.9);
-        th = Math.round(TW * 0.38);
-      } else {
-        tw = TW; th = TH;
-      }
-      tables.push({
-        id: nextTid++, name: t.name, seats: 8,
-        x: t.x, y: t.y, miri: t.miri, tw: tw, th: th
-      });
+    // Table circle - semi-transparent so image shows through
+    ctx.beginPath(); ctx.arc(s.x, s.y, r, 0, Math.PI*2);
+    var gr = ctx.createRadialGradient(s.x, s.y-r*0.3, r*0.1, s.x, s.y, r);
+    gr.addColorStop(0, 'rgba(255,250,240,0.82)');
+    gr.addColorStop(1, 'rgba(240,230,210,0.75)');
+    ctx.fillStyle = gr;
+    ctx.fill();
+    ctx.shadowColor = 'transparent';
+
+    // Border
+    ctx.strokeStyle = isAct ? '#b8924a' : 'rgba(200,180,140,0.9)';
+    ctx.lineWidth = (isAct ? 2.5 : 1.8) * sc;
+    ctx.stroke();
+
+    // Inner ring (tablecloth effect)
+    ctx.beginPath(); ctx.arc(s.x, s.y, r * 0.78, 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(210,195,170,0.5)';
+    ctx.lineWidth = 0.8*sc;
+    ctx.stroke();
+
+    // Table name
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    var fontSize = Math.max(9, Math.round(12*sc));
+    ctx.font = 'italic ' + fontSize + 'px "Cormorant Garamond",serif';
+    ctx.fillStyle = isAct ? '#8b5e20' : '#5a3a18';
+    ctx.fillText(t.name, s.x, s.y - fontSize*0.4);
+
+    // Filled/seats count
+    var fSize = Math.max(7, Math.round(9*sc));
+    ctx.font = fSize + 'px "Jost",sans-serif';
+    ctx.fillStyle = '#a08060';
+    ctx.fillText(filled + '/' + t.seats, s.x, s.y + fontSize*0.8);
+
+    // Draw seats
+    var spos = getSeatPositions(t);
+    spos.forEach(function(sp, idx) {
+      drawSeat(s.x + sp.x*sc, s.y + sp.y*sc, t.id, idx);
     });
 
-    // Set zoom so image fills the canvas perfectly
-    sc = cv.clientWidth / IMG_W;
-    ox = cv.clientWidth / 2;
-    oy = cv.clientHeight / 2;
+    // Active handles
+    if (isAct) drawCornerHandles(t);
+    ctx.restore();
+  };
 
-    save();
-    if (typeof renderGuests === 'function') renderGuests();
-    if (typeof updateStats === 'function') updateStats();
-    setTimeout(function() {
-      if (typeof draw === 'function') draw();
-    }, 100);
-    console.log('[Admin] Layout applied: ' + tables.length + ' tables');
-    _ready = true;
-  }
+  // ── Roma (mirilor) - special gold circle ─────────────────────
+  window.drawMiriTable = function(t) {
+    var s = w2s(t.x, t.y);
+    var r = tableRadius(t) * sc;
+    var isAct = activeTid === t.id;
+    var gHere = guests.filter(function(g){ return g.tableId == t.id; });
+    var filled = gHere.length;
 
-  setTimeout(applyImageLayout, 400);
+    ctx.save();
+    ctx.shadowColor = 'rgba(184,146,74,.35)';
+    ctx.shadowBlur = 14*sc;
+    ctx.shadowOffsetY = 2*sc;
 
-})();
+    // Gold circle
+    ctx.beginPath(); ctx.arc(s.x, s.y, r, 0, Math.PI*2);
+    var gr = ctx.createRadialGradient(s.x, s.y-r*0.3, r*0.1, s.x, s.y, r);
+    gr.addColorStop(0, 'rgba(255,252,235,0.88)');
+    gr.addColorStop(1, 'rgba(245,235,195,0.80)');
+    ctx.fillStyle = gr;
+    ctx.fill();
+    ctx.shadowColor = 'transparent';
 
-/* ─── Extra functions ──────────────────────────────────────────── */
-function forceRenameAllTables() {
-  var names = ['Torino','Verona','Firenze','Siena',
+    ctx.strokeStyle = isAct ? '#c9a84c' : '#b8924a';
+    ctx.lineWidth = (isAct ? 3 : 2.2) * sc;
+    // Dashed gold border for miri
+    ctx.setLineDash([6*sc, 3*sc]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.beginPath(); ctx.arc(s.x, s.y, r*0.75, 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(184,146,74,0.4)';
+    ctx.lineWidth = 0.8*sc;
+    ctx.stroke();
+
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    var fontSize = Math.max(9, Math.round(13*sc));
+    ctx.font = 'bold italic ' + fontSize + 'px "Cormorant Garamond",serif';
+    ctx.fillStyle = '#8b5e10';
+    ctx.fillText(t.name, s.x, s.y - fontSize*0.4);
+    var fSize = Math.max(7, Math.round(9*sc));
+    ctx.font = fSize + 'px "Jost",sans-serif';
+    ctx.fillStyle = '#b8924a';
+    ctx.fillText(filled + '/' + t.seats, s.x, s.y + fontSize*0.8);
+
+    var spos = getSeatPositions(t);
+    spos.forEach(function(sp, idx) {
+      drawSeat(s.x + sp.x*sc, s.y + sp.y*sc, t.id, idx);
+    });
+
+    if (isAct) drawCornerHandles(t);
+    ctx.restore();
+  };
+
+  // ── 4. Seats in a circle around the table ────────────────────
+  window.getSeatPositions = function(t) {
+    var r = tableRadius(t);
+    var seatR = SEAT_R + 2;
+    var orbitR = r + seatR + 3;
+    var seats = t.seats;
+    var pos = [];
+    for (var i = 0; i < seats; i++) {
+      // Start from top, go clockwise
+      var angle = (i / seats) * Math.PI * 2 - Math.PI/2;
+      pos.push({ x: orbitR * Math.cos(angle), y: orbitR * Math.sin(angle) });
+    }
+    return pos;
+  };
+
+  // ── 5. Hit test → circle ──────────────────────────────────────
+  window.getTableAt = function(sx, sy) {
+    for (var i = tables.length-1; i >= 0; i--) {
+      var t = tables[i];
+      var s = w2s(t.x, t.y);
+      var r = (tableRadius(t) + SEAT_R + 8) * sc;
+      var dx = sx - s.x, dy = sy - s.y;
+      if (dx*dx + dy*dy <= r*r) return t;
+    }
+    return null;
+  };
+
+  // ── 6. Fix layout: apply image positions + set zoom ───────────
+  applyImageLayout();
+}
+
+// Table radius helper (world units)
+function tableRadius(t) {
+  if (t.miri) return 42;
+  // Top section tables (smaller, perspective)
+  if (t.y < -60) return 50;
+  // Bottom section tables (bigger, closer)
+  return 80;
+}
+
+// Fixed table positions matching seating-map.png
+function applyImageLayout() {
+  if (typeof tables === 'undefined') { setTimeout(applyImageLayout, 100); return; }
+
+  var NAMES = ['Torino','Verona','Firenze','Siena',
     'Milano','Trieste','Padova','Bergamo',
     'Como','Genova','Perugia','Bologna',
     'Venezia','Napoli','Amalfi','Positano',
     'Bari','Capri','Siracusa','Palermo',
     'Taormina','Cagliari','Agrigento','Alghero'];
-  var nm = tables.filter(function(t){return !t.miri;});
-  nm.forEach(function(t,i){ if(names[i]) t.name = names[i]; });
-  guests.forEach(function(g){
-    if(g.tableId != null){
-      var t = tables.find(function(x){return x.id===g.tableId;});
-      if(t) g.table = t.name;
-    }
+
+  // Check if already correct
+  var nonMiri = tables.filter(function(t){ return !t.miri; });
+  var correct = nonMiri.length === 24 &&
+    tables.some(function(t){ return t.name==='Torino'; });
+  if (correct) {
+    setTimeout(function(){ if(typeof draw==='function') draw(); }, 100);
+    return;
+  }
+
+  try{ localStorage.removeItem('mp11'); localStorage.removeItem('mp10'); } catch(e){}
+  tables.length = 0;
+  if (typeof decorElements !== 'undefined') decorElements.length = 0;
+  nextTid = 1;
+
+  // Roma - cockpit
+  tables.push({id:nextTid++, name:'Roma', seats:8, x:0, y:-254, miri:true});
+
+  // 24 city tables - exact pixel positions from image
+  var POS = [
+    // Top section (y < 0) — inside fuselage, perspective
+    [-164,-166],[-77,-171],[66,-171],[153,-166],
+    [-189,-136],[-94,-141],[81,-141],[174,-136],
+    [-214,-106],[-108,-111],[96,-111],[200,-106],
+    [-242,-76],[-122,-81],[109,-81],[228,-76],
+    // Bottom section (y > 0) — outside, bigger tables
+    [-467,-17],[-234,-17],[201,-17],[444,-17],
+    [-510,30],[-274,30],[242,30],[486,30]
+  ];
+
+  POS.forEach(function(p, i) {
+    tables.push({id:nextTid++, name:NAMES[i], seats:8, x:p[0], y:p[1], miri:false});
   });
-  draw(); renderGuests(); updateStats(); save();
-  alert('✓ ' + nm.length + ' mese redenumite!');
+
+  if (typeof save === 'function') save();
+  if (typeof renderGuests === 'function') renderGuests();
+  if (typeof updateStats === 'function') updateStats();
+
+  // Zoom to fit image
+  sc = (typeof cv !== 'undefined' ? cv.clientWidth : 900) / 1408;
+  ox = (typeof cv !== 'undefined' ? cv.clientWidth : 900) / 2;
+  oy = (typeof cv !== 'undefined' ? cv.clientHeight : 600) / 2;
+
+  setTimeout(function(){
+    if (typeof fitView === 'function') fitView();
+    if (typeof draw === 'function') draw();
+  }, 150);
 }
 
-function exportFullSite() {
-  if (!guests.length) { alert('Importa invitatii mai intai!'); return; }
-  var gD = guests.filter(function(g){return g.tableId!=null;}).map(function(g){
-    var t = tables.find(function(x){return x.id==g.tableId;});
-    return {name:g.name, table:t?t.name:'', tableId:g.tableId,
-            seatIdx:g.seatIdx!=null?g.seatIdx:0, menu:g.menu||'normal', cazare:g.cazare||'nu'};
-  });
-  var allNames = guests.map(function(g){return g.name;}).filter(Boolean);
-  var tD = tables.map(function(t){
-    return {id:t.id, name:t.name, x:t.x, y:t.y,
-            tw:t.tw||220, th:t.th||65, miri:!!t.miri, seats:t.seats};
-  });
-  var dD = (decorElements||[]).map(function(d){
-    return {type:d.type, x:d.x, y:d.y, w:d.w, h:d.h, label:d.label};
-  });
-  fetch('index.html').then(function(r){return r.text();}).then(function(html){
-    html = html
-      .replace("typeof __LA_GUESTS__!=='undefined'?__LA_GUESTS__:[]", JSON.stringify(gD))
-      .replace("typeof __LA_TABLES__!=='undefined'?__LA_TABLES__:[]", JSON.stringify(tD))
-      .replace("typeof __LA_DECORS__!=='undefined'?__LA_DECORS__:[]", JSON.stringify(dD))
-      .replace("typeof __LA_GUEST_NAMES__!=='undefined'?__LA_GUEST_NAMES__:[]", JSON.stringify(allNames));
-    var blob = new Blob([html], {type:'text/html;charset=utf-8'});
-    var a = document.createElement('a');
-    a.href = URL.createObjectURL(blob); a.download = 'index.html';
-    document.body.appendChild(a); a.click();
-    setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(a.href);}, 1000);
-    alert('✓ index.html generat cu ' + allNames.length + ' invatati!\nUploadeaza pe GitHub.');
-  }).catch(function(e){ alert('Eroare: ' + e.message); });
-}
+setTimeout(patchAll, 300);
 </script>
-
-</body>
-</html>
