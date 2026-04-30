@@ -2603,198 +2603,174 @@ initPage();
 </html>
 
 <script>
-/* ═══════════════════════════════════════════════════════
-   LOVE AIRLINES ADMIN — Round tables on seating-map.png
-   ═══════════════════════════════════════════════════════ */
-
-// Table data: exact positions + radii matching image
+/* LOVE AIRLINES ADMIN — Round tables on seating-map.png */
 var TABLE_DATA = [
-    {name:"Roma",x:0,y:-251,miri:true,r:40},
-    {name:"Torino",x:-164,y:-164,miri:false,r:33},
-    {name:"Verona",x:-76,y:-169,miri:false,r:33},
-    {name:"Firenze",x:66,y:-169,miri:false,r:33},
-    {name:"Siena",x:154,y:-164,miri:false,r:33},
-    {name:"Milano",x:-188,y:-134,miri:false,r:36},
-    {name:"Trieste",x:-92,y:-139,miri:false,r:36},
-    {name:"Padova",x:80,y:-139,miri:false,r:36},
-    {name:"Bergamo",x:176,y:-134,miri:false,r:36},
-    {name:"Como",x:-212,y:-104,miri:false,r:40},
-    {name:"Genova",x:-106,y:-109,miri:false,r:40},
-    {name:"Perugia",x:96,y:-109,miri:false,r:40},
-    {name:"Bologna",x:202,y:-104,miri:false,r:40},
-    {name:"Venezia",x:-240,y:-74,miri:false,r:45},
-    {name:"Napoli",x:-120,y:-79,miri:false,r:45},
-    {name:"Amalfi",x:108,y:-79,miri:false,r:45},
-    {name:"Positano",x:228,y:-74,miri:false,r:45},
-    {name:"Bari",x:-466,y:144,miri:false,r:72},
-    {name:"Capri",x:-231,y:144,miri:false,r:72},
-    {name:"Siracusa",x:204,y:144,miri:false,r:72},
-    {name:"Palermo",x:446,y:144,miri:false,r:72},
-    {name:"Taormina",x:-508,y:192,miri:false,r:82},
-    {name:"Cagliari",x:-272,y:192,miri:false,r:82},
-    {name:"Agrigento",x:246,y:192,miri:false,r:82},
-    {name:"Alghero",x:488,y:192,miri:false,r:82}
+    {name:"Roma",x:0,y:-251,miri:true,r:35},
+    {name:"Torino",x:-161,y:-166,miri:false,r:30},
+    {name:"Verona",x:-75,y:-171,miri:false,r:30},
+    {name:"Firenze",x:69,y:-171,miri:false,r:30},
+    {name:"Siena",x:156,y:-166,miri:false,r:30},
+    {name:"Milano",x:-185,y:-136,miri:false,r:30},
+    {name:"Trieste",x:-90,y:-141,miri:false,r:30},
+    {name:"Padova",x:83,y:-141,miri:false,r:30},
+    {name:"Bergamo",x:178,y:-136,miri:false,r:30},
+    {name:"Como",x:-210,y:-106,miri:false,r:38},
+    {name:"Genova",x:-104,y:-111,miri:false,r:38},
+    {name:"Perugia",x:97,y:-111,miri:false,r:38},
+    {name:"Bologna",x:204,y:-106,miri:false,r:38},
+    {name:"Venezia",x:-238,y:-76,miri:false,r:40},
+    {name:"Napoli",x:-119,y:-81,miri:false,r:38},
+    {name:"Amalfi",x:111,y:-81,miri:false,r:38},
+    {name:"Positano",x:230,y:-76,miri:false,r:40},
+    {name:"Bari",x:-466,y:143,miri:false,r:68},
+    {name:"Capri",x:-230,y:143,miri:false,r:68},
+    {name:"Siracusa",x:204,y:143,miri:false,r:68},
+    {name:"Palermo",x:448,y:143,miri:false,r:68},
+    {name:"Taormina",x:-507,y:191,miri:false,r:78},
+    {name:"Cagliari",x:-272,y:191,miri:false,r:78},
+    {name:"Agrigento",x:246,y:191,miri:false,r:78},
+    {name:"Alghero",x:489,y:191,miri:false,r:78}
 ];
 
-// Load background image
 var _bgImg = new Image();
 _bgImg.onload = function(){ window.__bgLoaded=true; if(typeof draw==='function') draw(); };
-_bgImg.onerror = function(){ console.warn('seating-map.png not found'); };
 _bgImg.src = 'seating-map.png';
 
-function patchAll() {
-  if (typeof drawGrid==='undefined' || typeof draw==='undefined' ||
-      typeof w2s==='undefined' || typeof getSeatPositions==='undefined') {
-    setTimeout(patchAll, 80); return;
-  }
+function getR(t){
+  var d=TABLE_DATA.find(function(td){return td.name===t.name;});
+  return d?d.r:(t.miri?35:45);
+}
 
-  // 1. Background image instead of grid
-  window.drawGrid = function() {
-    if (!window.__bgLoaded) return;
-    var imgW=1408, imgH=768;
-    var sx=-imgW/2*sc+ox, sy=-imgH/2*sc+oy;
+function patchAll(){
+  if(typeof drawGrid==='undefined'||typeof w2s==='undefined'||
+     typeof getSeatPositions==='undefined'){setTimeout(patchAll,80);return;}
+
+  // Image background
+  window.drawGrid=function(){
+    if(!window.__bgLoaded)return;
+    var iW=1408,iH=768;
     ctx.save();
-    ctx.drawImage(_bgImg, sx, sy, imgW*sc, imgH*sc);
+    ctx.drawImage(_bgImg,-iW/2*sc+ox,-iH/2*sc+oy,iW*sc,iH*sc);
     ctx.restore();
   };
 
-  // 2. Round table drawing
-  window.drawTable = function(t) {
-    var s=w2s(t.x,t.y);
-    var r=getR(t)*sc;
+  // Round table
+  window.drawTable=function(t){
+    var s=w2s(t.x,t.y),r=getR(t)*sc;
     var isAct=activeTid===t.id;
     var filled=guests.filter(function(g){return g.tableId==t.id;}).length;
     ctx.save();
-    // Shadow
-    ctx.shadowColor='rgba(0,0,0,0.2)'; ctx.shadowBlur=8*sc; ctx.shadowOffsetY=2*sc;
-    // Fill - semi transparent
-    ctx.beginPath(); ctx.arc(s.x,s.y,r,0,Math.PI*2);
-    var gr=ctx.createRadialGradient(s.x,s.y-r*0.3,r*0.1,s.x,s.y,r);
-    gr.addColorStop(0,'rgba(255,250,240,0.78)');
-    gr.addColorStop(1,'rgba(235,220,195,0.70)');
-    ctx.fillStyle=gr; ctx.fill();
+    ctx.shadowColor='rgba(0,0,0,0.18)';ctx.shadowBlur=7*sc;ctx.shadowOffsetY=2*sc;
+    ctx.beginPath();ctx.arc(s.x,s.y,r,0,Math.PI*2);
+    var gr=ctx.createRadialGradient(s.x,s.y-r*0.25,r*0.05,s.x,s.y,r);
+    gr.addColorStop(0,'rgba(255,250,238,0.80)');
+    gr.addColorStop(1,'rgba(238,222,196,0.72)');
+    ctx.fillStyle=gr;ctx.fill();
     ctx.shadowColor='transparent';
-    // Border
-    ctx.strokeStyle=isAct?'#b8924a':'rgba(180,155,110,0.85)';
-    ctx.lineWidth=(isAct?2.5:1.6)*sc; ctx.stroke();
-    // Inner ring
-    ctx.beginPath(); ctx.arc(s.x,s.y,r*0.76,0,Math.PI*2);
-    ctx.strokeStyle='rgba(200,180,145,0.4)'; ctx.lineWidth=0.7*sc; ctx.stroke();
-    // Name
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    var fSize=Math.max(8,Math.round(11*sc));
-    ctx.font='italic '+fSize+'px "Cormorant Garamond",serif';
+    ctx.strokeStyle=isAct?'#b8924a':'rgba(175,150,105,0.90)';
+    ctx.lineWidth=(isAct?2.5:1.6)*sc;ctx.stroke();
+    ctx.beginPath();ctx.arc(s.x,s.y,r*0.75,0,Math.PI*2);
+    ctx.strokeStyle='rgba(195,175,140,0.35)';ctx.lineWidth=0.6*sc;ctx.stroke();
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    var fz=Math.max(7,Math.round(10*sc));
+    ctx.font='italic '+fz+'px "Cormorant Garamond",serif';
     ctx.fillStyle=isAct?'#8b5e20':'#4a2e10';
-    ctx.fillText(t.name,s.x,s.y-fSize*0.35);
-    // Count
-    var cSize=Math.max(6,Math.round(8*sc));
-    ctx.font=cSize+'px "Jost",sans-serif';
-    ctx.fillStyle='#9a7848';
-    ctx.fillText(filled+'/'+t.seats,s.x,s.y+fSize*0.75);
-    // Seats
-    getSeatPositions(t).forEach(function(sp,i){ drawSeat(s.x+sp.x*sc,s.y+sp.y*sc,t.id,i); });
-    if(isAct) drawCornerHandles(t);
+    ctx.fillText(t.name,s.x,s.y-fz*0.35);
+    var cz=Math.max(5,Math.round(7.5*sc));
+    ctx.font=cz+'px "Jost",sans-serif';ctx.fillStyle='#9a7848';
+    ctx.fillText(filled+'/'+t.seats,s.x,s.y+fz*0.72);
+    getSeatPositions(t).forEach(function(sp,i){drawSeat(s.x+sp.x*sc,s.y+sp.y*sc,t.id,i);});
+    if(isAct)drawCornerHandles(t);
     ctx.restore();
   };
 
-  // 3. Roma - gold circle
-  window.drawMiriTable = function(t) {
-    var s=w2s(t.x,t.y);
-    var r=getR(t)*sc;
+  // Roma - gold
+  window.drawMiriTable=function(t){
+    var s=w2s(t.x,t.y),r=getR(t)*sc;
     var isAct=activeTid===t.id;
     var filled=guests.filter(function(g){return g.tableId==t.id;}).length;
     ctx.save();
-    ctx.shadowColor='rgba(184,146,74,0.4)'; ctx.shadowBlur=12*sc; ctx.shadowOffsetY=2*sc;
-    ctx.beginPath(); ctx.arc(s.x,s.y,r,0,Math.PI*2);
+    ctx.shadowColor='rgba(184,146,74,0.45)';ctx.shadowBlur=12*sc;ctx.shadowOffsetY=2*sc;
+    ctx.beginPath();ctx.arc(s.x,s.y,r,0,Math.PI*2);
     var gr=ctx.createRadialGradient(s.x,s.y-r*0.3,r*0.1,s.x,s.y,r);
-    gr.addColorStop(0,'rgba(255,252,230,0.90)');
-    gr.addColorStop(1,'rgba(245,232,185,0.82)');
-    ctx.fillStyle=gr; ctx.fill();
-    ctx.shadowColor='transparent';
+    gr.addColorStop(0,'rgba(255,252,228,0.92)');
+    gr.addColorStop(1,'rgba(245,230,180,0.84)');
+    ctx.fillStyle=gr;ctx.fill();ctx.shadowColor='transparent';
     ctx.setLineDash([5*sc,3*sc]);
     ctx.strokeStyle=isAct?'#c9a84c':'#b8924a';
-    ctx.lineWidth=(isAct?3:2.2)*sc; ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.beginPath(); ctx.arc(s.x,s.y,r*0.72,0,Math.PI*2);
-    ctx.strokeStyle='rgba(184,146,74,0.35)'; ctx.lineWidth=0.8*sc; ctx.stroke();
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    var fSize=Math.max(8,Math.round(12*sc));
-    ctx.font='bold italic '+fSize+'px "Cormorant Garamond",serif';
+    ctx.lineWidth=(isAct?3:2.2)*sc;ctx.stroke();ctx.setLineDash([]);
+    ctx.beginPath();ctx.arc(s.x,s.y,r*0.72,0,Math.PI*2);
+    ctx.strokeStyle='rgba(184,146,74,0.3)';ctx.lineWidth=0.7*sc;ctx.stroke();
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    var fz=Math.max(7,Math.round(11*sc));
+    ctx.font='bold italic '+fz+'px "Cormorant Garamond",serif';
     ctx.fillStyle='#7a4e08';
-    ctx.fillText(t.name,s.x,s.y-fSize*0.35);
-    var cSize=Math.max(6,Math.round(8*sc));
-    ctx.font=cSize+'px "Jost",sans-serif';
-    ctx.fillStyle='#b8924a';
-    ctx.fillText(filled+'/'+t.seats,s.x,s.y+fSize*0.75);
-    getSeatPositions(t).forEach(function(sp,i){ drawSeat(s.x+sp.x*sc,s.y+sp.y*sc,t.id,i); });
-    if(isAct) drawCornerHandles(t);
+    ctx.fillText(t.name,s.x,s.y-fz*0.35);
+    var cz=Math.max(5,Math.round(7.5*sc));
+    ctx.font=cz+'px "Jost",sans-serif';ctx.fillStyle='#b8924a';
+    ctx.fillText(filled+'/'+t.seats,s.x,s.y+fz*0.72);
+    getSeatPositions(t).forEach(function(sp,i){drawSeat(s.x+sp.x*sc,s.y+sp.y*sc,t.id,i);});
+    if(isAct)drawCornerHandles(t);
     ctx.restore();
   };
 
-  // 4. Seats in circle around table
-  window.getSeatPositions = function(t) {
-    var r=getR(t);
-    var orbitR=r+(SEAT_R||9)+4;
-    var n=t.seats||8;
-    var pos=[];
+  // Seats in circle
+  window.getSeatPositions=function(t){
+    var r=getR(t),orbitR=r+(SEAT_R||9)+3,n=t.seats||8,pos=[];
     for(var i=0;i<n;i++){
-      var angle=(i/n)*Math.PI*2-Math.PI/2;
-      pos.push({x:orbitR*Math.cos(angle), y:orbitR*Math.sin(angle)});
+      var a=(i/n)*Math.PI*2-Math.PI/2;
+      pos.push({x:orbitR*Math.cos(a),y:orbitR*Math.sin(a)});
     }
     return pos;
   };
 
-  // 5. Hit test - circle
-  window.getTableAt = function(sx,sy) {
+  // Hit test circle
+  window.getTableAt=function(sx,sy){
     for(var i=tables.length-1;i>=0;i--){
-      var t=tables[i];
-      var s=w2s(t.x,t.y);
-      var r=(getR(t)+(SEAT_R||9)+6)*sc;
-      var dx=sx-s.x, dy=sy-s.y;
-      if(dx*dx+dy*dy<=r*r) return t;
+      var t=tables[i],s=w2s(t.x,t.y);
+      var r=(getR(t)+(SEAT_R||9)+5)*sc;
+      var dx=sx-s.x,dy=sy-s.y;
+      if(dx*dx+dy*dy<=r*r)return t;
     }
     return null;
   };
 
-  // Apply layout
   applyLayout();
-  console.log('[Admin] Patched OK');
 }
 
-// Get radius for a table
-function getR(t) {
-  var d=TABLE_DATA.find(function(td){return td.name===t.name;});
-  return d ? d.r : (t.miri ? 40 : 45);
-}
-
-// Apply fixed layout from TABLE_DATA
-function applyLayout() {
-  if(typeof tables==='undefined'){ setTimeout(applyLayout,100); return; }
-  // Check if already correct
-  if(tables.length===25 && tables.some(function(t){return t.name==='Torino'&&t.x===-164;})) {
-    setTimeout(function(){ if(typeof draw==='function') draw(); },100);
+function applyLayout(){
+  if(typeof tables==='undefined'){setTimeout(applyLayout,100);return;}
+  // Already correct?
+  if(tables.length===25&&tables.some(function(t){return t.name==='Torino'&&Math.abs(t.x+161)<5;})){
+    setTimeout(function(){setImageZoom();if(typeof draw==='function')draw();},100);
     return;
   }
   try{localStorage.removeItem('mp11');localStorage.removeItem('mp10');}catch(e){}
   tables.length=0;
-  if(typeof decorElements!=='undefined') decorElements.length=0;
+  if(typeof decorElements!=='undefined')decorElements.length=0;
   nextTid=1;
   TABLE_DATA.forEach(function(d){
     tables.push({id:nextTid++,name:d.name,seats:8,x:d.x,y:d.y,miri:d.miri});
   });
-  if(typeof save==='function') save();
-  if(typeof renderGuests==='function') renderGuests();
-  if(typeof updateStats==='function') updateStats();
-  // Zoom to fit image exactly
-  setTimeout(function(){
-    if(typeof cv==='undefined') return;
-    sc=cv.clientWidth/1408;
-    ox=cv.clientWidth/2; oy=cv.clientHeight/2;
-    if(typeof draw==='function') draw();
-  },150);
+  if(typeof save==='function')save();
+  if(typeof renderGuests==='function')renderGuests();
+  if(typeof updateStats==='function')updateStats();
+  setTimeout(function(){setImageZoom();if(typeof draw==='function')draw();},200);
 }
 
-setTimeout(patchAll, 350);
+function setImageZoom(){
+  if(typeof cv==='undefined')return;
+  var cW=cv.clientWidth,cH=cv.clientHeight;
+  // Scale so image fits width, centered vertically
+  sc=cW/1408;
+  ox=cW/2;
+  // Center image vertically - image height = 768*sc
+  oy=cH/2;
+  // If image is taller than canvas, align top
+  if(768*sc>cH) oy=384*sc;
+}
+
+setTimeout(patchAll,350);
 </script><script>
 function forceRenameAllTables(){
   var names=['Torino','Verona','Firenze','Siena','Milano','Trieste','Padova','Bergamo',
@@ -2805,7 +2781,7 @@ function forceRenameAllTables(){
   guests.forEach(function(g){
     if(g.tableId!=null){var t=tables.find(function(x){return x.id===g.tableId;});if(t)g.table=t.name;}
   });
-  draw(); renderGuests(); updateStats(); save();
+  draw();renderGuests();updateStats();save();
   alert('Redenumite: '+nm.length+' mese');
 }
 function exportFullSite(){
