@@ -154,7 +154,6 @@ header{background:var(--deep);padding:7px 14px;display:flex;align-items:center;g
         <button class="btn btn-outline" onclick="openImport()">↑ Excel</button>
         <button class="btn btn-outline" onclick="exportGuestPage()" style="background:#3a5c44;color:white;border-color:#3a5c44;width:100%;margin-top:4px;justify-content:center;" title="Generează pagina pentru invitați cu QR">📍 Pagină invitați</button>
         <button onclick="exportFullSite()" style="background:#1a3a2a;color:#c9a84c;border:1px solid #c9a84c;width:100%;margin-top:4px;padding:8px;border-radius:5px;cursor:pointer;font-size:11px;font-weight:600;">📥 Exportă site complet</button>
-        <button onclick="forceRenameAllTables()" style="background:#5a3a10;color:#f0d090;border:1px solid #b8924a;width:100%;margin-top:4px;padding:8px;border-radius:5px;cursor:pointer;font-size:11px;">✎ Redenumește mese</button>
         <button class="btn btn-red btn-sm" onclick="confirmReset()" style="width:100%;margin-top:4px;justify-content:center;font-size:.72rem;" title="Șterge tot și resetează la layout default">⟳ Reset complet</button>
       </div>
     </div>
@@ -2601,10 +2600,7 @@ initPage();
 </script>
 
 <script>
-/* ═══════════════════════════════════════════════
-   LOVE AIRLINES — Admin cu imagine + mese rotunde
-   ═══════════════════════════════════════════════ */
-
+/* LOVE AIRLINES ADMIN — 33 mese rotunde pe seating-map.png */
 var LA_TABLES = [
 {name:"Roma",x:0,y:-251,miri:true,r:35},
 {name:"Torino",x:-161,y:-166,miri:false,r:30},
@@ -2620,54 +2616,60 @@ var LA_TABLES = [
 {name:"Perugia",x:97,y:-111,miri:false,r:36},
 {name:"Bologna",x:204,y:-106,miri:false,r:36},
 {name:"Venezia",x:-238,y:-76,miri:false,r:40},
-{name:"Napoli",x:-119,y:-81,miri:false,r:38},
-{name:"Amalfi",x:111,y:-81,miri:false,r:38},
-{name:"Positano",x:230,y:-76,miri:false,r:40},
-{name:"Bari",x:-466,y:143,miri:false,r:65},
-{name:"Capri",x:-230,y:143,miri:false,r:65},
-{name:"Siracusa",x:204,y:143,miri:false,r:65},
-{name:"Palermo",x:448,y:143,miri:false,r:65},
-{name:"Taormina",x:-507,y:191,miri:false,r:75},
-{name:"Cagliari",x:-272,y:191,miri:false,r:75},
-{name:"Agrigento",x:246,y:191,miri:false,r:75},
-{name:"Alghero",x:489,y:191,miri:false,r:75}
+{name:"Firenze2",x:-119,y:-81,miri:false,r:38},
+{name:"Ancona",x:111,y:-81,miri:false,r:38},
+{name:"Pisa",x:230,y:-76,miri:false,r:40},
+{name:"Napoli",x:-467,y:143,miri:false,r:65},
+{name:"Bari",x:-231,y:143,miri:false,r:65},
+{name:"Siracusa",x:202,y:143,miri:false,r:65},
+{name:"Palermo",x:445,y:143,miri:false,r:65},
+{name:"Amalfi",x:-508,y:189,miri:false,r:72},
+{name:"Brindisi",x:-272,y:189,miri:false,r:72},
+{name:"Agrigento",x:244,y:189,miri:false,r:72},
+{name:"Messina",x:487,y:189,miri:false,r:72},
+{name:"Positano",x:-549,y:235,miri:false,r:80},
+{name:"Taranto",x:-316,y:235,miri:false,r:80},
+{name:"Cagliari",x:286,y:235,miri:false,r:80},
+{name:"Sassari",x:530,y:235,miri:false,r:80},
+{name:"Capri",x:-589,y:288,miri:false,r:88},
+{name:"Taormina",x:-360,y:288,miri:false,r:88},
+{name:"Catania",x:329,y:288,miri:false,r:88},
+{name:"Alghero",x:574,y:288,miri:false,r:88}
 ];
 
-// ── Imagine fundal ──────────────────────────────
 var _img = new Image();
 _img.onload = function(){ window._imgOk=true; if(typeof draw==='function') draw(); };
 _img.src = 'seating-map.png';
 
-// ── Patch principal ─────────────────────────────
+function laR(t){
+  var d=LA_TABLES.find(function(x){return x.name===t.name;});
+  return d?d.r:(t.miri?35:50);
+}
+
 function laPatch(){
   if(typeof drawGrid==='undefined'||typeof w2s==='undefined'){
     return setTimeout(laPatch,80);
   }
 
-  // 1. Fundal = imaginea (înlocuiește grila)
-  window.drawGrid = function(){
-    if(!window._imgOk) return;
-    // Desenăm imaginea 1408x768 centrată la world(0,0)
-    var sx = -704*sc+ox, sy = -384*sc+oy;
-    ctx.drawImage(_img, sx, sy, 1408*sc, 768*sc);
+  window.drawGrid=function(){
+    if(!window._imgOk)return;
+    ctx.drawImage(_img,-704*sc+ox,-384*sc+oy,1408*sc,768*sc);
   };
 
-  // 2. Masă rotundă normală
-  window.drawTable = function(t){
-    var s=w2s(t.x,t.y), r=laR(t)*sc;
-    var isAct=activeTid===t.id;
+  window.drawTable=function(t){
+    var s=w2s(t.x,t.y),r=laR(t)*sc,isAct=activeTid===t.id;
     var filled=guests.filter(function(g){return g.tableId==t.id;}).length;
     ctx.save();
-    ctx.beginPath(); ctx.arc(s.x,s.y,r,0,Math.PI*2);
+    ctx.beginPath();ctx.arc(s.x,s.y,r,0,Math.PI*2);
     var gr=ctx.createRadialGradient(s.x,s.y-r*.25,r*.05,s.x,s.y,r);
     gr.addColorStop(0,'rgba(255,250,238,0.82)');
     gr.addColorStop(1,'rgba(235,218,192,0.74)');
-    ctx.fillStyle=gr; ctx.fill();
+    ctx.fillStyle=gr;ctx.fill();
     ctx.strokeStyle=isAct?'#b8924a':'rgba(170,145,100,0.88)';
-    ctx.lineWidth=(isAct?2.5:1.6)*sc; ctx.stroke();
-    ctx.beginPath(); ctx.arc(s.x,s.y,r*.74,0,Math.PI*2);
-    ctx.strokeStyle='rgba(190,168,130,0.32)'; ctx.lineWidth=.6*sc; ctx.stroke();
-    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.lineWidth=(isAct?2.5:1.6)*sc;ctx.stroke();
+    ctx.beginPath();ctx.arc(s.x,s.y,r*.74,0,Math.PI*2);
+    ctx.strokeStyle='rgba(190,168,130,0.32)';ctx.lineWidth=.6*sc;ctx.stroke();
+    ctx.textAlign='center';ctx.textBaseline='middle';
     var fz=Math.max(7,Math.round(10*sc));
     ctx.font='italic '+fz+'px "Cormorant Garamond",serif';
     ctx.fillStyle=isAct?'#8b5e20':'#4a2e10';
@@ -2676,27 +2678,23 @@ function laPatch(){
     ctx.fillStyle='#9a7848';
     ctx.fillText(filled+'/'+t.seats,s.x,s.y+fz*.72);
     getSeatPositions(t).forEach(function(sp,i){drawSeat(s.x+sp.x*sc,s.y+sp.y*sc,t.id,i);});
-    if(isAct) drawCornerHandles(t);
+    if(isAct)drawCornerHandles(t);
     ctx.restore();
   };
 
-  // 3. Masa mirilor (Roma) - aurie
-  window.drawMiriTable = function(t){
-    var s=w2s(t.x,t.y), r=laR(t)*sc;
-    var isAct=activeTid===t.id;
+  window.drawMiriTable=function(t){
+    var s=w2s(t.x,t.y),r=laR(t)*sc,isAct=activeTid===t.id;
     var filled=guests.filter(function(g){return g.tableId==t.id;}).length;
     ctx.save();
-    ctx.beginPath(); ctx.arc(s.x,s.y,r,0,Math.PI*2);
+    ctx.beginPath();ctx.arc(s.x,s.y,r,0,Math.PI*2);
     var gr=ctx.createRadialGradient(s.x,s.y-r*.28,r*.08,s.x,s.y,r);
     gr.addColorStop(0,'rgba(255,252,225,0.94)');
     gr.addColorStop(1,'rgba(245,228,175,0.86)');
-    ctx.fillStyle=gr; ctx.fill();
+    ctx.fillStyle=gr;ctx.fill();
     ctx.setLineDash([5*sc,3*sc]);
     ctx.strokeStyle=isAct?'#c9a84c':'#b8924a';
-    ctx.lineWidth=(isAct?3:2.2)*sc; ctx.stroke(); ctx.setLineDash([]);
-    ctx.beginPath(); ctx.arc(s.x,s.y,r*.72,0,Math.PI*2);
-    ctx.strokeStyle='rgba(184,146,74,0.28)'; ctx.lineWidth=.7*sc; ctx.stroke();
-    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.lineWidth=(isAct?3:2.2)*sc;ctx.stroke();ctx.setLineDash([]);
+    ctx.textAlign='center';ctx.textBaseline='middle';
     var fz=Math.max(7,Math.round(11*sc));
     ctx.font='bold italic '+fz+'px "Cormorant Garamond",serif';
     ctx.fillStyle='#7a4e08';
@@ -2705,95 +2703,58 @@ function laPatch(){
     ctx.fillStyle='#b8924a';
     ctx.fillText(filled+'/'+t.seats,s.x,s.y+fz*.72);
     getSeatPositions(t).forEach(function(sp,i){drawSeat(s.x+sp.x*sc,s.y+sp.y*sc,t.id,i);});
-    if(isAct) drawCornerHandles(t);
+    if(isAct)drawCornerHandles(t);
     ctx.restore();
   };
 
-  // 4. Scaune în cerc în jurul mesei
-  window.getSeatPositions = function(t){
-    var r=laR(t), orb=r+(SEAT_R||9)+3, n=t.seats||8, pos=[];
+  window.getSeatPositions=function(t){
+    var r=laR(t),orb=r+(SEAT_R||9)+3,n=t.seats||8,pos=[];
     for(var i=0;i<n;i++){
       var a=i/n*Math.PI*2-Math.PI/2;
-      pos.push({x:orb*Math.cos(a), y:orb*Math.sin(a)});
+      pos.push({x:orb*Math.cos(a),y:orb*Math.sin(a)});
     }
     return pos;
   };
 
-  // 5. Hit-test cerc
-  window.getTableAt = function(sx,sy){
+  window.getTableAt=function(sx,sy){
     for(var i=tables.length-1;i>=0;i--){
-      var t=tables[i], s=w2s(t.x,t.y);
-      var r=(laR(t)+(SEAT_R||9)+5)*sc;
-      var dx=sx-s.x, dy=sy-s.y;
-      if(dx*dx+dy*dy<=r*r) return t;
+      var t=tables[i],s=w2s(t.x,t.y),r=(laR(t)+(SEAT_R||9)+5)*sc;
+      var dx=sx-s.x,dy=sy-s.y;
+      if(dx*dx+dy*dy<=r*r)return t;
     }
     return null;
   };
 
-  // 6. Aplică layout nou
   laApply();
-  console.log('[LA] Patch OK');
-}
-
-function laR(t){
-  var d=LA_TABLES.find(function(x){return x.name===t.name;});
-  return d?d.r:(t.miri?35:42);
 }
 
 function laApply(){
   if(typeof tables==='undefined'){return setTimeout(laApply,100);}
-
-  // Șterge tot din localStorage + date vechi
-  try{
-    localStorage.removeItem('mp11');
-    localStorage.removeItem('mp10');
-    localStorage.removeItem('loveairlines_data');
-  }catch(e){}
-
-  // Resetează arrays
+  try{localStorage.removeItem('mp11');localStorage.removeItem('mp10');localStorage.removeItem('loveairlines_data');}catch(e){}
   tables.length=0;
-  if(typeof decorElements!=='undefined') decorElements.length=0;
-  if(typeof guests!=='undefined') guests.length=0;
-  nextTid=1; nextGid=1; cityIdx=0;
-
-  // Adaugă mesele noi
+  if(typeof decorElements!=='undefined')decorElements.length=0;
+  if(typeof guests!=='undefined')guests.length=0;
+  nextTid=1;nextGid=1;cityIdx=0;
   LA_TABLES.forEach(function(d){
-    tables.push({
-      id:nextTid++, name:d.name,
-      seats:8, x:d.x, y:d.y, miri:d.miri
-    });
+    tables.push({id:nextTid++,name:d.name,seats:8,x:d.x,y:d.y,miri:d.miri});
   });
-
-  // Salvează
-  if(typeof save==='function') save();
-  if(typeof renderGuests==='function') renderGuests();
-  if(typeof updateStats==='function') updateStats();
-
-  // Zoom: imaginea umple lățimea canvas-ului, centrată
+  if(typeof save==='function')save();
+  if(typeof renderGuests==='function')renderGuests();
+  if(typeof updateStats==='function')updateStats();
   setTimeout(function(){
-    if(typeof cv==='undefined') return;
-    sc = cv.clientWidth / 1408;
-    ox = cv.clientWidth  / 2;
-    oy = cv.clientHeight / 2;
-    if(typeof draw==='function') draw();
-    console.log('[LA] Layout applied: '+tables.length+' tables, sc='+sc.toFixed(3));
-  }, 200);
+    if(typeof cv==='undefined')return;
+    sc=cv.clientWidth/1408;
+    ox=cv.clientWidth/2;
+    oy=cv.clientHeight/2;
+    if(typeof draw==='function')draw();
+    console.log('[LA] '+tables.length+' mese aplicate');
+  },200);
 }
 
-// Rulează după ce tot codul original s-a încărcat
-setTimeout(laPatch, 400);
-</script>
-<script>
+setTimeout(laPatch,400);
+</script><script>
 function forceRenameAllTables(){
-  var N=['Torino','Verona','Firenze','Siena','Milano','Trieste','Padova','Bergamo',
-    'Como','Genova','Perugia','Bologna','Venezia','Napoli','Amalfi','Positano',
-    'Bari','Capri','Siracusa','Palermo','Taormina','Cagliari','Agrigento','Alghero'];
-  tables.filter(function(t){return !t.miri;}).forEach(function(t,i){if(N[i])t.name=N[i];});
-  guests.forEach(function(g){
-    if(g.tableId!=null){var t=tables.find(function(x){return x.id===g.tableId;});if(t)g.table=t.name;}
-  });
-  draw();renderGuests();updateStats();save();
-  alert('Redenumite!');
+  alert('Folositi butoanele de asignare individuala. Mesele sunt deja denumite corect.');
 }
 function exportFullSite(){
   if(!guests.length){alert('Importa invitatii mai intai!');return;}
@@ -2809,7 +2770,7 @@ function exportFullSite(){
     html=html
       .replace("typeof __LA_GUESTS__!=='undefined'?__LA_GUESTS__:[]",JSON.stringify(gD))
       .replace("typeof __LA_TABLES__!=='undefined'?__LA_TABLES__:[]",JSON.stringify(tD))
-      .replace("typeof __LA_DECORS__!=='undefined'?__LA_DECORS__:[]",JSON.stringify([])) 
+      .replace("typeof __LA_DECORS__!=='undefined'?__LA_DECORS__:[]",JSON.stringify([]))
       .replace("typeof __LA_GUEST_NAMES__!=='undefined'?__LA_GUEST_NAMES__:[]",JSON.stringify(allNames));
     var b=new Blob([html],{type:'text/html;charset=utf-8'});
     var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='index.html';
