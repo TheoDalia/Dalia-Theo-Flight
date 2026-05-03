@@ -173,16 +173,17 @@ footer{text-align:center;padding:1.5rem;font-size:9px;letter-spacing:2px;color:r
 
 @media(max-width:640px){
   .nav-logo{display:none;}
-  .nav-tabs{position:static;transform:none;flex:1;justify-content:center;}
+  .nav-tabs{flex:1;justify-content:center;}
   .lang-sw{flex-shrink:0;}
-  .nav-tab{padding:0 .6rem;font-size:9px;letter-spacing:1px;}
+  .nav-tab{padding:0 .5rem;font-size:9px;letter-spacing:1px;}
   .nav-tab .ti{display:none;}
+  .lang-btn{font-size:18px;padding:2px 4px;}
   .gal-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));}
   .b-card{padding:1.5rem;}
 }
 
 .drinks-wrap{padding:2rem 1.25rem 3rem;max-width:680px;margin:0 auto;}.drinks-header{text-align:center;margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);}.drinks-header-label{font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem;}.drinks-header-title{font-family:'Playfair Display',serif;font-size:2.2rem;color:var(--gold);margin-bottom:.4rem;}.drinks-header-sub{font-size:11px;letter-spacing:2px;color:var(--gray);text-transform:uppercase;}.drinks-header-tagline{font-size:12px;color:var(--gold);font-style:italic;margin-top:.6rem;opacity:.8;}.drinks-category{margin-bottom:1.75rem;}.drinks-cat-label{font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:.75rem;padding-bottom:.4rem;border-bottom:1px solid rgba(201,168,76,.2);}.drinks-items{display:flex;flex-direction:column;gap:.5rem;}.drinks-item{background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:.9rem 1.1rem;}.drinks-item:hover{background:rgba(255,255,255,.07);}.drinks-item-name{font-family:'Playfair Display',serif;font-size:1rem;color:var(--cream);font-weight:600;}.drinks-item-desc{font-size:12px;color:var(--gray);letter-spacing:.5px;margin-top:.2rem;}.drinks-item-special{font-size:10px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-top:.2rem;}.drinks-brand{color:var(--gold);font-style:italic;font-weight:600;font-size:.9em;}.drinks-item-featured{border-color:rgba(201,168,76,.5);background:rgba(201,168,76,.07);}.drinks-footer{text-align:center;font-size:9px;letter-spacing:2px;color:rgba(201,168,74,.35);text-transform:uppercase;margin-top:2rem;padding-top:1.5rem;border-top:1px solid rgba(201,168,74,.1);}
-.lang-bar{display:none;}@media(max-width:640px){.lang-bar{display:flex;justify-content:center;gap:10px;background:var(--green-dark);border-bottom:1px solid var(--border);padding:6px 0;position:sticky;top:52px;z-index:99;}.lang-bar .lang-btn{font-size:22px;padding:3px 8px;opacity:.55;background:none;border:1.5px solid transparent;border-radius:6px;cursor:pointer;}.lang-bar .lang-btn.active{opacity:1;border-color:var(--gold);background:rgba(201,168,76,.15);}.lang-switcher{display:none!important;}}
+
 </style>
 </head>
 <body>
@@ -204,7 +205,6 @@ footer{text-align:center;padding:1.5rem;font-size:9px;letter-spacing:2px;color:r
     <button class="lb" onclick="setLang('en',this)" title="English">🇬🇧</button>
   </div>
 </nav>
-<div class="lang-bar" id="lang-bar"><button class="lang-btn active" onclick="setLang('ro',this)" title="Română">🇷🇴</button><button class="lang-btn" onclick="setLang('it',this)" title="Italiano">🇮🇹</button><button class="lang-btn" onclick="setLang('en',this)" title="English">🇬🇧</button></div>
 
 <!-- HEADER -->
 <div class="header">
@@ -351,10 +351,10 @@ footer{text-align:center;padding:1.5rem;font-size:9px;letter-spacing:2px;color:r
 // ══════════════════════════════════════════════════════
 // DATE — din data.js (uploadat pe GitHub de admin)
 // ══════════════════════════════════════════════════════
-var GUESTS=[{"name":"Dalia","table":"Roma","tableId":1,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Theo","table":"Roma","tableId":1,"seatIdx":1,"menu":"normal","cazare":"nu"},{"name":"Nasa","table":"Roma","tableId":1,"seatIdx":2,"menu":"normal","cazare":"nu"},{"name":"Nasu","table":"Roma","tableId":1,"seatIdx":3,"menu":"normal","cazare":"nu"},{"name":"Alessandra Chiariello","table":"Cagliari","tableId":23,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Fabio Cerullo","table":"Trieste","tableId":7,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Latis Simina","table":"Trieste","tableId":7,"seatIdx":1,"menu":"normal","cazare":"nu"},{"name":"Latis Rares","table":"Amalfi","tableId":16,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Margherita Malaspina","table":"Napoli","tableId":15,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Giuseppe Iacomino","table":"Capri","tableId":19,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Alin Bobeica","table":"Bari","tableId":18,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Irina Bobeica","table":"Taormina","tableId":22,"seatIdx":0,"menu":"normal","cazare":"nu"},{"name":"Alina Vreju","table":"Firenze","tableId":4,"seatIdx":0,"menu":"normal","cazare":"nu"}];
-var TABLES=[{"id":1,"name":"Roma","x":0,"y":-254,"tw":52,"th":77,"miri":true,"seats":8},{"id":2,"name":"Torino","x":-164,"y":-166,"tw":220,"th":65,"miri":false,"seats":8},{"id":3,"name":"Verona","x":-76,"y":-171,"tw":220,"th":65,"miri":false,"seats":8},{"id":4,"name":"Firenze","x":64,"y":-171,"tw":220,"th":65,"miri":false,"seats":8},{"id":5,"name":"Siena","x":152,"y":-166,"tw":220,"th":65,"miri":false,"seats":8},{"id":6,"name":"Milano","x":-188,"y":-136,"tw":220,"th":65,"miri":false,"seats":8},{"id":7,"name":"Trieste","x":-92,"y":-141,"tw":220,"th":65,"miri":false,"seats":8},{"id":8,"name":"Padova","x":80,"y":-141,"tw":220,"th":65,"miri":false,"seats":8},{"id":9,"name":"Bergamo","x":176,"y":-136,"tw":220,"th":65,"miri":false,"seats":8},{"id":10,"name":"Como","x":-212,"y":-106,"tw":220,"th":65,"miri":false,"seats":8},{"id":11,"name":"Genova","x":-106,"y":-111,"tw":220,"th":65,"miri":false,"seats":8},{"id":12,"name":"Perugia","x":94,"y":-111,"tw":220,"th":65,"miri":false,"seats":8},{"id":13,"name":"Bologna","x":200,"y":-106,"tw":220,"th":65,"miri":false,"seats":8},{"id":14,"name":"Venezia","x":-240,"y":-76,"tw":220,"th":65,"miri":false,"seats":8},{"id":15,"name":"Napoli","x":-120,"y":-81,"tw":220,"th":65,"miri":false,"seats":8},{"id":16,"name":"Amalfi","x":108,"y":-81,"tw":220,"th":65,"miri":false,"seats":8},{"id":17,"name":"Positano","x":228,"y":-76,"tw":220,"th":65,"miri":false,"seats":8},{"id":18,"name":"Bari","x":-446.4141546526868,"y":149.12057667103537,"tw":220,"th":65,"miri":false,"seats":8},{"id":19,"name":"Capri","x":-225.87942332896458,"y":144.22411533420708,"tw":220,"th":65,"miri":false,"seats":8},{"id":20,"name":"Siracusa","x":202,"y":143,"tw":220,"th":65,"miri":false,"seats":8},{"id":21,"name":"Palermo","x":446,"y":143,"tw":220,"th":65,"miri":false,"seats":8},{"id":22,"name":"Taormina","x":-452.9148099606815,"y":220.60288335517697,"tw":220,"th":65,"miri":false,"seats":8},{"id":23,"name":"Cagliari","x":-231.60419397116635,"y":220.6028833551769,"tw":220,"th":65,"miri":false,"seats":8},{"id":24,"name":"Agrigento","x":244,"y":190,"tw":220,"th":65,"miri":false,"seats":8},{"id":25,"name":"Alghero","x":488,"y":190,"tw":220,"th":65,"miri":false,"seats":8}];
-var DECORS=[];
-var GUEST_NAMES=["Dalia","Theo","Nasa","Nasu","Alessandra Chiariello","Fabio Cerullo","Latis Simina","Latis Rares","Margherita Malaspina","Giuseppe Iacomino","Alin Bobeica","Irina Bobeica","Alina Vreju"];
+var GUESTS=typeof __LA_GUESTS__!=='undefined'?__LA_GUESTS__:[];
+var TABLES=typeof __LA_TABLES__!=='undefined'?__LA_TABLES__:[];
+var DECORS=typeof __LA_DECORS__!=='undefined'?__LA_DECORS__:[];
+var GUEST_NAMES=typeof __LA_GUEST_NAMES__!=='undefined'?__LA_GUEST_NAMES__:[];
 if(typeof LA_DATA !== 'undefined' && LA_DATA){
   GUESTS      = LA_DATA.guests     || [];
   TABLES      = LA_DATA.tables     || [];
