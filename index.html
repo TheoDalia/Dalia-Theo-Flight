@@ -173,11 +173,13 @@ footer{text-align:center;padding:1.5rem;font-size:9px;letter-spacing:2px;color:r
 
 @media(max-width:640px){
   .nav-logo{display:none;}
-  .nav-tabs{flex:1;justify-content:center;}
-  .lang-sw{flex-shrink:0;}
-  .nav-tab{padding:0 .5rem;font-size:9px;letter-spacing:1px;}
-  .nav-tab .ti{display:none;}
-  .lang-btn{font-size:18px;padding:2px 4px;}
+  .nav-tabs{flex:1;justify-content:center;overflow:hidden;}
+  .lang-sw{flex-shrink:0;gap:2px;}
+  .nav-tab{padding:0 .4rem;font-size:8.5px;letter-spacing:.8px;}
+  .nav-tab .ti{display:inline;}
+  .nav-tab span:not(.ti){display:none;}
+  .lb{font-size:17px;padding:2px 3px;}
+  .nav-tab .ti{font-size:16px;}
   .gal-grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));}
   .b-card{padding:1.5rem;}
 }
