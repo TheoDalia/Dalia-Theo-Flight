@@ -152,6 +152,7 @@ header{background:var(--deep);padding:7px 14px;display:flex;align-items:center;g
         <button class="btn btn-outline" onclick="exportPDF()">↓ PDF</button>
         <button class="btn btn-outline" onclick="exportExcelTemplate()">↓ CSV</button>
         <button class="btn btn-outline" onclick="openImport()">↑ Excel</button>
+        <button class="btn btn-outline" onclick="autoAssign()" style="background:#4a6c8a;color:white;border-color:#4a6c8a;width:100%;margin-top:4px;justify-content:center;" title="Asignează automat toți invitații la mese">⚡ Asignare automată</button>
         <button class="btn btn-outline" onclick="exportGuestPage()" style="background:#3a5c44;color:white;border-color:#3a5c44;width:100%;margin-top:4px;justify-content:center;" title="Generează pagina pentru invitați cu QR">📍 Pagină invitați</button>
         <button class="btn btn-red btn-sm" onclick="confirmReset()" style="width:100%;margin-top:4px;justify-content:center;font-size:.72rem;" title="Șterge tot și resetează la layout default">⟳ Reset complet</button>
       </div>
@@ -1575,6 +1576,64 @@ function exportExcelTemplate(){
 }
 
 
+
+
+// ══════════════════════════════════════════
+// ASIGNARE AUTOMATĂ INVITAȚI LA MESE
+// ══════════════════════════════════════════
+function autoAssign(){
+  // Invitații fără masă asignată
+  const unassigned = guests.filter(g => g.tableId == null);
+  if(unassigned.length === 0){
+    alert('Toți invitații sunt deja asignați la mese!');
+    return;
+  }
+
+  // Mesele disponibile — excludem masa Roma (mirilor)
+  const availTables = tables.filter(t => !t.miri);
+  if(availTables.length === 0){
+    alert('Nu există mese disponibile!');
+    return;
+  }
+
+  let assigned = 0;
+  let guestIdx = 0;
+
+  // Parcurgem mesele în ordine și le umplem pe rând
+  for(let ti = 0; ti < availTables.length && guestIdx < unassigned.length; ti++){
+    const t = availTables[ti];
+
+    // Scaunele deja ocupate la această masă
+    const occupied = new Set(
+      guests
+        .filter(g => g.tableId == t.id && g.seatIdx != null)
+        .map(g => g.seatIdx)
+    );
+
+    // Umplem scaunele libere în ordine
+    for(let seat = 0; seat < t.seats && guestIdx < unassigned.length; seat++){
+      if(!occupied.has(seat)){
+        unassigned[guestIdx].tableId = t.id;
+        unassigned[guestIdx].seatIdx = seat;
+        occupied.add(seat);
+        assigned++;
+        guestIdx++;
+      }
+    }
+  }
+
+  const ramas = unassigned.length - assigned;
+  let msg = assigned + ' invitați asignați automat la mese.';
+  if(ramas > 0){
+    msg += '\n\n⚠ ' + ramas + ' invitați nu au putut fi asignați (mese pline). Adaugă mese suplimentare.';
+  }
+
+  renderGuests();
+  updateStats();
+  draw();
+  save();
+  alert(msg);
+}
 
 // ══════════════════════════════════════════
 // RESET COMPLET
