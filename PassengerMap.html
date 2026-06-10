@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Love Airlines · Masa Ta</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Jost',sans-serif;background:#1a3a2a;color:#f5f0e8;min-height:100vh;}
+
+.lsw{position:fixed;top:10px;right:12px;z-index:99;display:flex;gap:5px;}
+.lb{background:rgba(0,0,0,.4);border:1.5px solid rgba(201,168,76,.5);border-radius:4px;
+    padding:5px 10px;cursor:pointer;font-size:.7rem;font-weight:600;letter-spacing:.1em;
+    color:#c9a84c;font-family:'Jost',sans-serif;}
+.lb.on{background:#c9a84c;color:#1a3a2a;}
+
+header{text-align:center;padding:48px 20px 22px;border-bottom:1px solid rgba(201,168,76,.2);}
+.hl{font-size:.62rem;letter-spacing:.22em;color:#c9a84c;text-transform:uppercase;margin-bottom:5px;}
+.ht{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,7vw,2.8rem);
+    color:#e8c96a;font-weight:300;line-height:1.1;margin-bottom:5px;}
+.hs{font-size:.7rem;letter-spacing:.13em;color:rgba(245,240,232,.5);text-transform:uppercase;}
+
+.tw{overflow:hidden;background:#c9a84c;padding:6px 0;}
+.ti{display:flex;width:max-content;animation:tick 22s linear infinite;}
+.ts{font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:#1a3a2a;
+    font-weight:600;padding:0 26px;white-space:nowrap;}
+@keyframes tick{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
+
+.main{max-width:600px;margin:0 auto;padding:24px 16px 40px;}
+
+.card{background:rgba(245,240,232,.96);border-radius:4px;padding:22px;
+      margin-bottom:14px;box-shadow:0 6px 28px rgba(0,0,0,.28);}
+.cl{font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:#8a7a5a;margin-bottom:2px;}
+.ct{font-family:'Cormorant Garamond',serif;font-size:1.45rem;color:#1a1a14;margin-bottom:2px;}
+.cs{font-size:.7rem;color:#8a7a5a;margin-bottom:16px;}
+
+.sw{position:relative;}
+.si{width:100%;padding:12px 46px 12px 14px;border:1.5px solid #d0c4a8;border-radius:3px;
+    font-family:'Jost',sans-serif;font-size:.95rem;color:#1a1a14;background:#faf7f2;outline:none;}
+.si:focus{border-color:#c9a84c;}
+.si::placeholder{color:#b0a080;}
+.sb{position:absolute;right:5px;top:50%;transform:translateY(-50%);
+    background:#1a3a2a;border:none;border-radius:3px;width:36px;height:36px;
+    cursor:pointer;color:#c9a84c;font-size:1rem;}
+
+.sg{background:#fff;border:1.5px solid #d0c4a8;border-top:none;border-radius:0 0 4px 4px;
+    max-height:220px;overflow-y:auto;display:none;}
+.sg.open{display:block;}
+.sit{padding:13px 16px;cursor:pointer;font-size:.88rem;color:#1a1a14;
+     border-bottom:1px solid #f0ebe0;user-select:none;}
+.sit:last-child{border:none;}
+.sit.hl2{background:#f5f0e8;}
+.sit-sub{font-size:.66rem;color:#c9a84c;margin-top:2px;}
+.nf{font-size:.74rem;color:#8b2e2e;padding:8px 0;display:none;}
+
+/* BOARDING PASS */
+.bp{background:rgba(245,240,232,.96);border-radius:4px;overflow:hidden;
+    margin-bottom:14px;box-shadow:0 6px 28px rgba(0,0,0,.28);display:none;}
+.bp.show{display:block;}
+.bph{background:#152e22;padding:11px 16px;display:flex;justify-content:space-between;
+     align-items:center;border-bottom:1px solid rgba(201,168,76,.2);}
+.bphl{font-size:.54rem;letter-spacing:.16em;text-transform:uppercase;color:#c9a84c;}
+.bpal{font-size:.6rem;color:rgba(201,168,76,.5);}
+.bpb{padding:16px;}
+.bpg{font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:#1a1a14;margin-bottom:12px;}
+.bpg span{color:#c9a84c;font-style:italic;}
+.bpr{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+.bpf{flex:1;min-width:70px;}
+.bpfl{font-size:.52rem;letter-spacing:.13em;text-transform:uppercase;color:#8a7a5a;margin-bottom:2px;}
+.bpfv{font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:#1a1a14;}
+.bpdv{border:none;border-top:1px dashed #d0c4a8;margin:10px 0;}
+.bpnav{font-size:.7rem;color:#5a4a2a;background:#faf0d8;border-radius:3px;
+       padding:8px 12px;border-left:3px solid #c9a84c;font-style:italic;}
+
+/* MAP cu imagine */
+.mc{background:rgba(245,240,232,.96);border-radius:4px;overflow:hidden;
+    margin-bottom:14px;box-shadow:0 6px 28px rgba(0,0,0,.28);display:none;}
+.mc.show{display:block;}
+.mch{background:#152e22;padding:10px 16px;display:flex;justify-content:space-between;
+     font-size:.56rem;letter-spacing:.15em;text-transform:uppercase;color:#c9a84c;}
+.map-wrap{position:relative;width:100%;overflow:hidden;}
+.map-wrap img{width:100%;display:block;}
+/* Dot pulsant pe masa */
+.table-dot{
+  position:absolute;
+  width:28px;height:28px;
+  border-radius:50%;
+  background:rgba(192,48,16,.85);
+  border:3px solid white;
+  box-shadow:0 0 0 3px rgba(192,48,16,.5);
+  transform:translate(-50%,-50%);
+  animation:pulse-dot 1.2s ease-in-out infinite;
+  pointer-events:none;
+  display:none;
+}
+.table-dot.show{display:block;}
+@keyframes pulse-dot{
+  0%{box-shadow:0 0 0 0 rgba(192,48,16,.6);transform:translate(-50%,-50%) scale(1);}
+  50%{box-shadow:0 0 0 10px rgba(192,48,16,0);transform:translate(-50%,-50%) scale(1.15);}
+  100%{box-shadow:0 0 0 0 rgba(192,48,16,0);transform:translate(-50%,-50%) scale(1);}
+}
+/* Label masa langa dot */
+.table-label{
+  position:absolute;
+  background:#c03010;color:white;
+  font-family:'Jost',sans-serif;font-size:.65rem;font-weight:600;
+  padding:3px 8px;border-radius:3px;
+  transform:translate(-50%,-180%);
+  white-space:nowrap;
+  display:none;pointer-events:none;
+  box-shadow:0 2px 8px rgba(0,0,0,.3);
+}
+.table-label.show{display:block;}
+.mcf{padding:7px 16px;background:#152e22;text-align:center;
+     font-size:.58rem;letter-spacing:.11em;text-transform:uppercase;color:#c9a84c;}
+
+footer{text-align:center;padding:18px;font-size:.58rem;letter-spacing:.1em;
+       color:rgba(201,168,76,.3);text-transform:uppercase;
+       border-top:1px solid rgba(201,168,76,.12);}
+</style>
+</head>
+<body>
+
+<div class="lsw">
+  <button class="lb on" id="lro">RO</button>
+  <button class="lb" id="len">EN</button>
+  <button class="lb" id="lit">IT</button>
+</div>
+
+<header>
+  <div class="hl">✈ Love Airlines · Zbor DL&amp;TH · 23.08.2026</div>
+  <h1 class="ht" id="ttl">Găsește-ți Locul</h1>
+  <p class="hs">Dalia &amp; Theo · 23 August 2026 · Moonfields</p>
+</header>
+
+<div class="tw">
+  <div class="ti">
+    <span class="ts" id="tk1"></span>
+    <span class="ts" id="tk2"></span>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="card">
+    <div class="cl">BOARDING PASS · PASAGER</div>
+    <div class="ct" id="sct">Caută-ți locul la bord</div>
+    <div class="cs" id="scs">Introdu numele tău pentru a-ți găsi masa</div>
+    <div class="sw">
+      <input class="si" id="inp" type="text" autocomplete="off"
+             autocorrect="off" spellcheck="false" placeholder="ex: Ion Popescu">
+      <button class="sb" id="sbtn">→</button>
+    </div>
+    <div class="sg" id="sg"></div>
+    <div class="nf" id="nf"></div>
+  </div>
+
+  <!-- Boarding Pass -->
+  <div class="bp" id="bp">
+    <div class="bph">
+      <div>
+        <div class="bphl">BOARDING PASS</div>
+        <div class="bpal">✈ LOVE AIRLINES · DL&amp;TH-23.08.2026</div>
+      </div>
+      <div style="font-size:1.2rem;color:#c9a84c;opacity:.6">✈</div>
+    </div>
+    <div class="bpb">
+      <div class="bpg">Bun venit, <span id="rn">—</span>!</div>
+      <div class="bpr">
+        <div class="bpf">
+          <div class="bpfl" id="fl1">MASĂ</div>
+          <div class="bpfv" id="rt">—</div>
+        </div>
+        <div class="bpf">
+          <div class="bpfl" id="fl2">SCAUN</div>
+          <div class="bpfv" id="rs">—</div>
+        </div>
+        <div class="bpf">
+          <div class="bpfl" id="fl3">MENIU</div>
+          <div class="bpfv" id="rm">—</div>
+        </div>
+      </div>
+      <hr class="bpdv">
+      <div class="bpnav" id="nav">↓ Vezi masa ta pe harta de mai jos</div>
+    </div>
+  </div>
+
+  <!-- Harta cu imagine -->
+  <div class="mc" id="mcw">
+    <div class="mch">
+      <span>✈ PLAN SALĂ · MOONFIELDS · LOVE AIRLINES</span>
+      <span id="mct">HARTA</span>
+    </div>
+    <div class="map-wrap" id="map-wrap">
+      <img id="map-img" src="seating-map.png" alt="Plan sala">
+      <div class="table-dot" id="tdot"></div>
+      <div class="table-label" id="tlabel"></div>
+    </div>
+    <div class="mcf">✈ Masa ta este marcată cu roșu pe hartă</div>
+  </div>
+
+</div>
+
+<footer>✈ Love Airlines · DL&TH-23.08 · Moonfields, Tâncăbești ✦</footer>
+
+<script>
+// ── DATE — injectate la export ────────────────────────────────────────────
+var GUESTS = [{"name": "Dalia", "table": "Roma", "seatIdx": 0, "menu": "Normal"}, {"name": "Theo", "table": "Roma", "seatIdx": 1, "menu": "Vegetarian"}, {"name": "Nasa", "table": "Roma", "seatIdx": 2, "menu": "Normal"}, {"name": "Nasu", "table": "Roma", "seatIdx": 3, "menu": "Normal"}, {"name": "Ari Farcas", "table": "Torino", "seatIdx": 0, "menu": "Copil"}, {"name": "Alessandra Chiariello", "table": "Napoli", "seatIdx": 0, "menu": "Normal"}, {"name": "Fabio Cerullo", "table": "Napoli", "seatIdx": 1, "menu": "Normal"}, {"name": "Latis Simina", "table": "Torino", "seatIdx": 1, "menu": "Normal"}, {"name": "Latis Rares", "table": "Torino", "seatIdx": 2, "menu": "Normal"}, {"name": "Margherita Malaspina", "table": "Napoli", "seatIdx": 2, "menu": "Normal"}, {"name": "Giuseppe Iacomino", "table": "Napoli", "seatIdx": 3, "menu": "Vegetarian"}, {"name": "Alin Bobeica", "table": "Torino", "seatIdx": 3, "menu": "Normal"}, {"name": "Irina Bobeica", "table": "Torino", "seatIdx": 4, "menu": "Normal"}, {"name": "Alina Vreju", "table": "Torino", "seatIdx": 5, "menu": "Normal"}, {"name": "Razvan Gherca", "table": "Torino", "seatIdx": 6, "menu": "Normal"}, {"name": "Andreea Gherca", "table": "Torino", "seatIdx": 7, "menu": "Vegetarian"}, {"name": "Fatu Bogdan", "table": "Milano", "seatIdx": 0, "menu": "Normal"}, {"name": "Fatu Elena", "table": "Milano", "seatIdx": 1, "menu": "Normal"}, {"name": "Bratu Livia", "table": "Milano", "seatIdx": 2, "menu": "Normal"}, {"name": "Colonescu Cristian", "table": "Milano", "seatIdx": 3, "menu": "Normal"}, {"name": "Colonescu Maria", "table": "Milano", "seatIdx": 4, "menu": "Normal"}, {"name": "Petrea Adrian", "table": "Milano", "seatIdx": 5, "menu": "Normal"}, {"name": "Adascalitei Silvia", "table": "Milano", "seatIdx": 6, "menu": "Normal"}, {"name": "Adascalitei Marian", "table": "Milano", "seatIdx": 7, "menu": "Normal"}, {"name": "Costin Camelia", "table": "Como", "seatIdx": 0, "menu": "Normal"}, {"name": "Ionut Sabina", "table": "Como", "seatIdx": 1, "menu": "Copil"}, {"name": "Eremia Alida", "table": "Como", "seatIdx": 2, "menu": "Normal"}, {"name": "Eremia Silviu", "table": "Como", "seatIdx": 3, "menu": "Normal"}, {"name": "Sandu Alexandra", "table": "Como", "seatIdx": 4, "menu": "Normal"}, {"name": "Sandu Dragos", "table": "Como", "seatIdx": 5, "menu": "Normal"}, {"name": "Michiu Daniela", "table": "Como", "seatIdx": 6, "menu": "Normal"}, {"name": "Cepalis Steluta", "table": "Como", "seatIdx": 7, "menu": "Normal"}, {"name": "Harabagiu Irina", "table": "Genova", "seatIdx": 0, "menu": "Normal"}, {"name": "Harabagiu Florin", "table": "Genova", "seatIdx": 1, "menu": "Normal"}, {"name": "Bratu Bogdan", "table": "Genova", "seatIdx": 2, "menu": "Normal"}, {"name": "Bratu Dana", "table": "Genova", "seatIdx": 3, "menu": "Normal"}, {"name": "Anghelache Ioana", "table": "Genova", "seatIdx": 4, "menu": "Normal"}, {"name": "Ciobanasu Andrei", "table": "Genova", "seatIdx": 5, "menu": "Normal"}, {"name": "Petrea Magdalena", "table": "Genova", "seatIdx": 6, "menu": "Normal"}, {"name": "Petrea Miron", "table": "Genova", "seatIdx": 7, "menu": "Normal"}, {"name": "Negrescu Noemi", "table": "Venezia", "seatIdx": 0, "menu": "Normal"}, {"name": "Manolache Andrei", "table": "Venezia", "seatIdx": 1, "menu": "Normal"}, {"name": "Danescu Andreea", "table": "Venezia", "seatIdx": 2, "menu": "Normal"}, {"name": "Danescu Adi", "table": "Venezia", "seatIdx": 3, "menu": "Normal"}, {"name": "Ciobanu Laura", "table": "Venezia", "seatIdx": 4, "menu": "Normal"}, {"name": "Oprea Anca", "table": "Venezia", "seatIdx": 5, "menu": "Normal"}, {"name": "Oprea Iulian", "table": "Venezia", "seatIdx": 6, "menu": "Normal"}, {"name": "Mihalascu Laura", "table": "Venezia", "seatIdx": 7, "menu": "Normal"}, {"name": "Dicu Sorin", "table": "Verona", "seatIdx": 0, "menu": "Normal"}, {"name": "Glodeanu Daniela", "table": "Verona", "seatIdx": 1, "menu": "Normal"}, {"name": "Ursu Gabriel", "table": "Verona", "seatIdx": 2, "menu": "Normal"}, {"name": "Ursu Mona", "table": "Verona", "seatIdx": 3, "menu": "Normal"}, {"name": "Balescu Elana", "table": "Verona", "seatIdx": 4, "menu": "Normal"}, {"name": "Balescu Claudiu", "table": "Verona", "seatIdx": 5, "menu": "Normal"}, {"name": "Goglea Crisitan", "table": "Verona", "seatIdx": 6, "menu": "Normal"}, {"name": "Goglea Diana", "table": "Verona", "seatIdx": 7, "menu": "Normal"}, {"name": "Bucur Dorina", "table": "Padova", "seatIdx": 0, "menu": "Normal"}, {"name": "Goglea Matei", "table": "Padova", "seatIdx": 1, "menu": "Normal"}, {"name": "Ionescu Tiberiu", "table": "Padova", "seatIdx": 2, "menu": "Normal"}, {"name": "Ionescu Bogdana", "table": "Padova", "seatIdx": 3, "menu": "Normal"}, {"name": "Dragne Miruna", "table": "Padova", "seatIdx": 4, "menu": "Normal"}, {"name": "Dragne Catalin", "table": "Padova", "seatIdx": 5, "menu": "Normal"}, {"name": "Mihalache Carmen", "table": "Padova", "seatIdx": 6, "menu": "Normal"}, {"name": "Mihalache Sofia", "table": "Padova", "seatIdx": 7, "menu": "Copil"}, {"name": "Mihalache Maria", "table": "Trieste", "seatIdx": 0, "menu": "Normal"}, {"name": "Marinescu Maria", "table": "Trieste", "seatIdx": 1, "menu": "Normal"}, {"name": "Marinescu Mihai", "table": "Trieste", "seatIdx": 2, "menu": "Normal"}, {"name": "Andrei Oana", "table": "Trieste", "seatIdx": 3, "menu": "Normal"}, {"name": "Andrei Liviu", "table": "Trieste", "seatIdx": 4, "menu": "Normal"}, {"name": "Andrei Ilinca", "table": "Trieste", "seatIdx": 5, "menu": "Copil"}, {"name": "Chetroiu Daniela", "table": "Trieste", "seatIdx": 6, "menu": "Normal"}, {"name": "Chetroiu Dragos", "table": "Trieste", "seatIdx": 7, "menu": "Normal"}, {"name": "Gheorghiu Dana", "table": "Bologna", "seatIdx": 0, "menu": "Normal"}, {"name": "Gheorghiu Ciprian", "table": "Bologna", "seatIdx": 1, "menu": "Normal"}, {"name": "Bate Teodor", "table": "Bologna", "seatIdx": 2, "menu": "Normal"}, {"name": "Goglea Marioara", "table": "Bologna", "seatIdx": 3, "menu": "Normal"}, {"name": "Goglea Constantin", "table": "Bologna", "seatIdx": 4, "menu": "Normal"}, {"name": "Radu Vasile", "table": "Bologna", "seatIdx": 5, "menu": "Normal"}, {"name": "Radu Doina", "table": "Bologna", "seatIdx": 6, "menu": "Normal"}, {"name": "Ciovica David", "table": "Bologna", "seatIdx": 7, "menu": "Normal"}, {"name": "Densorean Bianca", "table": "Firenze", "seatIdx": 0, "menu": "Normal"}, {"name": "Sher Marinela", "table": "Firenze", "seatIdx": 1, "menu": "Normal"}, {"name": "Moraru Dan", "table": "Firenze", "seatIdx": 2, "menu": "Normal"}, {"name": "Moraru Evelina", "table": "Firenze", "seatIdx": 3, "menu": "Normal"}, {"name": "Sandu Codruta", "table": "Firenze", "seatIdx": 4, "menu": "Normal"}, {"name": "Toader Ivona", "table": "Firenze", "seatIdx": 5, "menu": "Normal"}, {"name": "Toader Radu", "table": "Firenze", "seatIdx": 6, "menu": "Normal"}, {"name": "Rizea Georgeta", "table": "Firenze", "seatIdx": 7, "menu": "Normal"}, {"name": "Rizea Vasile", "table": "Siena", "seatIdx": 0, "menu": "Normal"}, {"name": "Petrea Mircea", "table": "Siena", "seatIdx": 1, "menu": "Normal"}, {"name": "Pieptan Victor", "table": "Siena", "seatIdx": 2, "menu": "Normal"}, {"name": "Piepran Ingrid", "table": "Siena", "seatIdx": 3, "menu": "Normal"}, {"name": "Guzganu Ionut", "table": "Siena", "seatIdx": 4, "menu": "Normal"}, {"name": "Guzganu Ioana", "table": "Siena", "seatIdx": 5, "menu": "Normal"}, {"name": "Calimanescu Octavian", "table": "Siena", "seatIdx": 6, "menu": "Normal"}, {"name": "Calimanescu Ioana", "table": "Siena", "seatIdx": 7, "menu": "Normal"}, {"name": "Neaga Iulia Carmina", "table": "Perugia", "seatIdx": 0, "menu": "Normal"}, {"name": "Milea Doina", "table": "Perugia", "seatIdx": 1, "menu": "Normal"}, {"name": "Milea Doru", "table": "Perugia", "seatIdx": 2, "menu": "Normal"}, {"name": "Tarcau Sorin", "table": "Perugia", "seatIdx": 3, "menu": "Normal"}, {"name": "Tarcau Mihaela Stefania", "table": "Perugia", "seatIdx": 4, "menu": "Normal"}, {"name": "Harabagiu Miruna", "table": "Perugia", "seatIdx": 5, "menu": "Normal"}, {"name": "Shweilat Sara", "table": "Perugia", "seatIdx": 6, "menu": "Normal"}, {"name": "El Garushi Ahmad", "table": "Perugia", "seatIdx": 7, "menu": "Normal"}, {"name": "El Garushi Celine", "table": "Napoli", "seatIdx": 4, "menu": "Copil"}, {"name": "Cucu Corina", "table": "Napoli", "seatIdx": 5, "menu": "Normal"}, {"name": "Iacob Robert", "table": "Napoli", "seatIdx": 6, "menu": "Normal"}, {"name": "Forausberger Florin", "table": "Napoli", "seatIdx": 7, "menu": "Normal"}, {"name": "Forausberger Simona", "table": "Amalfi", "seatIdx": 0, "menu": "Normal"}, {"name": "Bodea Tudor", "table": "Amalfi", "seatIdx": 1, "menu": "Normal"}, {"name": "Bodea Madalina", "table": "Amalfi", "seatIdx": 2, "menu": "Normal"}, {"name": "Bodea Eliza", "table": "Amalfi", "seatIdx": 3, "menu": "Copil"}, {"name": "Bodea Ema", "table": "Amalfi", "seatIdx": 4, "menu": "Copil"}, {"name": "Chiriac Cristina", "table": "Amalfi", "seatIdx": 5, "menu": "Normal"}, {"name": "Chiriac Sorin", "table": "Amalfi", "seatIdx": 6, "menu": "Vegan"}, {"name": "Chiriac Sonia", "table": "Amalfi", "seatIdx": 7, "menu": "Normal"}, {"name": "Constantin Catalin", "table": "Positano", "seatIdx": 0, "menu": "Normal"}, {"name": "Constantin Isabela", "table": "Positano", "seatIdx": 1, "menu": "Normal"}, {"name": "Ghiuzan Ana", "table": "Positano", "seatIdx": 2, "menu": "Normal"}, {"name": "Kalpakjian Stephane", "table": "Positano", "seatIdx": 3, "menu": "Normal"}, {"name": "Tanase Nadia", "table": "Positano", "seatIdx": 4, "menu": "Normal"}, {"name": "Tanase Lucian", "table": "Positano", "seatIdx": 5, "menu": "Normal"}, {"name": "Ciucurel Elena", "table": "Positano", "seatIdx": 6, "menu": "Normal"}, {"name": "Ciucurel Radu", "table": "Positano", "seatIdx": 7, "menu": "Normal"}, {"name": "Ciont Laurentiu", "table": "Capri", "seatIdx": 0, "menu": "Normal"}, {"name": "Ciont Corina", "table": "Capri", "seatIdx": 1, "menu": "Normal"}, {"name": "Catana Dana", "table": "Capri", "seatIdx": 2, "menu": "Normal"}, {"name": "Catana Bogdan", "table": "Capri", "seatIdx": 3, "menu": "Normal"}, {"name": "Nuta Andreea", "table": "Capri", "seatIdx": 4, "menu": "Normal"}, {"name": "Nuta Alexandru", "table": "Capri", "seatIdx": 5, "menu": "Normal"}, {"name": "Popa Ruxandra", "table": "Capri", "seatIdx": 6, "menu": "Normal"}, {"name": "Menu Adina", "table": "Capri", "seatIdx": 7, "menu": "Normal"}, {"name": "Crăescu Alexandra", "table": "Palermo", "seatIdx": 0, "menu": "Normal"}, {"name": "Dinu Vlad", "table": "Palermo", "seatIdx": 1, "menu": "Normal"}, {"name": "Bolovan Madalina", "table": "Palermo", "seatIdx": 2, "menu": "Normal"}, {"name": "Goglea Alin", "table": "Palermo", "seatIdx": 3, "menu": "Normal"}, {"name": "Goglea Roxana", "table": "Palermo", "seatIdx": 4, "menu": "Normal"}, {"name": "Craescu Alexandra", "table": "Palermo", "seatIdx": 5, "menu": "Normal"}, {"name": "Dinu Vlad", "table": "Palermo", "seatIdx": 6, "menu": "Normal"}, {"name": "steafan", "table": "Palermo", "seatIdx": 7, "menu": "Normal"}, {"name": "larisa", "table": "Taormina", "seatIdx": 0, "menu": "Normal"}, {"name": "rhiana", "table": "Taormina", "seatIdx": 1, "menu": "Normal"}, {"name": "tania", "table": "Taormina", "seatIdx": 2, "menu": "Normal"}, {"name": "rogin liviu", "table": "Taormina", "seatIdx": 3, "menu": "Normal"}, {"name": "rogin ana", "table": "Taormina", "seatIdx": 4, "menu": "Normal"}, {"name": "Menu Adina", "table": "Taormina", "seatIdx": 5, "menu": "Normal"}, {"name": "Alina", "table": "Taormina", "seatIdx": 6, "menu": "Normal"}, {"name": "Alecu", "table": "Taormina", "seatIdx": 7, "menu": "Normal"}, {"name": "Narcisa", "table": "Siracusa", "seatIdx": 0, "menu": "Normal"}, {"name": "savu", "table": "Siracusa", "seatIdx": 1, "menu": "Normal"}, {"name": "silviu", "table": "Siracusa", "seatIdx": 2, "menu": "Normal"}, {"name": "mada", "table": "Siracusa", "seatIdx": 3, "menu": "Normal"}, {"name": "robert", "table": "Siracusa", "seatIdx": 4, "menu": "Normal"}, {"name": "madi bolovan", "table": "Siracusa", "seatIdx": 5, "menu": "Normal"}];
+
+// ── POZITII MESE IN IMAGINE (% din latime x inaltime) ────────────────────
+// Coordonate masurate din imaginea seating-map.png (1408x768)
+var TABLE_POS = {
+  'Roma':          [50.0, 18.0],
+  // Stanga sus
+  'Torino':        [28.5, 27.5],
+  'Milano':        [26.5, 34.0],
+  'Como':          [24.5, 40.5],
+  'Genova':        [22.0, 47.5],
+  // Stanga centru
+  'Venezia':       [38.5, 27.5],
+  'Verona':        [37.5, 34.0],
+  'Padova':        [36.5, 40.5],
+  'Trieste':       [35.5, 47.5],
+  // Dreapta sus
+  'Bologna':       [54.5, 27.5],
+  'Firenze':       [56.0, 34.0],
+  'Siena':         [57.5, 40.5],
+  'Perugia':       [59.0, 47.5],
+  // Dreapta centru
+  'Napoli':        [65.0, 27.5],
+  'Amalfi':        [66.5, 34.0],
+  'Positano':      [68.0, 40.5],
+  'Capri':         [70.0, 47.5],
+  // Jos stanga
+  'Palermo':       [17.5, 63.0],
+  'Taormina':      [15.0, 71.5],
+  'Siracusa':      [12.5, 79.0],
+  'Agrigento':     [10.0, 87.0],
+  // Jos centru
+  'Cagliari':      [33.5, 63.0],
+  'Alghero':       [31.5, 71.5],
+  'Olbia':         [29.5, 79.0],
+  'Costa Smeralda':[27.5, 87.0]
+};
+
+// ── TRADUCERI ─────────────────────────────────────────────────────────────
+var TT = {
+  ro:{ttl:'Găsește-ți Locul',sct:'Caută-ți locul la bord',
+      scs:'Introdu numele tău pentru a-ți găsi masa',ph:'ex: Ion Popescu',
+      nf:'Numele nu a fost găsit.',fl1:'MASĂ',fl2:'SCAUN',fl3:'MENIU',mct:'HARTA',
+      tk:'✈ LOVE AIRLINES · DL&TH-23.08 ✦ MOONFIELDS · 23 AUGUST 2026 ✈ DESTINAȚIE: FERICIRE ✦ BOARDING NOW'},
+  en:{ttl:'Find Your Seat',sct:'Find your seat on board',
+      scs:'Enter your name to find your table',ph:'e.g. John Smith',
+      nf:'Name not found.',fl1:'TABLE',fl2:'SEAT',fl3:'MENU',mct:'MAP',
+      tk:'✈ LOVE AIRLINES · DL&TH-23.08 ✦ MOONFIELDS · 23 AUGUST 2026 ✈ DESTINATION: HAPPINESS ✦ BOARDING NOW'},
+  it:{ttl:'Trova il Tuo Posto',sct:'Trova il tuo posto a bordo',
+      scs:'Inserisci il tuo nome per trovare il tuo tavolo',ph:'es. Mario Rossi',
+      nf:'Nome non trovato.',fl1:'TAVOLO',fl2:'POSTO',fl3:'MENU',mct:'MAPPA',
+      tk:'✈ LOVE AIRLINES · DL&TH-23.08 ✦ MOONFIELDS · 23 AGOSTO 2026 ✈ DESTINAZIONE: FELICITÀ ✦ IMBARCO'}
+};
+var ML={ro:{normal:'Normal',veg:'Vegetarian',vegan:'Vegan',copil:'Copil','Fara Gluten':'Fara Gluten','Fara Porc':'Fara Porc'},
+        en:{normal:'Normal',veg:'Vegetarian',vegan:'Vegan',copil:'Child','Fara Gluten':'Gluten Free','Fara Porc':'No Pork'},
+        it:{normal:'Normale',veg:'Vegetariano',vegan:'Vegano',copil:'Bambino','Fara Gluten':'Senza Glutine','Fara Porc':'Senza Maiale'}};
+
+var lang='ro', suggs=[], selG=null;
+
+function gi(id){return document.getElementById(id);}
+
+function applyLang(){
+  var t=TT[lang];
+  gi('ttl').textContent=t.ttl; gi('sct').textContent=t.sct;
+  gi('scs').textContent=t.scs; gi('inp').placeholder=t.ph;
+  gi('mct').textContent=t.mct;
+  gi('tk1').textContent=t.tk; gi('tk2').textContent=t.tk;
+  ['lro','len','lit'].forEach(function(id,i){
+    gi(id).className='lb'+(i===['ro','en','it'].indexOf(lang)?' on':'');
+  });
+  if(selG) showBP(selG);
+}
+function setLang(l){lang=l;applyLang();}
+gi('lro').onclick=function(){setLang('ro');};
+gi('len').onclick=function(){setLang('en');};
+gi('lit').onclick=function(){setLang('it');};
+
+// ── SEARCH ────────────────────────────────────────────────────────────────
+var inp=gi('inp'), sgEl=gi('sg'), nfEl=gi('nf');
+
+inp.addEventListener('input',function(){doSearch(this.value);});
+inp.addEventListener('keydown',function(e){if(e.key==='Enter')pickFirst();});
+gi('sbtn').addEventListener('click',pickFirst);
+
+function doSearch(v){
+  var q=v.trim().toLowerCase();
+  nfEl.style.display='none'; sgEl.className='sg'; sgEl.innerHTML=''; suggs=[];
+  if(q.length<2)return;
+  suggs=GUESTS.filter(function(g){return g.name.toLowerCase().indexOf(q)>=0;}).slice(0,8);
+  if(!suggs.length){
+    if(q.length>=3){nfEl.textContent=TT[lang].nf;nfEl.style.display='block';}
+    return;
+  }
+  suggs.forEach(function(g,i){
+    var d=document.createElement('div');
+    d.className='sit';
+    d.innerHTML='<strong>'+g.name+'</strong><div class="sit-sub">Masa '+g.table+'</div>';
+    (function(idx){
+      d.onclick=function(){pick(idx);};
+      d.ontouchend=function(e){e.preventDefault();pick(idx);};
+    })(i);
+    sgEl.appendChild(d);
+  });
+  sgEl.className='sg open';
+}
+
+function pickFirst(){if(suggs.length>0)pick(0);}
+
+function pick(i){
+  var g=suggs[i]; if(!g)return;
+  selG=g;
+  inp.value=g.name;
+  sgEl.className='sg'; sgEl.innerHTML='';
+  nfEl.style.display='none';
+  showBP(g);
+  gi('mcw').className='mc show';
+  gi('bp').scrollIntoView({behavior:'smooth',block:'nearest'});
+  setTimeout(function(){showDot(g);},300);
+}
+
+// ── BOARDING PASS ─────────────────────────────────────────────────────────
+function showBP(g){
+  var t=TT[lang];
+  gi('rn').textContent=g.name.split(' ')[0];
+  gi('rt').textContent=g.table;
+  gi('rs').textContent='#'+(g.seatIdx+1);
+  gi('rm').textContent=ML[lang][g.menu]||g.menu;
+  gi('fl1').textContent=t.fl1; gi('fl2').textContent=t.fl2; gi('fl3').textContent=t.fl3;
+  gi('bp').className='bp show';
+}
+
+// ── PUNCT PE IMAGINE ──────────────────────────────────────────────────────
+function showDot(g){
+  var pos=TABLE_POS[g.table];
+  if(!pos){
+    // Masa negasita in coordonate — afisam mesaj
+    gi('tdot').className='table-dot';
+    gi('tlabel').className='table-label';
+    return;
+  }
+
+  var wrap=gi('map-wrap');
+  var wRect=wrap.getBoundingClientRect();
+  var wW=wRect.width;
+  var img=gi('map-img');
+  var wH=img.offsetHeight;
+
+  var xPx=(pos[0]/100)*wW;
+  var yPx=(pos[1]/100)*wH;
+
+  var dot=gi('tdot');
+  dot.style.left=xPx+'px';
+  dot.style.top=yPx+'px';
+  dot.className='table-dot show';
+
+  var lbl=gi('tlabel');
+  lbl.textContent='Masa '+g.table;
+  lbl.style.left=xPx+'px';
+  lbl.style.top=yPx+'px';
+  lbl.className='table-label show';
+}
+
+window.addEventListener('resize',function(){if(selG)setTimeout(function(){showDot(selG);},100);});
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+applyLang();
+</script>
+</body>
+</html>
