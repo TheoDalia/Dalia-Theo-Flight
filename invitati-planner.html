@@ -1508,7 +1508,8 @@ var P2=';\n\n// ── POZITII MESE IN IMAGINE (% din latime x inaltime) ──�
 
 function exportGuestPage(){
   if(guests.filter(function(g){return g.tableId!=null;}).length===0){
-    alert('Nu exista invitati asignati la mese.');return;
+    alert('Nu exista invitati asignati la mese. Foloseste Asignare automata mai intai.');
+    return;
   }
   var gD=guests.filter(function(g){return g.tableId!=null;}).map(function(g){
     var t=tables.find(function(x){return x.id==g.tableId;});
@@ -1518,18 +1519,68 @@ function exportGuestPage(){
   var SC='<'+'script>';var SCE='</'+'script>';
   function fix(s){return s.replace(/XSCX/g,SC).replace(/XSCEX/g,SCE);}
   var html=fix(P1)+G+fix(P2);
-  var blob=new Blob([html],{type:'text/html;charset=utf-8'});
-  var url=URL.createObjectURL(blob);
-  var a=document.createElement('a');
-  a.href=url;
-  a.download='PassengerMap.html';
-  a.style.display='none';
-  document.body.appendChild(a);
-  a.click();
+
+  // Deschidem intr-un tab nou
+  var w=window.open('','_blank');
+  if(!w){
+    alert('Browserul a blocat fereastra noua. Permite popup-urile pentru acest site si incearca din nou.');
+    return;
+  }
+  w.document.open();
+  w.document.write(html);
+  w.document.close();
+
+  // Dupa ce pagina s-a incarcat, adaugam buton de salvare vizibil
   setTimeout(function(){
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  },2000);
+    try {
+      var bar = w.document.createElement('div');
+      bar.id = 'save-bar';
+      bar.style.cssText = [
+        'position:fixed','top:0','left:0','right:0','z-index:99999',
+        'background:#1a3a2a','color:#c9a84c',
+        'padding:14px 20px','display:flex','align-items:center',
+        'justify-content:space-between','gap:12px',
+        'font-family:Jost,sans-serif','font-size:.85rem','font-weight:600',
+        'box-shadow:0 2px 12px rgba(0,0,0,.4)'
+      ].join(';');
+
+      var msg = w.document.createElement('span');
+      msg.textContent = '✈ PassengerMap generat cu succes! Salveaza pagina pentru a o incarca pe GitHub:';
+      bar.appendChild(msg);
+
+      var btn = w.document.createElement('button');
+      btn.textContent = '💾 Salveaza ca PassengerMap.html';
+      btn.style.cssText = [
+        'background:#c9a84c','color:#1a3a2a','border:none',
+        'border-radius:4px','padding:8px 16px','cursor:pointer',
+        'font-family:Jost,sans-serif','font-size:.82rem','font-weight:700',
+        'white-space:nowrap'
+      ].join(';');
+      btn.onclick = function(){
+        // Trigger Ctrl+S programatic
+        var ev = new w.KeyboardEvent('keydown',{
+          key:'s', code:'KeyS', ctrlKey:true, bubbles:true
+        });
+        w.document.dispatchEvent(ev);
+        // Fallback: instructiuni
+        setTimeout(function(){
+          btn.textContent = '⌨ Acum apasa Ctrl+S (Windows) sau Cmd+S (Mac)';
+          btn.style.background = '#e8c96a';
+        }, 200);
+      };
+      bar.appendChild(btn);
+
+      var close = w.document.createElement('button');
+      close.textContent = '✕';
+      close.style.cssText = 'background:transparent;border:1px solid rgba(201,168,76,.4);color:#c9a84c;border-radius:4px;padding:6px 10px;cursor:pointer;font-size:.9rem;';
+      close.onclick = function(){ bar.remove(); };
+      bar.appendChild(close);
+
+      w.document.body.insertBefore(bar, w.document.body.firstChild);
+    } catch(e) {
+      // Daca nu putem accesa fereastra noua din cauza CORS, nu facem nimic
+    }
+  }, 800);
 }
 
 
