@@ -252,13 +252,14 @@ footer{text-align:center;padding:1.5rem;font-size:9px;letter-spacing:2px;color:r
   <div class="map-wrap">
     <div class="pm-welcome">
       <div class="pm-welcome-icon">✈️</div>
-      <div class="pm-welcome-title">Bun venit la bordul zborului Love Airlines!</div>
-      <div class="pm-welcome-teaser">Vă invităm să savurați pizza și gelato special aduse pentru acest eveniment 🍕🍨</div>
+      <div class="pm-welcome-title" id="welTitle">Bun venit la bordul zborului Love Airlines! ✈️</div>
+      <div class="pm-welcome-teaser" id="welTeaser">Până începe ceremonia, vă invităm să savurați pizza 🍕 și gelato 🍨, special aduse pentru acest eveniment.</div>
       <button class="pm-welcome-toggle" id="pm-welcome-btn" onclick="toggleWelcome()">Citește mesajul complet ⌄</button>
       <div class="pm-welcome-txt" id="pm-welcome-txt">
-        <p>În această seară, vă invităm să luați parte la cel mai important zbor din viața noastră. Voi sunteți oamenii pe care ne-am dorit să-i avem alături în această călătorie, iar prezența voastră face ca această destinație să fie și mai specială.</p>
-        <p>Vă invităm să vă găsiți locul la bord, să descoperiți meniul pregătit pentru această călătorie, să vă lăsați purtați de muzica de la bord și, pe parcursul zborului, să surprindeți în <strong>10 fotografii</strong> momentele care vă plac și să le încărcați în albumul colectiv de călătorie, pe care îl vom putea răsfoi cu toții și după aterizare.</p>
-        <p>Vă dorim voie bună și o călătorie plină de iubire, râsete și momente de neuitat! ✈️❤️</p>
+        <p id="welP1">În această seară, vă invităm să luați parte la cel mai important zbor din viața noastră. Voi sunteți oamenii pe care ni i-am dorit alături în această călătorie și suntem recunoscători că sunteți aici. Prezența voastră face ca această destinație să fie cu atât mai specială. ❤️</p>
+        <p id="welP2">Găsiți-vă locul la bord, descoperiți meniul pregătit pentru această călătorie și lăsați-vă purtați de muzica de la bord.</p>
+        <p id="welP3">Pe parcursul zborului, vă provocăm să surprindeți în <strong>10 fotografii</strong> momentele care vă plac cel mai mult și să le încărcați în albumul nostru colectiv de călătorie. Astfel, vom putea retrăi împreună toate aceste momente și după aterizare. 📸</p>
+        <p id="welP4">Vă dorim voie bună și o călătorie plină de iubire, râsete și momente de neuitat! Mulțumim că ați ales să zburați alături de noi.</p>
       </div>
     </div>
     <div class="pm-no-data" id="pm-no-data">
@@ -449,6 +450,14 @@ var T={
     navH:'Hartă',
     navM:'Dinner Menu',
     navA:'Album Foto',
+    welTitle:'Bun venit la bordul zborului Love Airlines! ✈️',
+    welTeaser:'Până începe ceremonia, vă invităm să savurați pizza 🍕 și gelato 🍨, special aduse pentru acest eveniment.',
+    welBtnOpen:'Citește mesajul complet ⌄',
+    welBtnClose:'Ascunde mesajul ⌃',
+    welP1:'În această seară, vă invităm să luați parte la cel mai important zbor din viața noastră. Voi sunteți oamenii pe care ni i-am dorit alături în această călătorie și suntem recunoscători că sunteți aici. Prezența voastră face ca această destinație să fie cu atât mai specială. ❤️',
+    welP2:'Găsiți-vă locul la bord, descoperiți meniul pregătit pentru această călătorie și lăsați-vă purtați de muzica de la bord.',
+    welP3:'Pe parcursul zborului, vă provocăm să surprindeți în <strong>10 fotografii</strong> momentele care vă plac cel mai mult și să le încărcați în albumul nostru colectiv de călătorie. Astfel, vom putea retrăi împreună toate aceste momente și după aterizare. 📸',
+    welP4:'Vă dorim voie bună și o călătorie plină de iubire, râsete și momente de neuitat! Mulțumim că ați ales să zburați alături de noi.',
     airline:'✈ Love Airlines · Zbor DL&amp;TH-23.08.2026',
     gate:'POARTĂ',
     gateV:'MOONFIELDS',
@@ -601,6 +610,14 @@ var T={
     navH:'Mappa',
     navM:'Dinner Menu',
     navA:'Album Foto',
+    welTitle:'Benvenuti a bordo di Love Airlines! ✈️',
+    welTeaser:"Prima dell'inizio della cerimonia, vi invitiamo a gustare pizza 🍕 e gelato 🍨, portati appositamente per questo evento.",
+    welBtnOpen:'Leggi il messaggio completo ⌄',
+    welBtnClose:'Nascondi il messaggio ⌃',
+    welP1:'Questa sera vi invitiamo a prendere parte al volo più importante della nostra vita. Siete le persone che abbiamo desiderato avere al nostro fianco in questo viaggio e siamo grati che siate qui. La vostra presenza rende questa destinazione ancora più speciale. ❤️',
+    welP2:'Trovate il vostro posto a bordo, scoprite il menu preparato per questo viaggio e lasciatevi trasportare dalla musica di bordo.',
+    welP3:'Durante il volo, vi sfidiamo a catturare in <strong>10 foto</strong> i momenti che vi piacciono di più e a caricarli nel nostro album di viaggio collettivo. Così potremo rivivere insieme questi momenti anche dopo l\'atterraggio. 📸',
+    welP4:"Vi auguriamo buon divertimento e un viaggio pieno di amore, risate e momenti indimenticabili! Grazie per aver scelto di volare con noi.",
     airline:'✈ Love Airlines · Volo DL&amp;TH-23.08.2026',
     gate:'PORTA',
     gateV:'MOONFIELDS',
@@ -751,6 +768,14 @@ var T={
     navH:'Map',
     navM:'Dinner Menu',
     navA:'Photo Album',
+    welTitle:'Welcome aboard Love Airlines! ✈️',
+    welTeaser:'Before the ceremony begins, please enjoy pizza 🍕 and gelato 🍨, brought specially for this event.',
+    welBtnOpen:'Read the full message ⌄',
+    welBtnClose:'Hide the message ⌃',
+    welP1:"Tonight, we invite you to join the most important flight of our lives. You are the people we wished to have by our side on this journey, and we're grateful you're here. Your presence makes this destination even more special. ❤️",
+    welP2:'Find your seat on board, discover the menu prepared for this journey, and let yourself be carried away by the music.',
+    welP3:'During the flight, we challenge you to capture, in <strong>10 photos</strong>, the moments you love most and upload them to our collective travel album. That way, we\'ll all be able to relive these moments together, even after landing. 📸',
+    welP4:'We wish you great fun and a journey full of love, laughter, and unforgettable moments! Thank you for choosing to fly with us.',
     airline:'✈ Love Airlines · Flight DL&amp;TH-23.08.2026',
     gate:'GATE',
     gateV:'MOONFIELDS',
@@ -933,11 +958,17 @@ function setLang(l,btn){
   document.getElementById('at-gal').textContent=t.galTitle;
   document.getElementById('al-ref').textContent=t.alRef;
   // ── Translate ALL menu elements ──
-  var _allIds = ['dkHot','dkSoft','dkBeer','dkMock','dkCock','dkLong','dkWine','dkSpir','diCoffee','diTea','diWater','diCola','diSchweppes','diIceTea','diSantal','diHeineken','diHeineken0','diGreenApple','diBerryMojito','diAperolSpritz','diHugoSpritz','diNegroni','diMojito','diCampariO','diGinTonic','diCubaLibre','diVodkaMix','diWhiskyCola','diSarica','diProsecco','diVodka','diBourboun','diCognac','diWhisky','diRum','diGin','diTequila','diVermouth','diBitter','diJager','diBaileys','ddCoffee','ddTea','ddWater','ddCola','ddSchweppes','ddIceTea','ddSantal','ddHeineken','ddHeineken0','ddGreenApple','ddBerryMojito','ddAperolSpritz','ddHugoSpritz','ddNegroni','ddMojito','ddCampariO','ddGinTonic','ddCubaLibre','ddVodkaMix','ddWhiskyCola','ddSarica','ddProsecco','ddVodka','ddBourboun','ddCognac','ddWhisky','ddRum','ddGin','ddTequila','ddVermouth','ddBitter','ddJager','ddBaileys','ddSaricaSpec','dmTagline','dmC1','dmC2','dmC3','dmC4','dmC5','dmI1a','dmI1b','dmI2a','dmI2b','dmI2c','dmI2d','dmI2e','dmI2f','dmI2g','dmI2h','dmI3a','dmI4a','dmI5a'];
+  var _allIds = ['welTitle','welTeaser','welP1','welP2','welP3','welP4','dkHot','dkSoft','dkBeer','dkMock','dkCock','dkLong','dkWine','dkSpir','diCoffee','diTea','diWater','diCola','diSchweppes','diIceTea','diSantal','diHeineken','diHeineken0','diGreenApple','diBerryMojito','diAperolSpritz','diHugoSpritz','diNegroni','diMojito','diCampariO','diGinTonic','diCubaLibre','diVodkaMix','diWhiskyCola','diSarica','diProsecco','diVodka','diBourboun','diCognac','diWhisky','diRum','diGin','diTequila','diVermouth','diBitter','diJager','diBaileys','ddCoffee','ddTea','ddWater','ddCola','ddSchweppes','ddIceTea','ddSantal','ddHeineken','ddHeineken0','ddGreenApple','ddBerryMojito','ddAperolSpritz','ddHugoSpritz','ddNegroni','ddMojito','ddCampariO','ddGinTonic','ddCubaLibre','ddVodkaMix','ddWhiskyCola','ddSarica','ddProsecco','ddVodka','ddBourboun','ddCognac','ddWhisky','ddRum','ddGin','ddTequila','ddVermouth','ddBitter','ddJager','ddBaileys','ddSaricaSpec','dmTagline','dmC1','dmC2','dmC3','dmC4','dmC5','dmI1a','dmI1b','dmI2a','dmI2b','dmI2c','dmI2d','dmI2e','dmI2f','dmI2g','dmI2h','dmI3a','dmI4a','dmI5a'];
   _allIds.forEach(function(id){
     var el = document.getElementById(id);
     if(el && t[id] !== undefined) el.innerHTML = t[id];
   });
+  // Welcome toggle button keeps its current open/closed state across language switches
+  var _welBtn = document.getElementById('pm-welcome-btn');
+  if(_welBtn){
+    var _welOpen = document.getElementById('pm-welcome-txt').classList.contains('open');
+    _welBtn.textContent = _welOpen ? t.welBtnClose : t.welBtnOpen;
+  }
   // ── Nav tabs ──
   var ntD = document.getElementById('nt-d');
   if(ntD && t.navDr) ntD.textContent = t.navDr;
@@ -955,7 +986,8 @@ function toggleWelcome(){
   var txt = document.getElementById('pm-welcome-txt');
   var btn = document.getElementById('pm-welcome-btn');
   var open = txt.classList.toggle('open');
-  btn.textContent = open ? 'Ascunde mesajul ⌃' : 'Citește mesajul complet ⌄';
+  var t = T[lang];
+  btn.textContent = open ? t.welBtnClose : t.welBtnOpen;
 }
 
 function showTab(name,btn){
