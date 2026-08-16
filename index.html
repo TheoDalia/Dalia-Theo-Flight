@@ -1195,23 +1195,78 @@ async function startUpload(){
   var pf=document.getElementById('prog-fill');
   pf.style.width='0%';
   var uploaded=0;
+  var lastErr='';
   for(var i=0;i<selFiles.length;i++){
     setStatus(t.alSending+' '+(i+1)+' '+t.alOf+' '+selFiles.length+'...','');
     try{
-      var b64=await toB64(selFiles[i]);
-      var r=await fetch(APPS_URL,{method:'POST',body:JSON.stringify({action:'upload',userName:name,fileName:selFiles[i].name,mimeType:selFiles[i].type,base64Data:b64})});
-      var data=await r.json();
+      var b64=await compressToB64(selFiles[i]);
+      var data=await fetchWithTimeout(APPS_URL,{method:'POST',body:JSON.stringify({action:'upload',userName:name,fileName:selFiles[i].name,mimeType:'image/jpeg',base64Data:b64})},30000);
       if(data.success) uploaded++;
       else if(data.error&&data.error.indexOf('limita')>=0){setStatus(t.alErrLimit,'err');break;}
-    }catch(e){}
+      else { lastErr = data.error || 'unknown'; }
+    }catch(e){ lastErr = e.message || String(e); }
     pf.style.width=((i+1)/selFiles.length*100)+'%';
   }
   btn.disabled=false;
-  if(uploaded>0){setStatus(t.alSuccess(uploaded,name),'ok');selFiles=[];renderPrev();document.getElementById('al-name').value='';}
-  else setStatus(t.alErrGeneral,'err');
+  if(uploaded>0 && uploaded===selFiles.length){setStatus(t.alSuccess(uploaded,name),'ok');selFiles=[];renderPrev();document.getElementById('al-name').value='';}
+  else if(uploaded>0){setStatus(t.alSuccess(uploaded,name)+' ('+(selFiles.length-uploaded)+' au eșuat, încearcă din nou pentru restul)','ok');}
+  else setStatus(t.alErrGeneral+(lastErr?' ('+lastErr+')':''),'err');
 }
 function setStatus(msg,cls){var el=document.getElementById('status-msg');el.textContent=msg;el.className='status-msg'+(cls?' '+cls:'');}
 function toB64(f){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(r.result.split(',')[1]);};r.onerror=rej;r.readAsDataURL(f);});}
+
+// Compress + resize image client-side before upload (max 1600px on the long
+// side, JPEG q=0.8). Large phone photos (8-15MB) were likely causing the
+// upload to hang or fail silently on slow/mobile connections.
+function compressToB64(file){
+  return new Promise(function(resolve, reject){
+    var img = new Image();
+    var url = URL.createObjectURL(file);
+    img.onload = function(){
+      URL.revokeObjectURL(url);
+      var maxDim = 1600;
+      var w = img.width, h = img.height;
+      if(w > maxDim || h > maxDim){
+        if(w > h){ h = Math.round(h * maxDim / w); w = maxDim; }
+        else { w = Math.round(w * maxDim / h); h = maxDim; }
+      }
+      var canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      var ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      var dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+      resolve(dataUrl.split(',')[1]);
+    };
+    img.onerror = function(){
+      URL.revokeObjectURL(url);
+      // Fallback: send original file un-compressed if it can't be decoded as an image
+      toB64(file).then(resolve).catch(reject);
+    };
+    img.src = url;
+  });
+}
+
+// fetch with a hard timeout, so a hung request fails visibly instead of
+// leaving the "Se trimite..." status stuck forever.
+function fetchWithTimeout(url, opts, ms){
+  return new Promise(function(resolve, reject){
+    var ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+    var timer = setTimeout(function(){
+      if(ctrl) ctrl.abort();
+      reject(new Error('timeout'));
+    }, ms);
+    var fetchOpts = ctrl ? Object.assign({}, opts, {signal: ctrl.signal}) : opts;
+    fetch(url, fetchOpts).then(function(r){
+      clearTimeout(timer);
+      return r.json();
+    }).then(function(data){
+      resolve(data);
+    }).catch(function(e){
+      clearTimeout(timer);
+      reject(e);
+    });
+  });
+}
 
 async function loadGallery(){
   var t=T[lang];
