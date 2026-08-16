@@ -1231,8 +1231,8 @@ async function startUpload(){
   for(var i=0;i<selFiles.length;i++){
     setStatus(t.alSending+' '+(i+1)+' '+t.alOf+' '+selFiles.length+'...','');
     try{
-      var b64=await compressToB64(selFiles[i]);
-      var data=await fetchWithTimeout(APPS_URL,{method:'POST',body:JSON.stringify({action:'upload',userName:name,fileName:selFiles[i].name,mimeType:'image/jpeg',base64Data:b64})},30000);
+      var b64=await toB64(selFiles[i]);
+      var data=await fetchWithTimeout(APPS_URL,{method:'POST',body:JSON.stringify({action:'upload',userName:name,fileName:selFiles[i].name,mimeType:selFiles[i].type,base64Data:b64})},45000);
       if(data.success) uploaded++;
       else if(data.error&&data.error.indexOf('limita')>=0){setStatus(t.alErrLimit,'err');break;}
       else { lastErr = data.error || 'unknown'; }
@@ -1247,36 +1247,13 @@ async function startUpload(){
 function setStatus(msg,cls){var el=document.getElementById('status-msg');el.textContent=msg;el.className='status-msg'+(cls?' '+cls:'');}
 function toB64(f){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(r.result.split(',')[1]);};r.onerror=rej;r.readAsDataURL(f);});}
 
-// Compress + resize image client-side before upload (max 1600px on the long
-// side, JPEG q=0.8). Large phone photos (8-15MB) were likely causing the
-// upload to hang or fail silently on slow/mobile connections.
-function compressToB64(file){
-  return new Promise(function(resolve, reject){
-    var img = new Image();
-    var url = URL.createObjectURL(file);
-    img.onload = function(){
-      URL.revokeObjectURL(url);
-      var maxDim = 1600;
-      var w = img.width, h = img.height;
-      if(w > maxDim || h > maxDim){
-        if(w > h){ h = Math.round(h * maxDim / w); w = maxDim; }
-        else { w = Math.round(w * maxDim / h); h = maxDim; }
-      }
-      var canvas = document.createElement('canvas');
-      canvas.width = w; canvas.height = h;
-      var ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, w, h);
-      var dataUrl = canvas.toDataURL('image/jpeg', 0.8);
-      resolve(dataUrl.split(',')[1]);
-    };
-    img.onerror = function(){
-      URL.revokeObjectURL(url);
-      // Fallback: send original file un-compressed if it can't be decoded as an image
-      toB64(file).then(resolve).catch(reject);
-    };
-    img.src = url;
-  });
-}
+// NOTE: an earlier version compressed images client-side (canvas + JPEG)
+// before upload. That broke uploads that previously worked — most likely
+// because many phones (iPhones by default) shoot in HEIC, and <img>/canvas
+// can't decode HEIC in most browsers, so the "compression" silently fell
+// back to sending raw bytes while still telling the server mimeType was
+// image/jpeg — a mismatch. Reverted to sending each file's own bytes and
+// its own real mimeType, which is what worked before.
 
 // fetch with a hard timeout, so a hung request fails visibly instead of
 // leaving the "Se trimite..." status stuck forever.
