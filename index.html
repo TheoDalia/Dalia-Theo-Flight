@@ -1226,23 +1226,59 @@ async function startUpload(){
   document.getElementById('prog-bar').style.display='block';
   var pf=document.getElementById('prog-fill');
   pf.style.width='0%';
+  hideDebug();
   var uploaded=0;
   var lastErr='';
-  for(var i=0;i<selFiles.length;i++){
-    setStatus(t.alSending+' '+(i+1)+' '+t.alOf+' '+selFiles.length+'...','');
-    try{
-      var b64=await toB64(selFiles[i]);
-      var data=await fetchWithTimeout(APPS_URL,{method:'POST',body:JSON.stringify({action:'upload',userName:name,fileName:selFiles[i].name,mimeType:selFiles[i].type,base64Data:b64})},45000);
-      if(data.success) uploaded++;
-      else if(data.error&&data.error.indexOf('limita')>=0){setStatus(t.alErrLimit,'err');break;}
-      else { lastErr = data.error || 'unknown'; }
-    }catch(e){ lastErr = e.message || String(e); }
-    pf.style.width=((i+1)/selFiles.length*100)+'%';
+  try{
+    for(var i=0;i<selFiles.length;i++){
+      setStatus(t.alSending+' '+(i+1)+' '+t.alOf+' '+selFiles.length+'...','');
+      try{
+        var b64=await toB64(selFiles[i]);
+        var data=await fetchWithTimeout(APPS_URL,{method:'POST',body:JSON.stringify({action:'upload',userName:name,fileName:selFiles[i].name,mimeType:selFiles[i].type,base64Data:b64})},45000);
+        if(data && data.success){ uploaded++; }
+        else if(data && data.error && String(data.error).indexOf('limita')>=0){ setStatus(t.alErrLimit,'err'); break; }
+        else { lastErr = 'Răspuns server: '+JSON.stringify(data); }
+      }catch(e){
+        lastErr = describeError(e);
+      }
+      pf.style.width=((i+1)/selFiles.length*100)+'%';
+    }
+  }catch(outerErr){
+    lastErr = 'Eroare neașteptată: '+describeError(outerErr);
   }
   btn.disabled=false;
   if(uploaded>0 && uploaded===selFiles.length){setStatus(t.alSuccess(uploaded,name),'ok');selFiles=[];renderPrev();document.getElementById('al-name').value='';}
   else if(uploaded>0){setStatus(t.alSuccess(uploaded,name)+' ('+(selFiles.length-uploaded)+' au eșuat, încearcă din nou pentru restul)','ok');}
-  else setStatus(t.alErrGeneral+(lastErr?' ('+lastErr+')':''),'err');
+  else{
+    setStatus(t.alErrGeneral,'err');
+    showDebug(lastErr || 'Nicio informație suplimentară disponibilă.');
+  }
+}
+function describeError(e){
+  try{
+    if(!e) return 'eroare necunoscută (fără detalii)';
+    var parts=[];
+    if(e.name) parts.push(e.name);
+    if(e.message) parts.push(e.message);
+    if(!parts.length) parts.push(String(e));
+    return parts.join(': ');
+  }catch(x){ return 'eroare la citirea erorii'; }
+}
+function showDebug(msg){
+  console.error('[Album Foto] Detaliu eroare upload:', msg);
+  var box=document.getElementById('debug-box');
+  if(!box){
+    box=document.createElement('div');
+    box.id='debug-box';
+    box.style.cssText='margin-top:.75rem;padding:.75rem 1rem;background:#fdeceb;border:1px solid #e0a89f;border-radius:8px;font-size:12px;color:#7a2d22;text-align:left;word-break:break-word;font-family:monospace;';
+    document.getElementById('status-msg').insertAdjacentElement('afterend', box);
+  }
+  box.innerHTML = '<strong>Detaliu tehnic (trimite-mi acest text):</strong><br>' + msg.replace(/</g,'&lt;');
+  box.style.display='block';
+}
+function hideDebug(){
+  var box=document.getElementById('debug-box');
+  if(box) box.style.display='none';
 }
 function setStatus(msg,cls){var el=document.getElementById('status-msg');el.textContent=msg;el.className='status-msg'+(cls?' '+cls:'');}
 function toB64(f){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(r.result.split(',')[1]);};r.onerror=rej;r.readAsDataURL(f);});}
