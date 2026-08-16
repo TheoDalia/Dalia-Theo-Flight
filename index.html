@@ -39,6 +39,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--green);color:var(--cream)
 
 /* HEADER */
 .header{text-align:center;padding:2.5rem 1.5rem 1.75rem;position:relative;z-index:1;border-bottom:1px solid var(--border);}
+.header-slim{text-align:center;padding:.85rem 1rem;font-size:12.5px;letter-spacing:.03em;color:#c9a84c;border-bottom:1px solid rgba(201,168,74,.18);background:rgba(0,0,0,.12);}
 .h-airline{font-size:10px;letter-spacing:4px;color:var(--gold);text-transform:uppercase;margin-bottom:.6rem;}
 .h-title{font-family:'Playfair Display',serif;font-size:clamp(2rem,6vw,3.2rem);color:var(--gold);line-height:1.1;margin-bottom:.4rem;}
 .h-sub{font-size:11px;letter-spacing:3px;color:var(--cream-dark);text-transform:uppercase;opacity:.65;margin-bottom:1.25rem;}
@@ -238,28 +239,8 @@ footer{text-align:center;padding:1.5rem;font-size:9px;letter-spacing:2px;color:r
   </div>
 </nav>
 
-<!-- HEADER -->
-<div class="header">
-  <div class="h-airline" id="h-al">✈ Love Airlines · Zbor DL&TH-23.08.2026</div>
-  <div class="h-title">🧳 Dalia &amp; Theo 🧳</div>
-  <div class="h-sub">23 August 2026 · Moonfields, Tâncăbești</div>
-  <div class="h-cities">
-    <span class="h-city" style="left:2%;top:10px;opacity:.38;animation:floatCity 6s ease-in-out infinite;">Roma</span>
-    <span class="h-city" style="left:16%;top:34px;opacity:.42;animation:floatCity 7s ease-in-out infinite 1s;">Napoli</span>
-    <span class="h-city" style="left:31%;top:12px;opacity:.36;animation:floatCity 5.5s ease-in-out infinite 2s;">Firenze</span>
-    <span class="h-city center">Moonfields</span>
-    <span class="h-city" style="right:16%;top:30px;opacity:.40;animation:floatCity 8s ease-in-out infinite .5s;">Amalfi</span>
-    <span class="h-city" style="right:7%;top:8px;opacity:.35;animation:floatCity 6.5s ease-in-out infinite 1.5s;">Positano</span>
-  </div>
-  <div class="h-info">
-    <div id="h-gate">POARTĂ <span>MOONFIELDS</span></div>
-    <div id="h-dest">DESTINAȚIE <span>FERICIRE</span></div>
-    <div id="h-cls">CLASĂ <span>AMINTIRI</span></div>
-  </div>
-</div>
-
-<!-- TICKER -->
-<div class="ticker"><span class="ticker-inner"><span class="ticker-text" id="ticker">🧳 Bun venit la bordul zborului DL&TH-23.08 ✈ Dalia & Theo · 23 August 2026 · Moonfields ✦ Găsește-ți locul · Încarcă amintirile ✈ Love Airlines ✦</span></span></div>
+<!-- HEADER (compact) -->
+<div class="header-slim">✈ Dalia &amp; Theo · 23 August 2026 · Moonfields, Tâncăbești</div>
 
 <!-- ══ HARTA ══ -->
 <div class="section active" id="sec-harta">
@@ -920,11 +901,6 @@ function setLang(l,btn){
   document.getElementById('nt-h').textContent=t.navH;
   document.getElementById('nt-m').textContent=t.navM;
   document.getElementById('nt-a').textContent=t.navA;
-  document.getElementById('h-al').textContent=t.airline;
-  document.getElementById('h-gate').innerHTML=t.gate+' <span>'+t.gateV+'</span>';
-  document.getElementById('h-dest').innerHTML=t.dest+' <span>'+t.destV+'</span>';
-  document.getElementById('h-cls').innerHTML=t.cls+' <span>'+t.clsV+'</span>';
-  document.getElementById('ticker').textContent=t.ticker;
   document.getElementById('pm-title').textContent=t.pmTitle;
   document.getElementById('pm-sub').textContent=t.pmSub;
   document.getElementById('pm-inp').placeholder=t.pmPh;
@@ -932,11 +908,11 @@ function setLang(l,btn){
   document.getElementById('pm-fl1').textContent=t.pmF1;
   document.getElementById('pm-fl2').textContent=t.pmF2;
   document.getElementById('pm-fl3').textContent=t.pmF3;
-  document.getElementById('pm-map-lbl').textContent=t.pmMapLbl;
-  document.getElementById('pm-entrance').textContent=t.pmEntrance;
-  document.getElementById('mc-lbl').textContent=t.mcLbl;
-  document.getElementById('mc-title').textContent=t.mcTitle;
-  document.getElementById('mc-sub').innerHTML=t.mcSub;
+  var _pmMapLbl=document.getElementById('pm-map-lbl'); if(_pmMapLbl) _pmMapLbl.textContent=t.pmMapLbl;
+  var _pmEntrance=document.getElementById('pm-entrance'); if(_pmEntrance) _pmEntrance.textContent=t.pmEntrance;
+  var _mcLbl=document.getElementById('mc-lbl'); if(_mcLbl) _mcLbl.textContent=t.mcLbl;
+  var _mcTitle=document.getElementById('mc-title'); if(_mcTitle) _mcTitle.textContent=t.mcTitle;
+  var _mcSub=document.getElementById('mc-sub'); if(_mcSub) _mcSub.innerHTML=t.mcSub;
   document.getElementById('al-lbl').textContent=t.alLbl;
   document.getElementById('al-title').textContent=t.alTitle;
   document.getElementById('al-sub').textContent=t.alSub;
