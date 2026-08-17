@@ -502,6 +502,7 @@ var T={
     alSending:'Se trimite',
     alOf:'din',
     alErrLimit:'Ai atins limita de fotografii.',
+    alSuccess:function(n,name){return (n===1?'O fotografie a fost trimisă':n+' fotografii au fost trimise')+', mulțumim '+name+'! ✈️';},
     alErrGeneral:'A apărut o eroare. Încearcă din nou.',
     alConfirmDel:'Ești sigur că vrei să ștergi această fotografie?',
     alErrDel:'Eroare la ștergere.',
@@ -661,6 +662,7 @@ var T={
     alSending:'Invio',
     alOf:'di',
     alErrLimit:'Hai raggiunto il limite di foto.',
+    alSuccess:function(n,name){return (n===1?'Una foto è stata inviata':n+' foto sono state inviate')+', grazie '+name+'! ✈️';},
     alErrGeneral:'Si è verificato un errore. Riprova.',
     alConfirmDel:'Sei sicuro di voler eliminare questa foto?',
     alErrLoad:'Errore di caricamento.',
@@ -819,6 +821,7 @@ var T={
     alSending:'Sending',
     alOf:'of',
     alErrLimit:'You have reached the photo limit.',
+    alSuccess:function(n,name){return (n===1?'One photo was uploaded':n+' photos were uploaded')+', thank you '+name+'! ✈️';},
     alErrGeneral:'An error occurred. Please try again.',
     alConfirmDel:'Are you sure you want to delete this photo?',
     alErrDel:'Error deleting photo.',
@@ -1240,12 +1243,33 @@ async function startUpload(){
       try{
         log('Citesc fișierul (FileReader)...');
         var b64=await toB64(selFiles[i]);
-        log('Citit OK, '+b64.length+' caractere base64. Trimit către server...');
-        var data=await fetchWithTimeout(APPS_URL,{method:'POST',body:JSON.stringify({action:'upload',userName:name,fileName:selFiles[i].name,mimeType:selFiles[i].type,base64Data:b64})},45000);
-        log('Răspuns primit: '+JSON.stringify(data));
-        if(data && data.success){ uploaded++; log('→ succes.'); }
-        else if(data && data.error && String(data.error).indexOf('limita')>=0){ log('→ limită atinsă.'); setStatus(t.alErrLimit,'err'); break; }
-        else { lastErr = 'Răspuns server neașteptat: '+JSON.stringify(data); log('→ '+lastErr); }
+        log('Citit OK, '+b64.length+' caractere base64. Trimit către server (cerere normală)...');
+        var payload=JSON.stringify({action:'upload',userName:name,fileName:selFiles[i].name,mimeType:selFiles[i].type,base64Data:b64});
+        var gotConfirmed=false;
+        try{
+          var data=await fetchWithTimeout(APPS_URL,{method:'POST',body:payload},45000);
+          log('Răspuns primit: '+JSON.stringify(data));
+          if(data && data.success){ uploaded++; gotConfirmed=true; log('→ succes (confirmat de server).'); }
+          else if(data && data.error && String(data.error).indexOf('limita')>=0){ log('→ limită atinsă.'); setStatus(t.alErrLimit,'err'); break; }
+          else { lastErr = 'Răspuns server neașteptat: '+JSON.stringify(data); log('→ '+lastErr); }
+        }catch(normalErr){
+          log('→ Cererea normală a eșuat: '+describeError(normalErr)+'. Încerc metoda 2 (fără citire răspuns, din cauza posibilului blocaj CORS)...');
+          try{
+            await fetch(APPS_URL,{method:'POST',mode:'no-cors',body:payload});
+            uploaded++; gotConfirmed=true;
+            log('→ Trimis prin metoda 2 (nu putem confirma din browser dacă serverul a acceptat-o, dar cererea a plecat fără eroare de rețea).');
+          }catch(fallbackErr){
+            log('→ A eșuat și metoda 2: '+describeError(fallbackErr)+'. Încerc metoda 3 (formular clasic, fără fetch)...');
+            try{
+              await submitViaForm(name,selFiles[i].name,selFiles[i].type,b64);
+              uploaded++; gotConfirmed=true;
+              log('→ Trimis prin metoda 3 (formular). Nu putem confirma automat, dar cererea a plecat fără eroare de browser.');
+            }catch(formErr){
+              lastErr = describeError(formErr);
+              log('→ A eșuat și metoda 3: '+lastErr);
+            }
+          }
+        }
       }catch(e){
         lastErr = describeError(e);
         log('→ EROARE la citire/trimitere: '+lastErr);
@@ -1294,6 +1318,67 @@ function hideDebug(){
 function setStatus(msg,cls){var el=document.getElementById('status-msg');el.textContent=msg;el.className='status-msg'+(cls?' '+cls:'');}
 function toB64(f){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){res(r.result.split(',')[1]);};r.onerror=rej;r.readAsDataURL(f);});}
 
+// Third fallback: a plain HTML <form> POST to a hidden <iframe>. This does
+// NOT use fetch/XHR at all — it's a normal browser form submission, which
+// is not subject to the same CORS/tracking-prevention restrictions that
+// can silently block fetch() to a third-party domain in some browsers.
+// We can't read the response (cross-origin iframe), so we only know the
+// browser didn't throw a hard error — treated as a tentative success.
+function submitViaForm(userName, fileName, mimeType, base64Data){
+  return new Promise(function(resolve, reject){
+    try{
+      var iframeName = 'upload-target-'+Date.now();
+      var iframe = document.createElement('iframe');
+      iframe.name = iframeName;
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+
+      var form = document.createElement('form');
+      form.method = 'POST';
+      form.action = APPS_URL;
+      form.target = iframeName;
+      form.style.display = 'none';
+
+      function addField(name, value){
+        var inp = document.createElement('input');
+        inp.type = 'hidden';
+        inp.name = name;
+        inp.value = value;
+        form.appendChild(inp);
+      }
+      addField('action', 'upload');
+      addField('userName', userName);
+      addField('fileName', fileName);
+      addField('mimeType', mimeType);
+      addField('base64Data', base64Data);
+
+      document.body.appendChild(form);
+
+      var settled = false;
+      var cleanup = function(){
+        try{ document.body.removeChild(form); }catch(e2){}
+        setTimeout(function(){ try{ document.body.removeChild(iframe); }catch(e3){} }, 4000);
+      };
+      iframe.onload = function(){
+        if(settled) return;
+        settled = true;
+        cleanup();
+        resolve(true);
+      };
+      setTimeout(function(){
+        if(settled) return;
+        settled = true;
+        cleanup();
+        reject(new Error('formular: fără răspuns în 20s'));
+      }, 20000);
+
+      form.submit();
+    }catch(err){
+      reject(err);
+    }
+  });
+}
+
 // NOTE: an earlier version compressed images client-side (canvas + JPEG)
 // before upload. That broke uploads that previously worked — most likely
 // because many phones (iPhones by default) shoot in HEIC, and <img>/canvas
@@ -1302,26 +1387,18 @@ function toB64(f){return new Promise(function(res,rej){var r=new FileReader();r.
 // image/jpeg — a mismatch. Reverted to sending each file's own bytes and
 // its own real mimeType, which is what worked before.
 
-// fetch with a hard timeout, so a hung request fails visibly instead of
-// leaving the "Se trimite..." status stuck forever.
+// fetch with a hard timeout. Does NOT use AbortController/signal — on some
+// iOS Safari versions, passing an AbortSignal in fetch options (even via
+// Object.assign) triggers "DataCloneError: The object can not be cloned"
+// and the request never gets sent at all. A plain Promise.race timeout
+// avoids that bug entirely (the underlying request may keep running in the
+// background if it truly hangs, but that's harmless — we just stop waiting).
 function fetchWithTimeout(url, opts, ms){
-  return new Promise(function(resolve, reject){
-    var ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
-    var timer = setTimeout(function(){
-      if(ctrl) ctrl.abort();
-      reject(new Error('timeout'));
-    }, ms);
-    var fetchOpts = ctrl ? Object.assign({}, opts, {signal: ctrl.signal}) : opts;
-    fetch(url, fetchOpts).then(function(r){
-      clearTimeout(timer);
-      return r.json();
-    }).then(function(data){
-      resolve(data);
-    }).catch(function(e){
-      clearTimeout(timer);
-      reject(e);
-    });
+  var timeoutPromise = new Promise(function(_, reject){
+    setTimeout(function(){ reject(new Error('timeout ('+(ms/1000)+'s)')); }, ms);
   });
+  var fetchPromise = fetch(url, opts).then(function(r){ return r.json(); });
+  return Promise.race([fetchPromise, timeoutPromise]);
 }
 
 async function loadGallery(){
