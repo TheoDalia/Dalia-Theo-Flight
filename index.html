@@ -69,6 +69,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--green);color:var(--cream)
 .map-wrap{padding:2rem 1rem 3rem;max-width:600px;margin:0 auto;}
 .pm-welcome{background:linear-gradient(135deg,rgba(26,58,42,.97),rgba(20,45,32,.97));border:1px solid rgba(201,168,74,.35);border-radius:12px;padding:1.1rem 1.3rem;margin-bottom:1rem;box-shadow:0 6px 28px rgba(0,0,0,.3);text-align:center;}
 .pm-welcome-icon{font-size:1.3rem;margin-bottom:.3rem;}
+.pm-mission-box{margin-top:1rem;padding:.9rem 1rem;background:rgba(201,168,74,.1);border:1px dashed rgba(201,168,74,.45);border-radius:10px;}
+.pm-mission-title{font-family:'DM Sans',sans-serif;font-weight:700;font-size:12.5px;letter-spacing:.04em;color:#e8c96a;text-align:center;margin-bottom:.55rem;}
+.pm-mission-box p{margin-bottom:.6rem;}
+.pm-mission-box p:last-child{margin-bottom:0;text-align:center;font-style:italic;color:#d8c9a3;}
 .pm-welcome-title{font-family:'Playfair Display',serif;font-size:1.05rem;color:#e8c96a;margin-bottom:.3rem;line-height:1.3;letter-spacing:.01em;}
 .pm-welcome-teaser{font-size:12.5px;color:#cbbfa0;line-height:1.5;margin-bottom:.5rem;}
 .pm-welcome-txt{font-size:13px;color:#e8ded0;line-height:1.7;text-align:left;max-height:0;overflow:hidden;transition:max-height .35s ease, margin .35s ease;margin-top:0;}
@@ -251,15 +255,18 @@ footer{text-align:center;padding:1.5rem;font-size:9px;letter-spacing:2px;color:r
 <div class="section active" id="sec-harta">
   <div class="map-wrap">
     <div class="pm-welcome">
-      <div class="pm-welcome-icon">✈️</div>
-      <div class="pm-welcome-title" id="welTitle">Bun venit la bordul zborului Love Airlines! ✈️</div>
-      <div class="pm-welcome-teaser" id="welTeaser">Până începe ceremonia, vă invităm să savurați pizza 🍕 și gelato 🍨, special aduse pentru acest eveniment.</div>
+      <div class="pm-welcome-title" id="welTitle">✈️ Bun venit la bordul zborului Love Airlines! ✈️</div>
+      <div class="pm-welcome-teaser" id="welTeaser">Până la îmbarcarea pentru ceremonia principală 💒, vă invităm să vă bucurați de o scurtă escală de bun venit: pizza fierbinte, direct din cuptorul pe lemne 🍕, gelato de la Gelateria Romana 🍨 și o curte numai bună de explorat, admirat și savurat. Faceți-vă comozi, întâlniți-vă cu ceilalți pasageri și bucurați-vă de începutul călătoriei. ❤️</div>
       <button class="pm-welcome-toggle" id="pm-welcome-btn" onclick="toggleWelcome()">Citește mesajul complet ⌄</button>
       <div class="pm-welcome-txt" id="pm-welcome-txt">
         <p id="welP1">În această seară, vă invităm să luați parte la cel mai important zbor din viața noastră. Voi sunteți oamenii pe care ni i-am dorit alături în această călătorie și suntem recunoscători că sunteți aici. Prezența voastră face ca această destinație să fie cu atât mai specială. ❤️</p>
         <p id="welP2">Găsiți-vă locul la bord, descoperiți meniul pregătit pentru această călătorie și lăsați-vă purtați de muzica de la bord.</p>
-        <p id="welP3">Pe parcursul zborului, vă provocăm să surprindeți în <strong>10 fotografii</strong> momentele care vă plac cel mai mult și să le încărcați în albumul nostru colectiv de călătorie. Astfel, vom putea retrăi împreună toate aceste momente și după aterizare. 📸</p>
-        <p id="welP4">Vă dorim voie bună și o călătorie plină de iubire, râsete și momente de neuitat! Mulțumim că ați ales să zburați alături de noi.</p>
+        <div class="pm-mission-box">
+          <div class="pm-mission-title" id="welMissionTitle">📸 ATENȚIE, PASAGERI! AVEȚI O MISIUNE!</div>
+          <p id="welP3">Aveți <strong>10 fotografii</strong> la dispoziție. Folosiți-le pentru a surprinde cele mai îndrăznețe, spontane și memorabile momente ale zborului. 🥂💃</p>
+          <p id="welP4">Încărcați-le în albumul nostru colectiv și ajutați-ne să retrăim această călătorie prin ochii voștri. ❤️</p>
+          <p id="welP5">Misiunea începe la decolare! 📸✈️</p>
+        </div>
       </div>
     </div>
     <div class="pm-no-data" id="pm-no-data">
@@ -450,14 +457,16 @@ var T={
     navH:'Hartă',
     navM:'Dinner Menu',
     navA:'Album Foto',
-    welTitle:'Bun venit la bordul zborului Love Airlines! ✈️',
-    welTeaser:'Până începe ceremonia, vă invităm să savurați pizza 🍕 și gelato 🍨, special aduse pentru acest eveniment.',
+    welTitle:'✈️ Bun venit la bordul zborului Love Airlines! ✈️',
+    welTeaser:'Până la îmbarcarea pentru ceremonia principală 💒, vă invităm să vă bucurați de o scurtă escală de bun venit: pizza fierbinte, direct din cuptorul pe lemne 🍕, gelato de la Gelateria Romana 🍨 și o curte numai bună de explorat, admirat și savurat. Faceți-vă comozi, întâlniți-vă cu ceilalți pasageri și bucurați-vă de începutul călătoriei. ❤️',
     welBtnOpen:'Citește mesajul complet ⌄',
     welBtnClose:'Ascunde mesajul ⌃',
     welP1:'În această seară, vă invităm să luați parte la cel mai important zbor din viața noastră. Voi sunteți oamenii pe care ni i-am dorit alături în această călătorie și suntem recunoscători că sunteți aici. Prezența voastră face ca această destinație să fie cu atât mai specială. ❤️',
     welP2:'Găsiți-vă locul la bord, descoperiți meniul pregătit pentru această călătorie și lăsați-vă purtați de muzica de la bord.',
-    welP3:'Pe parcursul zborului, vă provocăm să surprindeți în <strong>10 fotografii</strong> momentele care vă plac cel mai mult și să le încărcați în albumul nostru colectiv de călătorie. Astfel, vom putea retrăi împreună toate aceste momente și după aterizare. 📸',
-    welP4:'Vă dorim voie bună și o călătorie plină de iubire, râsete și momente de neuitat! Mulțumim că ați ales să zburați alături de noi.',
+    welMissionTitle:'📸 ATENȚIE, PASAGERI! AVEȚI O MISIUNE!',
+    welP3:'Aveți <strong>10 fotografii</strong> la dispoziție. Folosiți-le pentru a surprinde cele mai îndrăznețe, spontane și memorabile momente ale zborului. 🥂💃',
+    welP4:'Încărcați-le în albumul nostru colectiv și ajutați-ne să retrăim această călătorie prin ochii voștri. ❤️',
+    welP5:'Misiunea începe la decolare! 📸✈️',
     airline:'✈ Love Airlines · Zbor DL&amp;TH-23.08.2026',
     gate:'POARTĂ',
     gateV:'MOONFIELDS',
@@ -612,14 +621,16 @@ var T={
     navH:'Mappa',
     navM:'Dinner Menu',
     navA:'Album Foto',
-    welTitle:'Benvenuti a bordo di Love Airlines! ✈️',
-    welTeaser:"Prima dell'inizio della cerimonia, vi invitiamo a gustare pizza 🍕 e gelato 🍨, portati appositamente per questo evento.",
+    welTitle:'✈️ Benvenuti a bordo di Love Airlines! ✈️',
+    welTeaser:"In attesa dell'imbarco per la cerimonia principale 💒, vi invitiamo a godervi una breve sosta di benvenuto: pizza calda, direttamente dal forno a legna 🍕, gelato della Gelateria Romana 🍨 e un cortile tutto da scoprire, ammirare e gustare. Mettetevi comodi, incontrate gli altri passeggeri e godetevi l'inizio del viaggio. ❤️",
     welBtnOpen:'Leggi il messaggio completo ⌄',
     welBtnClose:'Nascondi il messaggio ⌃',
     welP1:'Questa sera vi invitiamo a prendere parte al volo più importante della nostra vita. Siete le persone che abbiamo desiderato avere al nostro fianco in questo viaggio e siamo grati che siate qui. La vostra presenza rende questa destinazione ancora più speciale. ❤️',
     welP2:'Trovate il vostro posto a bordo, scoprite il menu preparato per questo viaggio e lasciatevi trasportare dalla musica di bordo.',
-    welP3:'Durante il volo, vi sfidiamo a catturare in <strong>10 foto</strong> i momenti che vi piacciono di più e a caricarli nel nostro album di viaggio collettivo. Così potremo rivivere insieme questi momenti anche dopo l\'atterraggio. 📸',
-    welP4:"Vi auguriamo buon divertimento e un viaggio pieno di amore, risate e momenti indimenticabili! Grazie per aver scelto di volare con noi.",
+    welMissionTitle:'📸 ATTENZIONE, PASSEGGERI! AVETE UNA MISSIONE!',
+    welP3:'Avete <strong>10 foto</strong> a disposizione. Usatele per catturare i momenti più audaci, spontanei e memorabili del volo. 🥂💃',
+    welP4:'Caricatele nel nostro album collettivo e aiutateci a rivivere questo viaggio attraverso i vostri occhi. ❤️',
+    welP5:'La missione inizia al decollo! 📸✈️',
     airline:'✈ Love Airlines · Volo DL&amp;TH-23.08.2026',
     gate:'PORTA',
     gateV:'MOONFIELDS',
@@ -772,14 +783,16 @@ var T={
     navH:'Map',
     navM:'Dinner Menu',
     navA:'Photo Album',
-    welTitle:'Welcome aboard Love Airlines! ✈️',
-    welTeaser:'Before the ceremony begins, please enjoy pizza 🍕 and gelato 🍨, brought specially for this event.',
+    welTitle:'✈️ Welcome aboard Love Airlines! ✈️',
+    welTeaser:'Before boarding for the main ceremony 💒, please enjoy a short welcome stopover: hot pizza, straight from the wood-fired oven 🍕, gelato from Gelateria Romana 🍨, and a courtyard well worth exploring, admiring, and enjoying. Make yourselves comfortable, meet your fellow passengers, and enjoy the start of the journey. ❤️',
     welBtnOpen:'Read the full message ⌄',
     welBtnClose:'Hide the message ⌃',
     welP1:"Tonight, we invite you to join the most important flight of our lives. You are the people we wished to have by our side on this journey, and we're grateful you're here. Your presence makes this destination even more special. ❤️",
     welP2:'Find your seat on board, discover the menu prepared for this journey, and let yourself be carried away by the music.',
-    welP3:'During the flight, we challenge you to capture, in <strong>10 photos</strong>, the moments you love most and upload them to our collective travel album. That way, we\'ll all be able to relive these moments together, even after landing. 📸',
-    welP4:'We wish you great fun and a journey full of love, laughter, and unforgettable moments! Thank you for choosing to fly with us.',
+    welMissionTitle:'📸 ATTENTION, PASSENGERS! YOU HAVE A MISSION!',
+    welP3:'You have <strong>10 photos</strong> at your disposal. Use them to capture the boldest, most spontaneous and memorable moments of the flight. 🥂💃',
+    welP4:'Upload them to our collective album and help us relive this journey through your eyes. ❤️',
+    welP5:'The mission begins at takeoff! 📸✈️',
     airline:'✈ Love Airlines · Flight DL&amp;TH-23.08.2026',
     gate:'GATE',
     gateV:'MOONFIELDS',
@@ -964,7 +977,7 @@ function setLang(l,btn){
   document.getElementById('at-gal').textContent=t.galTitle;
   document.getElementById('al-ref').textContent=t.alRef;
   // ── Translate ALL menu elements ──
-  var _allIds = ['welTitle','welTeaser','welP1','welP2','welP3','welP4','dkHot','dkSoft','dkBeer','dkMock','dkCock','dkLong','dkWine','dkSpir','diCoffee','diTea','diWater','diCola','diSchweppes','diIceTea','diSantal','diHeineken','diHeineken0','diGreenApple','diBerryMojito','diAperolSpritz','diHugoSpritz','diNegroni','diMojito','diCampariO','diGinTonic','diCubaLibre','diVodkaMix','diWhiskyCola','diSarica','diProsecco','diVodka','diBourboun','diCognac','diWhisky','diRum','diGin','diTequila','diVermouth','diBitter','diJager','diBaileys','ddCoffee','ddTea','ddWater','ddCola','ddSchweppes','ddIceTea','ddSantal','ddHeineken','ddHeineken0','ddGreenApple','ddBerryMojito','ddAperolSpritz','ddHugoSpritz','ddNegroni','ddMojito','ddCampariO','ddGinTonic','ddCubaLibre','ddVodkaMix','ddWhiskyCola','ddSarica','ddProsecco','ddVodka','ddBourboun','ddCognac','ddWhisky','ddRum','ddGin','ddTequila','ddVermouth','ddBitter','ddJager','ddBaileys','ddSaricaSpec','dmTagline','dmC1','dmC2','dmC3','dmC4','dmC5','dmI1a','dmI1b','dmI2a','dmI2b','dmI2c','dmI2d','dmI2e','dmI2f','dmI2g','dmI2h','dmI3a','dmI4a','dmI5a'];
+  var _allIds = ['welTitle','welTeaser','welP1','welP2','welMissionTitle','welP3','welP4','welP5','dkHot','dkSoft','dkBeer','dkMock','dkCock','dkLong','dkWine','dkSpir','diCoffee','diTea','diWater','diCola','diSchweppes','diIceTea','diSantal','diHeineken','diHeineken0','diGreenApple','diBerryMojito','diAperolSpritz','diHugoSpritz','diNegroni','diMojito','diCampariO','diGinTonic','diCubaLibre','diVodkaMix','diWhiskyCola','diSarica','diProsecco','diVodka','diBourboun','diCognac','diWhisky','diRum','diGin','diTequila','diVermouth','diBitter','diJager','diBaileys','ddCoffee','ddTea','ddWater','ddCola','ddSchweppes','ddIceTea','ddSantal','ddHeineken','ddHeineken0','ddGreenApple','ddBerryMojito','ddAperolSpritz','ddHugoSpritz','ddNegroni','ddMojito','ddCampariO','ddGinTonic','ddCubaLibre','ddVodkaMix','ddWhiskyCola','ddSarica','ddProsecco','ddVodka','ddBourboun','ddCognac','ddWhisky','ddRum','ddGin','ddTequila','ddVermouth','ddBitter','ddJager','ddBaileys','ddSaricaSpec','dmTagline','dmC1','dmC2','dmC3','dmC4','dmC5','dmI1a','dmI1b','dmI2a','dmI2b','dmI2c','dmI2d','dmI2e','dmI2f','dmI2g','dmI2h','dmI3a','dmI4a','dmI5a'];
   _allIds.forEach(function(id){
     var el = document.getElementById(id);
     if(el && t[id] !== undefined) el.innerHTML = t[id];
