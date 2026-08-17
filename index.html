@@ -151,7 +151,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--green);color:var(--cream)
 .drop-zone:hover,.drop-zone.over{border-color:var(--gold);background:rgba(201,168,76,.05);}
 .prev-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:8px;margin-top:.9rem;}
 .prev-item{position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;}
-.prev-item img{width:100%;height:100%;object-fit:cover;}
+.prev-item img,.prev-item video{width:100%;height:100%;object-fit:cover;}
+.prev-vid-badge{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:28px;height:28px;background:rgba(0,0,0,.55);border-radius:50%;color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center;pointer-events:none;}
 .prev-rm{position:absolute;top:3px;right:3px;width:20px;height:20px;background:rgba(0,0,0,.65);border:none;border-radius:50%;color:white;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
 .btn-prim{width:100%;padding:.9rem;background:var(--green);border:1px solid var(--gold);border-radius:10px;color:var(--gold);font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;cursor:pointer;transition:all .2s;margin-top:.9rem;}
 .btn-prim:hover{background:var(--green-light);}
@@ -401,9 +402,9 @@ footer{text-align:center;padding:1.5rem;font-size:9px;letter-spacing:2px;color:r
         <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-inp').click()">
           <div style="font-size:1.8rem;margin-bottom:.6rem;">📷</div>
           <div style="font-size:14px;color:var(--green);font-weight:500;margin-bottom:.2rem;" id="al-drop">Apasă sau trage fotografiile aici</div>
-          <div style="font-size:12px;color:var(--gray);" id="al-drop-sub">JPG, PNG, WEBP · Max 10MB per fotografie</div>
+          <div style="font-size:12px;color:var(--gray);" id="al-drop-sub">JPG, PNG, WEBP, MP4, MOV · Max 20MB per fișier</div>
         </div>
-        <input type="file" id="file-inp" multiple accept="image/*" style="display:none">
+        <input type="file" id="file-inp" multiple accept="image/*,video/*" style="display:none">
         <div class="prev-grid" id="prev-grid"></div>
         <button class="btn-prim" id="up-btn" onclick="startUpload()">✈ <span id="al-up-btn">Îmbarcare · Trimite fotografiile</span></button>
         <div class="prog-bar" id="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
@@ -499,7 +500,7 @@ var T={
     alSub:'Maximum 10 fotografii per pasager',
     alNameLbl:'Numele tău complet',
     alDropText:'Apasă sau trage fotografiile aici',
-    alDropSub:'JPG, PNG, WEBP · Max 10MB per fotografie',
+    alDropSub:'JPG, PNG, WEBP, MP4, MOV · Max 20MB per fișier',
     alUpBtn:'Îmbarcare · Trimite fotografiile',
     galTitle:'Galerie',
     alRef:'Refresh',
@@ -507,6 +508,7 @@ var T={
     alEmpty:'Nu există fotografii încă. Fii primul care încarcă! 📷',
     alErrName:'Te rugăm să introduci numele tău.',
     alErrPhoto:'Selectează cel puțin o fotografie.',
+    alErrTooBig:function(names){return 'Prea mare (peste 20MB), nu a fost adăugat: '+names;},
     alErrNotInvited:'Numele tău nu este în lista de invitați.',
     alSending:'Se trimite',
     alOf:'din',
@@ -662,7 +664,7 @@ var T={
     alSub:'Massimo 10 foto per passeggero',
     alNameLbl:'Il tuo nome completo',
     alDropText:'Clicca o trascina le foto qui',
-    alDropSub:'JPG, PNG, WEBP · Max 10MB per foto',
+    alDropSub:'JPG, PNG, WEBP, MP4, MOV · Max 20MB per file',
     alUpBtn:'Imbarco · Invia le fotografie',
     galTitle:'Galleria',
     alRef:'Aggiorna',
@@ -670,6 +672,7 @@ var T={
     alEmpty:'Nessuna foto ancora. Sii il primo a caricare! 📷',
     alErrName:'Inserisci il tuo nome.',
     alErrPhoto:'Seleziona almeno una foto.',
+    alErrTooBig:function(names){return 'Troppo grande (oltre 20MB), non aggiunto: '+names;},
     alErrNotInvited:'Il tuo nome non è nella lista degli invitati.',
     alSending:'Invio',
     alOf:'di',
@@ -824,7 +827,7 @@ var T={
     alSub:'Maximum 10 photos per passenger',
     alNameLbl:'Your full name',
     alDropText:'Click or drag photos here',
-    alDropSub:'JPG, PNG, WEBP · Max 10MB per photo',
+    alDropSub:'JPG, PNG, WEBP, MP4, MOV · Max 20MB per file',
     alUpBtn:'Boarding · Send your photos',
     galTitle:'Gallery',
     alRef:'Refresh',
@@ -832,6 +835,7 @@ var T={
     alEmpty:'No photos yet. Be the first to upload! 📷',
     alErrName:'Please enter your name.',
     alErrPhoto:'Please select at least one photo.',
+    alErrTooBig:function(names){return 'Too large (over 20MB), not added: '+names;},
     alErrNotInvited:'Your name is not in the guest list.',
     alSending:'Sending',
     alOf:'of',
@@ -1214,11 +1218,21 @@ function filterNames(v){
 }
 function selName(n){document.getElementById('al-name').value=n;document.getElementById('al-name-sugg').style.display='none';setStatus('','');}
 
+var MAX_FILE_BYTES = 20 * 1024 * 1024; // 20MB
 function addFiles(files){
-  var imgs=files.filter(function(f){return f.type.startsWith('image/');});
+  var t=T[lang];
+  var media=files.filter(function(f){return f.type.startsWith('image/')||f.type.startsWith('video/');});
+  var tooBig=media.filter(function(f){return f.size>MAX_FILE_BYTES;});
+  var ok=media.filter(function(f){return f.size<=MAX_FILE_BYTES;});
   var rem=10-selFiles.length;
-  selFiles=selFiles.concat(imgs.slice(0,rem));
+  var added=ok.slice(0,rem);
+  selFiles=selFiles.concat(added);
   renderPrev();
+  if(tooBig.length){
+    setStatus(t.alErrTooBig(tooBig.map(function(f){return f.name;}).join(', ')),'err');
+  } else if(ok.length>added.length){
+    setStatus(t.alErrPhoto,'err');
+  }
 }
 function renderPrev(){
   var g=document.getElementById('prev-grid');
@@ -1227,7 +1241,10 @@ function renderPrev(){
     var u=URL.createObjectURL(f);
     var d=document.createElement('div');
     d.className='prev-item';
-    d.innerHTML='<img src="'+u+'" alt=""><button class="prev-rm" onclick="rmFile('+i+')">✕</button>';
+    var mediaTag = f.type.startsWith('video/')
+      ? '<video src="'+u+'" muted playsinline></video><div class="prev-vid-badge">▶</div>'
+      : '<img src="'+u+'" alt="">';
+    d.innerHTML=mediaTag+'<button class="prev-rm" onclick="rmFile('+i+')">✕</button>';
     g.appendChild(d);
   });
 }
