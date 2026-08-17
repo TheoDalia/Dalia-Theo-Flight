@@ -132,10 +132,12 @@ body{font-family:'DM Sans',sans-serif;background:var(--green);color:var(--cream)
 .menu-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--gold),var(--gold-light),var(--gold));}
 
 /* ── ALBUM ── */
-.album-subtabs{display:flex;justify-content:center;background:rgba(0,0,0,.2);border-bottom:1px solid var(--border);}
-.album-stab{padding:.9rem 1.75rem;background:none;border:none;color:var(--gray);font-family:'DM Sans',sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;}
-.album-stab.active{color:var(--gold);border-bottom-color:var(--gold);}
-.album-stab:hover{color:var(--gold-light);}
+.album-subtabs{display:flex;justify-content:center;gap:.75rem;background:rgba(0,0,0,.2);padding:1rem 1.25rem;border-bottom:1px solid var(--border);}
+.album-stab{flex:1;max-width:220px;padding:1rem 1.25rem;background:rgba(255,255,255,.05);border:1.5px solid var(--border);border-radius:12px;color:var(--stone);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:.4rem;}
+.album-stab.active{color:#1a1712;background:linear-gradient(135deg,var(--gold-light),var(--gold));border-color:var(--gold);box-shadow:0 4px 14px rgba(201,162,74,.35);}
+.album-stab:not(.active){animation:galpulse 2.2s ease-in-out infinite;}
+.album-stab:hover{border-color:var(--gold-light);color:var(--gold-light);}
+@keyframes galpulse{0%,100%{box-shadow:0 0 0 0 rgba(201,162,74,.35);}50%{box-shadow:0 0 0 6px rgba(201,162,74,0);}}
 .album-sub{display:none;}
 .album-sub.active{display:block;}
 .album-section{padding:2rem 1.25rem 3rem;max-width:860px;margin:0 auto;}
@@ -415,6 +417,7 @@ footer{text-align:center;padding:1.5rem;font-size:9px;letter-spacing:2px;color:r
         <button class="btn-prim" id="up-btn" onclick="startUpload()">✈ <span id="al-up-btn">Îmbarcare · Trimite fotografiile</span></button>
         <div class="prog-bar" id="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
         <div class="status-msg" id="status-msg"></div>
+        <button class="btn-sec" id="goto-gal-btn" onclick="showSub('gallery', document.querySelectorAll('.album-stab')[1])" style="width:100%;margin-top:1rem;padding:1rem;border-radius:10px;border:1.5px solid var(--gold);background:rgba(201,162,74,.08);color:var(--gold);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem;transition:all .2s;">🖼 <span id="al-goto-gal">Vezi galeria foto</span></button>
       </div>
     </div>
     <div class="album-sub" id="sub-gallery">
