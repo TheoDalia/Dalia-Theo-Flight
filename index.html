@@ -1216,11 +1216,14 @@ function rmFile(i){selFiles.splice(i,1);renderPrev();}
 
 async function startUpload(){
   var t=T[lang];
+  var trace=[];
+  function log(msg){ trace.push(msg); }
   var name=document.getElementById('al-name').value.trim();
   if(!name) return setStatus(t.alErrName,'err');
   if(GUEST_NAMES.length>0&&!GUEST_NAMES.some(function(n){return n.toLowerCase()===name.toLowerCase();}))
     return setStatus(t.alErrNotInvited,'err');
   if(!selFiles.length) return setStatus(t.alErrPhoto,'err');
+  log('Start: '+selFiles.length+' fișier(e) selectat(e), nume="'+name+'"');
   var btn=document.getElementById('up-btn');
   btn.disabled=true;
   document.getElementById('prog-bar').style.display='block';
@@ -1230,28 +1233,36 @@ async function startUpload(){
   var uploaded=0;
   var lastErr='';
   try{
+    log('Intru în buclă, selFiles.length='+selFiles.length);
     for(var i=0;i<selFiles.length;i++){
+      log('Fișier '+(i+1)+'/'+selFiles.length+': "'+selFiles[i].name+'", '+selFiles[i].size+' bytes, tip="'+selFiles[i].type+'"');
       setStatus(t.alSending+' '+(i+1)+' '+t.alOf+' '+selFiles.length+'...','');
       try{
+        log('Citesc fișierul (FileReader)...');
         var b64=await toB64(selFiles[i]);
+        log('Citit OK, '+b64.length+' caractere base64. Trimit către server...');
         var data=await fetchWithTimeout(APPS_URL,{method:'POST',body:JSON.stringify({action:'upload',userName:name,fileName:selFiles[i].name,mimeType:selFiles[i].type,base64Data:b64})},45000);
-        if(data && data.success){ uploaded++; }
-        else if(data && data.error && String(data.error).indexOf('limita')>=0){ setStatus(t.alErrLimit,'err'); break; }
-        else { lastErr = 'Răspuns server: '+JSON.stringify(data); }
+        log('Răspuns primit: '+JSON.stringify(data));
+        if(data && data.success){ uploaded++; log('→ succes.'); }
+        else if(data && data.error && String(data.error).indexOf('limita')>=0){ log('→ limită atinsă.'); setStatus(t.alErrLimit,'err'); break; }
+        else { lastErr = 'Răspuns server neașteptat: '+JSON.stringify(data); log('→ '+lastErr); }
       }catch(e){
         lastErr = describeError(e);
+        log('→ EROARE la citire/trimitere: '+lastErr);
       }
       pf.style.width=((i+1)/selFiles.length*100)+'%';
     }
+    log('Ieșit din buclă. uploaded='+uploaded+', total='+selFiles.length);
   }catch(outerErr){
     lastErr = 'Eroare neașteptată: '+describeError(outerErr);
+    log('→ EROARE ÎN AFARA BUCLEI: '+lastErr);
   }
   btn.disabled=false;
   if(uploaded>0 && uploaded===selFiles.length){setStatus(t.alSuccess(uploaded,name),'ok');selFiles=[];renderPrev();document.getElementById('al-name').value='';}
   else if(uploaded>0){setStatus(t.alSuccess(uploaded,name)+' ('+(selFiles.length-uploaded)+' au eșuat, încearcă din nou pentru restul)','ok');}
   else{
     setStatus(t.alErrGeneral,'err');
-    showDebug(lastErr || 'Nicio informație suplimentară disponibilă.');
+    showDebug(trace.join('\n'));
   }
 }
 function describeError(e){
@@ -1265,15 +1276,15 @@ function describeError(e){
   }catch(x){ return 'eroare la citirea erorii'; }
 }
 function showDebug(msg){
-  console.error('[Album Foto] Detaliu eroare upload:', msg);
+  console.error('[Album Foto] Urmă completă:', msg);
   var box=document.getElementById('debug-box');
   if(!box){
     box=document.createElement('div');
     box.id='debug-box';
-    box.style.cssText='margin-top:.75rem;padding:.75rem 1rem;background:#fdeceb;border:1px solid #e0a89f;border-radius:8px;font-size:12px;color:#7a2d22;text-align:left;word-break:break-word;font-family:monospace;';
+    box.style.cssText='margin-top:.75rem;padding:.75rem 1rem;background:#fdeceb;border:1px solid #e0a89f;border-radius:8px;font-size:11px;color:#7a2d22;text-align:left;word-break:break-word;font-family:monospace;white-space:pre-wrap;line-height:1.5;max-height:280px;overflow-y:auto;';
     document.getElementById('status-msg').insertAdjacentElement('afterend', box);
   }
-  box.innerHTML = '<strong>Detaliu tehnic (trimite-mi acest text):</strong><br>' + msg.replace(/</g,'&lt;');
+  box.innerHTML = '<strong>Urmă pas-cu-pas (trimite-mi o poză cu tot ce scrie aici):</strong>\n' + msg.replace(/</g,'&lt;');
   box.style.display='block';
 }
 function hideDebug(){
