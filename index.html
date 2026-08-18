@@ -71,6 +71,8 @@ body{font-family:'DM Sans',sans-serif;background:var(--green);color:var(--cream)
 .pm-welcome-icon{font-size:1.3rem;margin-bottom:.3rem;}
 .pm-mission-box{margin-top:1rem;padding:.9rem 1rem;background:rgba(201,168,74,.1);border:1px dashed rgba(201,168,74,.45);border-radius:10px;}
 .pm-mission-title{font-family:'DM Sans',sans-serif;font-weight:700;font-size:12.5px;letter-spacing:.04em;color:#e8c96a;text-align:center;margin-bottom:.55rem;}
+.pm-mission-box{text-align:center;}
+.pm-mission-box p{text-align:center !important;}
 .pm-mission-box p{margin-bottom:.6rem;}
 .pm-mission-box p:last-child{margin-bottom:0;text-align:center;font-style:italic;color:#d8c9a3;}
 .pm-welcome-title{font-family:'Playfair Display',serif;font-size:1.05rem;color:#e8c96a;margin-bottom:.3rem;line-height:1.3;letter-spacing:.01em;}
@@ -83,6 +85,17 @@ body{font-family:'DM Sans',sans-serif;background:var(--green);color:var(--cream)
 .pm-welcome-toggle{background:none;border:1px solid rgba(201,168,74,.4);color:#c9a84c;font-size:11.5px;letter-spacing:.03em;padding:.35rem 1rem;border-radius:20px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s;}
 .pm-welcome-toggle:hover{background:rgba(201,168,74,.15);}
 .pm-card{background:rgba(245,240,232,.97);border-radius:12px;padding:1.5rem;margin-bottom:1rem;box-shadow:0 6px 28px rgba(0,0,0,.3);}
+.pm-table-result{display:none;background:rgba(245,240,232,.97);border-radius:12px;padding:1.5rem;margin-bottom:1rem;box-shadow:0 6px 28px rgba(0,0,0,.3);}
+.pm-table-result.show{display:block;}
+.pm-table-back{background:none;border:none;color:var(--gold);font-size:12px;letter-spacing:.03em;padding:0 0 .9rem;cursor:pointer;font-family:'DM Sans',sans-serif;}
+.pm-table-back:hover{text-decoration:underline;}
+.pm-table-nav{font-size:13px;color:#4a4636;line-height:1.6;white-space:pre-line;background:rgba(201,168,74,.1);border-radius:8px;padding:.85rem 1rem;margin:.6rem 0 1.1rem;}
+.pm-table-guests-heading{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#8a7a5a;margin-bottom:.5rem;}
+.pm-table-guests-list{list-style:none;margin:0;padding:0;}
+.pm-table-guests-list li{font-size:14px;color:#1a1a14;padding:.5rem 0;border-bottom:1px solid rgba(0,0,0,.08);}
+.pm-table-guests-list li:last-child{border-bottom:none;}
+.pm-sugg-item.pm-sugg-table{background:rgba(201,168,74,.08);}
+.pm-sugg-item.pm-sugg-table .pm-sugg-sub{color:#8a7a5a;}
 .pm-card-lbl{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#8a7a5a;margin-bottom:.2rem;}
 .pm-card-title{font-family:'Playfair Display',serif;font-size:1.3rem;color:#1a1a14;margin-bottom:.2rem;}
 .pm-card-sub{font-size:12px;color:#8a7a5a;margin-bottom:1rem;}
@@ -279,14 +292,24 @@ footer{text-align:center;padding:1.5rem;font-size:9px;letter-spacing:2px;color:r
     <div class="pm-card">
       <div class="pm-card-lbl">BOARDING PASS · PASAGER</div>
       <div class="pm-card-title" id="pm-title">Caută-ți locul la bord</div>
-      <div class="pm-card-sub" id="pm-sub">Introdu numele tău pentru a-ți găsi masa</div>
+      <div class="pm-card-sub" id="pm-sub">Introdu numele tău sau numele mesei pentru a găsi locul</div>
       <div class="pm-sw">
-        <input class="pm-inp" id="pm-inp" type="text" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="ex: Ion Popescu">
+        <input class="pm-inp" id="pm-inp" type="text" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="ex: Ion Popescu sau Torino">
         <button class="pm-btn" id="pm-go">→</button>
       </div>
       <div class="pm-sugg" id="pm-sugg"></div>
-      <div class="pm-nf" id="pm-nf"></div>
+    <div class="pm-nf" id="pm-nf"></div>
     </div>
+
+    <div class="pm-table-result" id="pm-table-result">
+      <button class="pm-table-back" id="pm-table-back" onclick="closeTableResult()">← Înapoi la căutare</button>
+      <div class="pm-card-lbl" id="pm-tbl-lbl">MASĂ</div>
+      <div class="pm-card-title" id="pm-tbl-name">—</div>
+      <div class="pm-table-nav" id="pm-tbl-nav"></div>
+      <div class="pm-table-guests-heading" id="pm-tbl-guests-heading">Invitații de la masa</div>
+      <ul class="pm-table-guests-list" id="pm-tbl-guests-list"></ul>
+    </div>
+
 
     <div class="pm-bp" id="pm-bp">
       <div class="pm-bp-head">
@@ -394,8 +417,8 @@ footer{text-align:center;padding:1.5rem;font-size:9px;letter-spacing:2px;color:r
 </div></div>
 <div class="section" id="sec-album">
   <div class="album-subtabs">
-    <button class="album-stab active" onclick="showSub('upload',this)">✈ <span id="at-up">Încarcă foto</span></button>
-    <button class="album-stab" onclick="showSub('gallery',this)">🖼 <span id="at-gal">Galerie</span></button>
+    <button class="album-stab active" onclick="showSub('upload',this)">📷 <span id="at-up">Încarcă foto</span></button>
+    <button class="album-stab" onclick="showSub('gallery',this)">🎞️ <span id="at-gal">Galerie</span></button>
   </div>
   <div class="album-section">
     <div class="album-sub active" id="sub-upload">
@@ -486,13 +509,17 @@ var T={
     clsV:'AMINTIRI',
     ticker:'🧳 Bun venit la bordul zborului DL&amp;TH-23.08 ✈ Dalia &amp; Theo · 23 August 2026 · Moonfields ✦ Găsește-ți locul · Încarcă amintirile ✈ Love Airlines ✦',
     pmTitle:'Caută-ți locul la bord',
-    pmSub:'Introdu numele tău pentru a-ți găsi masa',
-    pmPh:'ex: Ion Popescu',
+    pmSub:'Introdu numele tău sau numele mesei pentru a găsi locul',
+    pmPh:'ex: Ion Popescu sau Torino',
     pmNF:'Numele nu a fost găsit.',
     pmWelcome:'Bun venit, ',
     pmF1:'MASĂ',
     pmF2:'SCAUN',
     pmF3:'MENIU',
+    pmTableLbl:'Masă',
+    pmTableGuestsLbl:'invitați',
+    pmTableHeading:'Invitații de la masa',
+    pmTableBack:'← Înapoi la căutare',
     pmMapLbl:'✈ LOVE AIRLINES SEATS',
     pmEntrance:'INTRARE DREAPTA · ZONA CORTINA / PORTOFINO',
     pmNDTxt:'Lista de invitați va fi activată în curând de organizatori.',
@@ -653,13 +680,17 @@ var T={
     clsV:'RICORDI',
     ticker:'🧳 Benvenuti a bordo del volo DL&amp;TH-23.08 ✈ Dalia &amp; Theo · 23 Agosto 2026 · Moonfields ✦ Trova il tuo posto · Carica i ricordi ✈ Love Airlines ✦',
     pmTitle:'Trova il tuo posto',
-    pmSub:'Inserisci il tuo nome per trovare il tuo tavolo',
-    pmPh:'es. Mario Rossi',
+    pmSub:'Inserisci il tuo nome o il nome del tavolo per trovare il posto',
+    pmPh:'es. Mario Rossi o Torino',
     pmNF:'Nome non trovato.',
     pmWelcome:'Benvenuto/a, ',
     pmF1:'TAVOLO',
     pmF2:'POSTO',
     pmF3:'MENU',
+    pmTableLbl:'Tavolo',
+    pmTableGuestsLbl:'ospiti',
+    pmTableHeading:'Ospiti al tavolo',
+    pmTableBack:'← Torna alla ricerca',
     pmMapLbl:'✈ MAPPA SALA · MOONFIELDS',
     pmEntrance:'INGRESSO DESTRA · ZONA CORTINA / PORTOFINO',
     pmNDTxt:'La lista degli invitati sarà attivata presto dagli organizzatori.',
@@ -818,13 +849,17 @@ var T={
     clsV:'MEMORIES',
     ticker:'🧳 Welcome aboard flight DL&amp;TH-23.08 ✈ Dalia &amp; Theo · 23 August 2026 · Moonfields ✦ Find your seat · Upload memories ✈ Love Airlines ✦',
     pmTitle:'Find your seat',
-    pmSub:'Enter your name to find your table',
-    pmPh:'e.g. John Smith',
+    pmSub:'Enter your name or table name to find your seat',
+    pmPh:'e.g. John Smith or Torino',
     pmNF:'Name not found.',
     pmWelcome:'Welcome, ',
     pmF1:'TABLE',
     pmF2:'SEAT',
     pmF3:'MENU',
+    pmTableLbl:'Table',
+    pmTableGuestsLbl:'guests',
+    pmTableHeading:'Guests at table',
+    pmTableBack:'← Back to search',
     pmMapLbl:'✈ HALL MAP · MOONFIELDS',
     pmEntrance:'ENTRANCE RIGHT · CORTINA / PORTOFINO AREA',
     pmNDTxt:'The guest list will be activated soon by the organizers.',
@@ -995,6 +1030,9 @@ function setLang(l,btn){
   document.getElementById('at-up').textContent=t.alUpBtn.split('·')[0].trim();
   document.getElementById('at-gal').textContent=t.galTitle;
   document.getElementById('al-ref').textContent=t.alRef;
+  var _pmTblLbl=document.getElementById('pm-tbl-lbl'); if(_pmTblLbl) _pmTblLbl.textContent=t.pmTableLbl;
+  var _pmTblBack=document.getElementById('pm-table-back'); if(_pmTblBack) _pmTblBack.textContent=t.pmTableBack;
+  var _pmTblGH=document.getElementById('pm-tbl-guests-heading'); if(_pmTblGH) _pmTblGH.textContent=t.pmTableHeading+(pmCurTableName?' '+pmCurTableName:'');
   // ── Translate ALL menu elements ──
   var _allIds = ['welTitle','welTeaser','welP1','welP2','welMissionTitle','welP3','welP4','welP5','dkHot','dkSoft','dkBeer','dkMock','dkCock','dkLong','dkWine','dkSpir','diCoffee','diTea','diWater','diCola','diSchweppes','diIceTea','diSantal','diHeineken','diHeineken0','diGreenApple','diBerryMojito','diAperolSpritz','diHugoSpritz','diNegroni','diMojito','diCampariO','diGinTonic','diCubaLibre','diVodkaMix','diWhiskyCola','diSarica','diProsecco','diVodka','diBourboun','diCognac','diWhisky','diRum','diGin','diTequila','diVermouth','diBitter','diJager','diBaileys','ddCoffee','ddTea','ddWater','ddCola','ddSchweppes','ddIceTea','ddSantal','ddHeineken','ddHeineken0','ddGreenApple','ddBerryMojito','ddAperolSpritz','ddHugoSpritz','ddNegroni','ddMojito','ddCampariO','ddGinTonic','ddCubaLibre','ddVodkaMix','ddWhiskyCola','ddSarica','ddProsecco','ddVodka','ddBourboun','ddCognac','ddWhisky','ddRum','ddGin','ddTequila','ddVermouth','ddBitter','ddJager','ddBaileys','ddSaricaSpec','dmTagline','dmC1','dmC2','dmC3','dmC4','dmC5','dmI1a','dmI1b','dmI2a','dmI2b','dmI2c','dmI2d','dmI2e','dmI2f','dmI2g','dmI2h','dmI3a','dmI4a','dmI5a','dmC6','dmI6a'];
   _allIds.forEach(function(id){
@@ -1051,7 +1089,7 @@ function showSub(name,btn){
 // ══════════════════════════════════════════════════════
 // HARTA — search + boarding pass + SVG map
 // ══════════════════════════════════════════════════════
-var pmSuggs=[], pmSelG=null;
+var pmSuggs=[], pmSelG=null, pmCurTableName=null;
 
 // Show/hide no-data banner
 document.getElementById('pm-no-data').style.display = GUEST_NAMES.length===0 ? 'block' : 'none';
@@ -1076,15 +1114,25 @@ function pmSearch(v){
     pmNF.style.display='block';
     return;
   }
-  pmSuggs=GUESTS.filter(function(g){return g.name.toLowerCase().indexOf(q)>=0;}).slice(0,8);
+  var guestMatches=GUESTS.filter(function(g){return g.name.toLowerCase().indexOf(q)>=0;}).slice(0,6);
+  var tableMatches=TABLES.filter(function(tb){return tb.name.toLowerCase().indexOf(q)>=0;}).slice(0,4);
+  pmSuggs=guestMatches.map(function(g){return {isTable:false,guest:g};})
+    .concat(tableMatches.map(function(tb){return {isTable:true,table:tb};}));
   if(!pmSuggs.length){
     if(q.length>=3){pmNF.textContent=T[lang].pmNF;pmNF.style.display='block';}
     return;
   }
-  pmSuggs.forEach(function(g,i){
+  var t=T[lang];
+  pmSuggs.forEach(function(s,i){
     var d=document.createElement('div');
-    d.className='pm-sugg-item';
-    d.innerHTML='<strong>'+esc(g.name)+'</strong><div class="pm-sugg-sub">Masa '+esc(g.table)+'</div>';
+    if(s.isTable){
+      var cnt=GUESTS.filter(function(g){return g.table===s.table.name;}).length;
+      d.className='pm-sugg-item pm-sugg-table';
+      d.innerHTML='<strong>🍽 '+esc(s.table.name)+'</strong><div class="pm-sugg-sub">'+t.pmTableLbl+' · '+cnt+' '+t.pmTableGuestsLbl+'</div>';
+    } else {
+      d.className='pm-sugg-item';
+      d.innerHTML='<strong>'+esc(s.guest.name)+'</strong><div class="pm-sugg-sub">'+t.pmF1[0]+t.pmF1.slice(1).toLowerCase()+' '+esc(s.guest.table)+'</div>';
+    }
     d.onclick=function(){pmPick(i);};
     pmSuggBox.appendChild(d);
   });
@@ -1094,19 +1142,74 @@ function pmSearch(v){
 function pmPickFirst(){if(pmSuggs.length)pmPick(0);}
 
 function pmPick(i){
-  var g=pmSuggs[i];
-  if(!g) return;
-  pmSelG=g;
-  pmInp.value=g.name;
+  var s=pmSuggs[i];
+  if(!s) return;
   pmSuggBox.className='pm-sugg';
   pmSuggBox.innerHTML='';
   pmNF.style.display='none';
-  showBP(g);
+  if(s.isTable){
+    pmSelG=null;
+    showTableResult(s.table);
+  } else {
+    var g=s.guest;
+    pmSelG=g;
+    pmInp.value=g.name;
+    document.getElementById('pm-table-result').className='pm-table-result';
+    showBP(g);
+    document.getElementById('pm-map-wrap').className='pm-map-wrap show';
+    setTimeout(function(){
+      document.getElementById('pm-bp').scrollIntoView({behavior:'smooth',block:'nearest'});
+    },100);
+    setTimeout(function(){drawMap(g);},350);
+  }
+}
+
+function lastNameOf(fullName){
+  var parts=fullName.trim().split(/\s+/);
+  return parts[parts.length-1];
+}
+
+function showTableResult(tbl){
+  var t=T[lang];
+  pmCurTableName=tbl.name;
+  pmInp.value=tbl.name;
+  document.getElementById('pm-bp').className='pm-bp';
+  document.getElementById('pm-tbl-lbl').textContent=t.pmTableLbl;
+  document.getElementById('pm-tbl-name').textContent=tbl.name;
+  document.getElementById('pm-table-back').textContent=t.pmTableBack;
+  document.getElementById('pm-tbl-guests-heading').textContent=t.pmTableHeading+' '+tbl.name;
+
+  var navText=(NAV_TXT[lang] && NAV_TXT[lang][tbl.name]) || (NAV_TXT.ro && NAV_TXT.ro[tbl.name]) || '';
+  document.getElementById('pm-tbl-nav').textContent=navText;
+
+  var guestsAtTable=GUESTS.filter(function(g){return g.table===tbl.name;});
+  guestsAtTable.sort(function(a,b){
+    var la=lastNameOf(a.name).toLowerCase(), lb=lastNameOf(b.name).toLowerCase();
+    if(la<lb) return -1;
+    if(la>lb) return 1;
+    return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+  });
+  var listEl=document.getElementById('pm-tbl-guests-list');
+  listEl.innerHTML='';
+  guestsAtTable.forEach(function(g){
+    var li=document.createElement('li');
+    li.textContent=g.name;
+    listEl.appendChild(li);
+  });
+
+  document.getElementById('pm-table-result').className='pm-table-result show';
   document.getElementById('pm-map-wrap').className='pm-map-wrap show';
   setTimeout(function(){
-    document.getElementById('pm-bp').scrollIntoView({behavior:'smooth',block:'nearest'});
+    document.getElementById('pm-table-result').scrollIntoView({behavior:'smooth',block:'nearest'});
   },100);
-  setTimeout(function(){drawMap(g);},350);
+  setTimeout(function(){drawMap({table:tbl.name});},350);
+}
+
+function closeTableResult(){
+  pmCurTableName=null;
+  document.getElementById('pm-table-result').className='pm-table-result';
+  pmInp.value='';
+  pmInp.focus();
 }
 
 var NAV_TXT = {"ro": {"Capri": "🚪 Din intrarea principală: Chiar la intrare, pe partea dreaptă, pe coloana din mijloc — masa cu cel mai radiant zâmbet din avion. Glow-ul lor se vede din avion! 🧴✨\n🌿 Din curtea interioară: Treci de Ring și mergi spre intrarea principală. Capri este pe partea stângă, în coloana din mijloc, prima dintre cele două mese.", "Bari": "🚪 Din intrarea principală: Chiar la intrare, pe partea dreaptă, pe coloana din mijloc, lângă Capri — masa cu un glow care se vede din avion! 🧴✨\n🌿 Din curtea interioară: Treci de Ring și mergi spre intrarea principală. Bari este pe partea stângă, în coloana din mijloc, imediat după Capri.", "Napoli": "🚪 Din intrarea principală: Intri în sală și mergi pe partea stângă, spre geam. Este prima masă din coloana de lângă geam.\n🌿 Din curtea interioară: Treci de Ring și mergi spre intrarea principală. Napoli este pe partea dreaptă, în coloana de lângă geam, ultima masă înainte de zona de intrare.", "Sorrento": "🚪 Din intrarea principală: Intri în sală și mergi pe partea stângă, spre geam. Este a doua masă din coloana de lângă geam.\n🌿 Din curtea interioară: Treci de Ring și mergi spre intrarea principală. Sorrento este pe partea dreaptă, în coloana de lângă geam, între Napoli și Positano.", "Positano": "🚪 Din intrarea principală: Intri în sală și mergi pe partea stângă, spre geam. Este ultima masă din coloana de lângă geam, înainte de Ring.\n🌿 Din curtea interioară: Treci de Ring și mergi spre intrarea principală. Positano este pe partea dreaptă, în coloana de lângă geam, prima masă pe care o întâlnești după zona Ringului.", "Assisi": "🚪 Din intrarea principală: Intri în sală și mergi pe partea stângă, spre mijlocul sălii. Este prima masă din coloana interioară.\n🌿 Din curtea interioară: Treci de Ring și mergi spre intrarea principală. Assisi este pe partea dreaptă, în coloana interioară, ultima masă dinaintea Ringului.", "Orvieto": "🚪 Din intrarea principală: Intri în sală și mergi pe partea stângă, spre mijlocul sălii. Este a doua masă din coloana interioară.\n🌿 Din curtea interioară: Treci de Ring și mergi spre intrarea principală. Orvieto este pe partea dreaptă, în coloana interioară, între Assisi și Ancona.", "Ancona": "🚪 Din intrarea principală: Intri în sală și mergi pe partea stângă, spre mijlocul sălii. Este ultima masă din coloana interioară, înainte de Ring.\n🌿 Din curtea interioară: Treci de Ring și mergi spre intrarea principală. Ancona este pe partea dreaptă, în coloana interioară, prima masă pe care o întâlnești după Ring.", "Venetia": "🚪 Din intrarea principală: După Ring, mergi pe partea dreaptă și ține-te de șirul de mese de lângă geam. Este prima masă din acest rând, cea mai apropiată de Ring.\n🌿 Din curtea interioară: Intri din curte și mergi spre Ring. După Ring, continui pe partea stângă, lângă geam. Venetia este prima masă din acest rând.", "Como": "🚪 Din intrarea principală: După Ring, pe partea dreaptă, lângă geam — a doua masă din acest rând.\n🌿 Din curtea interioară: După Ring, mergi pe partea stângă, lângă geam — a doua masă din acest rând.", "Genova": "🚪 Din intrarea principală: După Ring, pe partea dreaptă, lângă geam — a treia masă din acest rând.\n🌿 Din curtea interioară: După Ring, mergi pe partea stângă, lângă geam — a treia masă din acest rând.", "Milano": "🚪 Din intrarea principală: După Ring, pe partea dreaptă, lângă geam — a patra masă din acest rând.\n🌿 Din curtea interioară: După Ring, mergi pe partea stângă, lângă geam — a patra masă din acest rând.", "Torino": "🚪 Din intrarea principală: După Ring, pe partea dreaptă, lângă geam — ultima masă din acest rând, cea mai aproape de Roma.\n🌿 Din curtea interioară: După Ring, mergi pe partea stângă, lângă geam. Torino este ultima masă din acest rând, cea mai aproape de Roma.", "Bologna": "🚪 Din intrarea principală: După Ring, mergi spre partea dreaptă, către Roma. Este prima masă din șirul interior, cea mai apropiată de Ring.\n🌿 Din curtea interioară: Intri din curte și mergi spre Ring. După Ring, continui pe partea stângă, spre mijlocul sălii. Bologna este prima masă din șirul interior.", "Trieste": "🚪 Din intrarea principală: După Ring, pe partea dreaptă, spre mijlocul sălii — a doua masă din acest șir.\n🌿 Din curtea interioară: După Ring, pe partea stângă, spre mijlocul sălii — a doua masă din acest șir.", "Padova": "🚪 Din intrarea principală: După Ring, pe partea dreaptă, spre mijlocul sălii — a treia masă din acest șir.\n🌿 Din curtea interioară: După Ring, pe partea stângă, spre mijlocul sălii — a treia masă din acest șir.", "Verona": "🚪 Din intrarea principală: După Ring, pe partea dreaptă, spre mijlocul sălii — ultima masă din acest șir, cea mai aproape de Roma.\n🌿 Din curtea interioară: După Ring, pe partea stângă, spre mijlocul sălii. Verona este ultima masă din acest șir, cea mai aproape de Roma.", "Firenze": "🚪 Din intrarea principală: După Ring, mergi spre partea stângă, către Roma. Este prima masă din șirul interior, cea mai apropiată de Ring.\n🌿 Din curtea interioară: Intri din curte și mergi spre Ring. După Ring, continui pe partea dreaptă, spre mijlocul sălii. Firenze este prima masă din șirul interior.", "Rimini": "🚪 Din intrarea principală: După Ring, pe partea stângă, spre mijlocul sălii — a doua masă din acest șir.\n🌿 Din curtea interioară: După Ring, pe partea dreaptă, spre mijlocul sălii — a doua masă din acest șir.", "Modena": "🚪 Din intrarea principală: După Ring, pe partea stângă, spre mijlocul sălii — a treia masă din acest șir.\n🌿 Din curtea interioară: După Ring, pe partea dreaptă, spre mijlocul sălii — a treia masă din acest șir.", "Parma": "🚪 Din intrarea principală: După Ring, pe partea stângă, spre mijlocul sălii — ultima masă din acest șir, cea mai aproape de Roma.\n🌿 Din curtea interioară: După Ring, pe partea dreaptă, spre mijlocul sălii. Parma este ultima masă din acest șir, cea mai aproape de Roma.", "Perugia": "🚪 Din intrarea principală: După Ring, mergi pe partea stângă și ține-te de șirul de mese de lângă geam. Este prima masă din acest rând, cea mai apropiată de Ring.\n🌿 Din curtea interioară: Intri din curte și mergi spre Ring. După Ring, continui pe partea dreaptă, lângă geam. Perugia este prima masă din acest rând.", "Lucca": "🚪 Din intrarea principală: După Ring, pe partea stângă, lângă geam — a doua masă din acest rând.\n🌿 Din curtea interioară: După Ring, mergi pe partea dreaptă, lângă geam — a doua masă din acest rând.", "Pisa": "🚪 Din intrarea principală: După Ring, pe partea stângă, lângă geam — a treia masă din acest rând.\n🌿 Din curtea interioară: După Ring, mergi pe partea dreaptă, lângă geam — a treia masă din acest rând.", "Siena": "🚪 Din intrarea principală: După Ring, pe partea stângă, lângă geam — ultima masă din acest rând, cea mai aproape de Roma.\n🌿 Din curtea interioară: După Ring, mergi pe partea dreaptă, lângă geam. Siena este ultima masă din acest rând, cea mai aproape de Roma.", "Staff · Palermo": "🚪 Din intrarea principală: Chiar la intrare, pe partea dreaptă, lângă geam — prima masă Staff, înainte de scena Feelings.\n🌿 Din curtea interioară: Treci de Ring și mergi spre zona Feelings. Palermo este pe partea stângă, lângă geam, în zona de dinaintea scenei Feelings.", "Staff · Catania": "🚪 Din intrarea principală: Pe partea dreaptă, lângă geam, înainte de scena Feelings — a doua masă Staff.\n🌿 Din curtea interioară: Treci de Ring și mergi spre zona Feelings. Catania este pe partea stângă, lângă geam, între Palermo și Cagliari.", "Staff · Cagliari": "🚪 Din intrarea principală: Pe partea dreaptă, lângă geam, chiar înainte de scena Feelings — ultima masă Staff din acest rând.\n🌿 Din curtea interioară: Treci de Ring și mergi spre zona Feelings. Cagliari este pe partea stângă, lângă geam, cea mai apropiată de scena Feelings.", "Roma": "🚪 Din intrarea principală: Treci de Ring și mergi tot înainte, până în capătul sălii — masa mirilor.\n🌿 Din curtea interioară: Intri din curte, mergi spre Ring, apoi continui tot înainte, până în capătul sălii — masa mirilor."}, "en": {"Capri": "🚪 From the main entrance: Right at the entrance, on the right, in the middle column — the table with the most radiant smile on the plane. Their glow can be seen from the plane! 🧴✨\n🌿 From the inner courtyard: Pass the Dance Floor and head toward the main entrance. Capri is on the left, in the middle column, the first of the two tables.", "Bari": "🚪 From the main entrance: Right at the entrance, on the right, in the middle column, next to Capri — the table with a glow that can be seen from the plane! 🧴✨\n🌿 From the inner courtyard: Pass the Dance Floor and head toward the main entrance. Bari is on the left, in the middle column, right after Capri.", "Napoli": "🚪 From the main entrance: Enter the room and go to the left, toward the window. It's the first table in the column by the window.\n🌿 From the inner courtyard: Pass the Dance Floor and head toward the main entrance. Napoli is on the right, in the column by the window, the last table before the entrance area.", "Sorrento": "🚪 From the main entrance: Enter the room and go to the left, toward the window. It's the second table in the column by the window.\n🌿 From the inner courtyard: Pass the Dance Floor and head toward the main entrance. Sorrento is on the right, in the column by the window, between Napoli and Positano.", "Positano": "🚪 From the main entrance: Enter the room and go to the left, toward the window. It's the last table in the column by the window, before the Dance Floor.\n🌿 From the inner courtyard: Pass the Dance Floor and head toward the main entrance. Positano is on the right, in the column by the window, the first table you reach after the Dance Floor area.", "Assisi": "🚪 From the main entrance: Enter the room and go to the left, toward the middle of the room. It's the first table in the inner column.\n🌿 From the inner courtyard: Pass the Dance Floor and head toward the main entrance. Assisi is on the right, in the inner column, the last table before the Dance Floor.", "Orvieto": "🚪 From the main entrance: Enter the room and go to the left, toward the middle of the room. It's the second table in the inner column.\n🌿 From the inner courtyard: Pass the Dance Floor and head toward the main entrance. Orvieto is on the right, in the inner column, between Assisi and Ancona.", "Ancona": "🚪 From the main entrance: Enter the room and go to the left, toward the middle of the room. It's the last table in the inner column, before the Dance Floor.\n🌿 From the inner courtyard: Pass the Dance Floor and head toward the main entrance. Ancona is on the right, in the inner column, the first table you reach after the Dance Floor.", "Venetia": "🚪 From the main entrance: After the Dance Floor, go right and follow the row of tables by the window. It's the first table in this row, closest to the Dance Floor.\n🌿 From the inner courtyard: Enter from the courtyard and head toward the Dance Floor. After the Dance Floor, continue on the left, by the window. Venetia is the first table in this row.", "Como": "🚪 From the main entrance: After the Dance Floor, on the right, by the window — the second table in this row.\n🌿 From the inner courtyard: After the Dance Floor, go left, by the window — the second table in this row.", "Genova": "🚪 From the main entrance: After the Dance Floor, on the right, by the window — the third table in this row.\n🌿 From the inner courtyard: After the Dance Floor, go left, by the window — the third table in this row.", "Milano": "🚪 From the main entrance: After the Dance Floor, on the right, by the window — the fourth table in this row.\n🌿 From the inner courtyard: After the Dance Floor, go left, by the window — the fourth table in this row.", "Torino": "🚪 From the main entrance: After the Dance Floor, on the right, by the window — the last table in this row, closest to Roma.\n🌿 From the inner courtyard: After the Dance Floor, go left, by the window. Torino is the last table in this row, closest to Roma.", "Bologna": "🚪 From the main entrance: After the Dance Floor, head to the right, toward Roma. It's the first table in the inner row, closest to the Dance Floor.\n🌿 From the inner courtyard: Enter from the courtyard and head toward the Dance Floor. After the Dance Floor, continue on the left, toward the middle of the room. Bologna is the first table in the inner row.", "Trieste": "🚪 From the main entrance: After the Dance Floor, on the right, toward the middle of the room — the second table in this row.\n🌿 From the inner courtyard: After the Dance Floor, on the left, toward the middle of the room — the second table in this row.", "Padova": "🚪 From the main entrance: After the Dance Floor, on the right, toward the middle of the room — the third table in this row.\n🌿 From the inner courtyard: After the Dance Floor, on the left, toward the middle of the room — the third table in this row.", "Verona": "🚪 From the main entrance: After the Dance Floor, on the right, toward the middle of the room — the last table in this row, closest to Roma.\n🌿 From the inner courtyard: After the Dance Floor, on the left, toward the middle of the room. Verona is the last table in this row, closest to Roma.", "Firenze": "🚪 From the main entrance: After the Dance Floor, head to the left, toward Roma. It's the first table in the inner row, closest to the Dance Floor.\n🌿 From the inner courtyard: Enter from the courtyard and head toward the Dance Floor. After the Dance Floor, continue on the right, toward the middle of the room. Firenze is the first table in the inner row.", "Rimini": "🚪 From the main entrance: After the Dance Floor, on the left, toward the middle of the room — the second table in this row.\n🌿 From the inner courtyard: After the Dance Floor, on the right, toward the middle of the room — the second table in this row.", "Modena": "🚪 From the main entrance: After the Dance Floor, on the left, toward the middle of the room — the third table in this row.\n🌿 From the inner courtyard: After the Dance Floor, on the right, toward the middle of the room — the third table in this row.", "Parma": "🚪 From the main entrance: After the Dance Floor, on the left, toward the middle of the room — the last table in this row, closest to Roma.\n🌿 From the inner courtyard: After the Dance Floor, on the right, toward the middle of the room. Parma is the last table in this row, closest to Roma.", "Perugia": "🚪 From the main entrance: After the Dance Floor, go left and follow the row of tables by the window. It's the first table in this row, closest to the Dance Floor.\n🌿 From the inner courtyard: Enter from the courtyard and head toward the Dance Floor. After the Dance Floor, continue on the right, by the window. Perugia is the first table in this row.", "Lucca": "🚪 From the main entrance: After the Dance Floor, on the left, by the window — the second table in this row.\n🌿 From the inner courtyard: After the Dance Floor, go right, by the window — the second table in this row.", "Pisa": "🚪 From the main entrance: After the Dance Floor, on the left, by the window — the third table in this row.\n🌿 From the inner courtyard: After the Dance Floor, go right, by the window — the third table in this row.", "Siena": "🚪 From the main entrance: After the Dance Floor, on the left, by the window — the last table in this row, closest to Roma.\n🌿 From the inner courtyard: After the Dance Floor, go right, by the window. Siena is the last table in this row, closest to Roma.", "Staff · Palermo": "🚪 From the main entrance: Right at the entrance, on the right, by the window — the first Staff table, before the Feelings stage.\n🌿 From the inner courtyard: Pass the Dance Floor and head toward the Feelings area. Palermo is on the left, by the window, in the area before the Feelings stage.", "Staff · Catania": "🚪 From the main entrance: On the right, by the window, before the Feelings stage — the second Staff table.\n🌿 From the inner courtyard: Pass the Dance Floor and head toward the Feelings area. Catania is on the left, by the window, between Palermo and Cagliari.", "Staff · Cagliari": "🚪 From the main entrance: On the right, by the window, right before the Feelings stage — the last Staff table in this row.\n🌿 From the inner courtyard: Pass the Dance Floor and head toward the Feelings area. Cagliari is on the left, by the window, closest to the Feelings stage.", "Roma": "🚪 From the main entrance: Pass the Dance Floor and keep going straight, to the far end of the room — the newlyweds' table.\n🌿 From the inner courtyard: Enter from the courtyard, head toward the Dance Floor, then keep going straight, to the far end of the room — the newlyweds' table."}, "it": {"Capri": "🚪 Dall'ingresso principale: Subito all'ingresso, sulla destra, nella colonna centrale — il tavolo con il sorriso più radioso dell'aereo. Il loro splendore si vede da lontano! 🧴✨\n🌿 Dal cortile interno: Supera la Pista da Ballo e vai verso l'ingresso principale. Capri è sulla sinistra, nella colonna centrale, il primo dei due tavoli.", "Bari": "🚪 Dall'ingresso principale: Subito all'ingresso, sulla destra, nella colonna centrale, accanto a Capri — il tavolo con uno splendore visibile da lontano! 🧴✨\n🌿 Dal cortile interno: Supera la Pista da Ballo e vai verso l'ingresso principale. Bari è sulla sinistra, nella colonna centrale, subito dopo Capri.", "Napoli": "🚪 Dall'ingresso principale: Entra nella sala e vai a sinistra, verso il finestrino. È il primo tavolo della colonna vicino al finestrino.\n🌿 Dal cortile interno: Supera la Pista da Ballo e vai verso l'ingresso principale. Napoli è sulla destra, nella colonna vicino al finestrino, l'ultimo tavolo prima della zona d'ingresso.", "Sorrento": "🚪 Dall'ingresso principale: Entra nella sala e vai a sinistra, verso il finestrino. È il secondo tavolo della colonna vicino al finestrino.\n🌿 Dal cortile interno: Supera la Pista da Ballo e vai verso l'ingresso principale. Sorrento è sulla destra, nella colonna vicino al finestrino, tra Napoli e Positano.", "Positano": "🚪 Dall'ingresso principale: Entra nella sala e vai a sinistra, verso il finestrino. È l'ultimo tavolo della colonna vicino al finestrino, prima della Pista da Ballo.\n🌿 Dal cortile interno: Supera la Pista da Ballo e vai verso l'ingresso principale. Positano è sulla destra, nella colonna vicino al finestrino, il primo tavolo che incontri dopo la Pista da Ballo.", "Assisi": "🚪 Dall'ingresso principale: Entra nella sala e vai a sinistra, verso il centro della sala. È il primo tavolo della colonna interna.\n🌿 Dal cortile interno: Supera la Pista da Ballo e vai verso l'ingresso principale. Assisi è sulla destra, nella colonna interna, l'ultimo tavolo prima della Pista da Ballo.", "Orvieto": "🚪 Dall'ingresso principale: Entra nella sala e vai a sinistra, verso il centro della sala. È il secondo tavolo della colonna interna.\n🌿 Dal cortile interno: Supera la Pista da Ballo e vai verso l'ingresso principale. Orvieto è sulla destra, nella colonna interna, tra Assisi e Ancona.", "Ancona": "🚪 Dall'ingresso principale: Entra nella sala e vai a sinistra, verso il centro della sala. È l'ultimo tavolo della colonna interna, prima della Pista da Ballo.\n🌿 Dal cortile interno: Supera la Pista da Ballo e vai verso l'ingresso principale. Ancona è sulla destra, nella colonna interna, il primo tavolo che incontri dopo la Pista da Ballo.", "Venetia": "🚪 Dall'ingresso principale: Dopo la Pista da Ballo, vai a destra e segui la fila di tavoli vicino al finestrino. È il primo tavolo di questa fila, il più vicino alla Pista da Ballo.\n🌿 Dal cortile interno: Entri dal cortile e vai verso la Pista da Ballo. Dopo la Pista da Ballo, continui sulla sinistra, vicino al finestrino. Venetia è il primo tavolo di questa fila.", "Como": "🚪 Dall'ingresso principale: Dopo la Pista da Ballo, sulla destra, vicino al finestrino — il secondo tavolo di questa fila.\n🌿 Dal cortile interno: Dopo la Pista da Ballo, vai a sinistra, vicino al finestrino — il secondo tavolo di questa fila.", "Genova": "🚪 Dall'ingresso principale: Dopo la Pista da Ballo, sulla destra, vicino al finestrino — il terzo tavolo di questa fila.\n🌿 Dal cortile interno: Dopo la Pista da Ballo, vai a sinistra, vicino al finestrino — il terzo tavolo di questa fila.", "Milano": "🚪 Dall'ingresso principale: Dopo la Pista da Ballo, sulla destra, vicino al finestrino — il quarto tavolo di questa fila.\n🌿 Dal cortile interno: Dopo la Pista da Ballo, vai a sinistra, vicino al finestrino — il quarto tavolo di questa fila.", "Torino": "🚪 Dall'ingresso principale: Dopo la Pista da Ballo, sulla destra, vicino al finestrino — l'ultimo tavolo di questa fila, il più vicino a Roma.\n🌿 Dal cortile interno: Dopo la Pista da Ballo, vai a sinistra, vicino al finestrino. Torino è l'ultimo tavolo di questa fila, il più vicino a Roma.", "Bologna": "🚪 Dall'ingresso principale: Dopo la Pista da Ballo, vai verso destra, in direzione di Roma. È il primo tavolo della fila interna, il più vicino alla Pista da Ballo.\n🌿 Dal cortile interno: Entri dal cortile e vai verso la Pista da Ballo. Dopo la Pista da Ballo, continui sulla sinistra, verso il centro della sala. Bologna è il primo tavolo della fila interna.", "Trieste": "🚪 Dall'ingresso principale: Dopo la Pista da Ballo, sulla destra, verso il centro della sala — il secondo tavolo di questa fila.\n🌿 Dal cortile interno: Dopo la Pista da Ballo, sulla sinistra, verso il centro della sala — il secondo tavolo di questa fila.", "Padova": "🚪 Dall'ingresso principale: Dopo la Pista da Ballo, sulla destra, verso il centro della sala — il terzo tavolo di questa fila.\n🌿 Dal cortile interno: Dopo la Pista da Ballo, sulla sinistra, verso il centro della sala — il terzo tavolo di questa fila.", "Verona": "🚪 Dall'ingresso principale: Dopo la Pista da Ballo, sulla destra, verso il centro della sala — l'ultimo tavolo di questa fila, il più vicino a Roma.\n🌿 Dal cortile interno: Dopo la Pista da Ballo, sulla sinistra, verso il centro della sala. Verona è l'ultimo tavolo di questa fila, il più vicino a Roma.", "Firenze": "🚪 Dall'ingresso principale: Dopo la Pista da Ballo, vai verso sinistra, in direzione di Roma. È il primo tavolo della fila interna, il più vicino alla Pista da Ballo.\n🌿 Dal cortile interno: Entri dal cortile e vai verso la Pista da Ballo. Dopo la Pista da Ballo, continui sulla destra, verso il centro della sala. Firenze è il primo tavolo della fila interna.", "Rimini": "🚪 Dall'ingresso principale: Dopo la Pista da Ballo, sulla sinistra, verso il centro della sala — il secondo tavolo di questa fila.\n🌿 Dal cortile interno: Dopo la Pista da Ballo, sulla destra, verso il centro della sala — il secondo tavolo di questa fila.", "Modena": "🚪 Dall'ingresso principale: Dopo la Pista da Ballo, sulla sinistra, verso il centro della sala — il terzo tavolo di questa fila.\n🌿 Dal cortile interno: Dopo la Pista da Ballo, sulla destra, verso il centro della sala — il terzo tavolo di questa fila.", "Parma": "🚪 Dall'ingresso principale: Dopo la Pista da Ballo, sulla sinistra, verso il centro della sala — l'ultimo tavolo di questa fila, il più vicino a Roma.\n🌿 Dal cortile interno: Dopo la Pista da Ballo, sulla destra, verso il centro della sala. Parma è l'ultimo tavolo di questa fila, il più vicino a Roma.", "Perugia": "🚪 Dall'ingresso principale: Dopo la Pista da Ballo, vai a sinistra e segui la fila di tavoli vicino al finestrino. È il primo tavolo di questa fila, il più vicino alla Pista da Ballo.\n🌿 Dal cortile interno: Entri dal cortile e vai verso la Pista da Ballo. Dopo la Pista da Ballo, continui sulla destra, vicino al finestrino. Perugia è il primo tavolo di questa fila.", "Lucca": "🚪 Dall'ingresso principale: Dopo la Pista da Ballo, sulla sinistra, vicino al finestrino — il secondo tavolo di questa fila.\n🌿 Dal cortile interno: Dopo la Pista da Ballo, vai a destra, vicino al finestrino — il secondo tavolo di questa fila.", "Pisa": "🚪 Dall'ingresso principale: Dopo la Pista da Ballo, sulla sinistra, vicino al finestrino — il terzo tavolo di questa fila.\n🌿 Dal cortile interno: Dopo la Pista da Ballo, vai a destra, vicino al finestrino — il terzo tavolo di questa fila.", "Siena": "🚪 Dall'ingresso principale: Dopo la Pista da Ballo, sulla sinistra, vicino al finestrino — l'ultimo tavolo di questa fila, il più vicino a Roma.\n🌿 Dal cortile interno: Dopo la Pista da Ballo, vai a destra, vicino al finestrino. Siena è l'ultimo tavolo di questa fila, il più vicino a Roma.", "Staff · Palermo": "🚪 Dall'ingresso principale: Subito all'ingresso, sulla destra, vicino al finestrino — il primo tavolo Staff, prima del palco Feelings.\n🌿 Dal cortile interno: Supera la Pista da Ballo e vai verso l'area Feelings. Palermo è sulla sinistra, vicino al finestrino, nell'area prima del palco Feelings.", "Staff · Catania": "🚪 Dall'ingresso principale: Sulla destra, vicino al finestrino, prima del palco Feelings — il secondo tavolo Staff.\n🌿 Dal cortile interno: Supera la Pista da Ballo e vai verso l'area Feelings. Catania è sulla sinistra, vicino al finestrino, tra Palermo e Cagliari.", "Staff · Cagliari": "🚪 Dall'ingresso principale: Sulla destra, vicino al finestrino, subito prima del palco Feelings — l'ultimo tavolo Staff di questa fila.\n🌿 Dal cortile interno: Supera la Pista da Ballo e vai verso l'area Feelings. Cagliari è sulla sinistra, vicino al finestrino, il più vicino al palco Feelings.", "Roma": "🚪 Dall'ingresso principale: Supera la Pista da Ballo e continua dritto, fino in fondo alla sala — il tavolo degli sposi.\n🌿 Dal cortile interno: Entri dal cortile, vai verso la Pista da Ballo, poi continui dritto, fino in fondo alla sala — il tavolo degli sposi."}};
