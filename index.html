@@ -1030,9 +1030,12 @@ function setLang(l,btn){
   document.getElementById('at-up').textContent=t.alUpBtn.split('·')[0].trim();
   document.getElementById('at-gal').textContent=t.galTitle;
   document.getElementById('al-ref').textContent=t.alRef;
-  var _pmTblLbl=document.getElementById('pm-tbl-lbl'); if(_pmTblLbl) _pmTblLbl.textContent=t.pmTableLbl;
-  var _pmTblBack=document.getElementById('pm-table-back'); if(_pmTblBack) _pmTblBack.textContent=t.pmTableBack;
-  var _pmTblGH=document.getElementById('pm-tbl-guests-heading'); if(_pmTblGH) _pmTblGH.textContent=t.pmTableHeading+(pmCurTableName?' '+pmCurTableName:'');
+  var _pmTblResult=document.getElementById('pm-table-result');
+  if(_pmTblResult && _pmTblResult.className.indexOf('show')>=0 && pmCurTableName){
+    var _tblObj=null;
+    for(var _ti=0;_ti<TABLES.length;_ti++){ if(TABLES[_ti].name===pmCurTableName){ _tblObj=TABLES[_ti]; break; } }
+    if(_tblObj) showTableResult(_tblObj);
+  }
   // ── Translate ALL menu elements ──
   var _allIds = ['welTitle','welTeaser','welP1','welP2','welMissionTitle','welP3','welP4','welP5','dkHot','dkSoft','dkBeer','dkMock','dkCock','dkLong','dkWine','dkSpir','diCoffee','diTea','diWater','diCola','diSchweppes','diIceTea','diSantal','diHeineken','diHeineken0','diGreenApple','diBerryMojito','diAperolSpritz','diHugoSpritz','diNegroni','diMojito','diCampariO','diGinTonic','diCubaLibre','diVodkaMix','diWhiskyCola','diSarica','diProsecco','diVodka','diBourboun','diCognac','diWhisky','diRum','diGin','diTequila','diVermouth','diBitter','diJager','diBaileys','ddCoffee','ddTea','ddWater','ddCola','ddSchweppes','ddIceTea','ddSantal','ddHeineken','ddHeineken0','ddGreenApple','ddBerryMojito','ddAperolSpritz','ddHugoSpritz','ddNegroni','ddMojito','ddCampariO','ddGinTonic','ddCubaLibre','ddVodkaMix','ddWhiskyCola','ddSarica','ddProsecco','ddVodka','ddBourboun','ddCognac','ddWhisky','ddRum','ddGin','ddTequila','ddVermouth','ddBitter','ddJager','ddBaileys','ddSaricaSpec','dmTagline','dmC1','dmC2','dmC3','dmC4','dmC5','dmI1a','dmI1b','dmI2a','dmI2b','dmI2c','dmI2d','dmI2e','dmI2f','dmI2g','dmI2h','dmI3a','dmI4a','dmI5a','dmC6','dmI6a'];
   _allIds.forEach(function(id){
