@@ -1857,59 +1857,17 @@ document.getElementById('lb-dl-btn').addEventListener('click',function(ev){
 // îl oferă prin Web Share API. Dacă telefonul/browserul nu suportă asta
 // (majoritatea desktop-urilor, unele Android-uri vechi), cade automat pe
 // deschiderea pozei la rezoluție maximă, unde apăsarea lungă tot salvează.
-async function saveMedia(fid, mimeTypeGuess, fname, downloadUrl, thumbUrl, btn){
+function saveMedia(fid, mimeTypeGuess, fname, downloadUrl, thumbUrl, btn){
   var un=currentUserName();
   if(!un){
     un=(prompt(T[lang].alDlNamePrompt||'Numele tău, ca să știm cine a descărcat:')||'').trim();
     if(un) saveNameEverywhere(un);
   }
   notifyDownload(fid, fname, un);
-
-  var origHTML=btn?btn.innerHTML:null;
-  if(btn){ btn.disabled=true; btn.innerHTML='⏳'; }
-
-  var shared=false;
-  var DEBUG=true; // ⚠️ temporar, pentru diagnostic — scoatem după ce găsim problema
-  if(!navigator.share){
-    if(DEBUG) alert('DIAGNOSTIC: navigator.share nu există pe acest browser.');
-  } else if(!navigator.canShare){
-    if(DEBUG) alert('DIAGNOSTIC: navigator.canShare nu există pe acest browser.');
-  } else {
-    try{
-      var r=await fetchWithTimeout(APPS_URL,{method:'POST',body:JSON.stringify({action:'getFileData',fileId:fid})}, 45000);
-      if(!r || !r.success || !r.base64){
-        if(DEBUG) alert('DIAGNOSTIC: server nu a returnat fișierul. Răspuns: '+JSON.stringify(r).slice(0,300));
-      } else {
-        var byteChars=atob(r.base64);
-        var byteNums=new Array(byteChars.length);
-        for(var i=0;i<byteChars.length;i++){ byteNums[i]=byteChars.charCodeAt(i); }
-        var byteArr=new Uint8Array(byteNums);
-        var file=new File([byteArr], r.fileName||fname, {type:r.mimeType||mimeTypeGuess||'application/octet-stream'});
-        var canShareFiles=false;
-        try{ canShareFiles=navigator.canShare({files:[file]}); }catch(csErr){ if(DEBUG) alert('DIAGNOSTIC: canShare a aruncat eroare: '+describeError(csErr)); }
-        if(!canShareFiles){
-          if(DEBUG) alert('DIAGNOSTIC: canShare(files) a răspuns FALSE. mimeType folosit: '+file.type+', mărime: '+byteArr.length+' bytes.');
-        } else {
-          try{
-            await navigator.share({files:[file]});
-            shared=true;
-          }catch(shareErr){
-            if(DEBUG) alert('DIAGNOSTIC: navigator.share() a aruncat eroare: '+describeError(shareErr));
-          }
-        }
-      }
-    }catch(e){
-      if(DEBUG) alert('DIAGNOSTIC: eroare la cererea către server: '+describeError(e));
-    }
-  }
-
-  if(btn){ btn.disabled=false; if(origHTML!==null) btn.innerHTML=origHTML; }
-
-  if(!shared){
-    // Fallback: deschide poza la rezoluție maximă în lightbox — apăsarea
-    // lungă pe imagine salvează nativ, funcționează garantat.
-    openLB(thumbUrl, currentUserName()||'', fid, mimeTypeGuess, fname, downloadUrl);
-  }
+  // Deschide poza la rezoluție maximă în lightbox. De acolo, apăsarea lungă
+  // pe imagine arată meniul nativ "Save Image"/"Save in Photos" — asta e
+  // metoda dovedită să funcționeze pe toate telefoanele, testată direct.
+  openLB(thumbUrl, un||'', fid, mimeTypeGuess, fname, downloadUrl);
 }
 
 // ══════════════════════════════════════════════════════
