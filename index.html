@@ -1864,10 +1864,10 @@ function saveMedia(fid, mimeTypeGuess, fname, downloadUrl, thumbUrl, btn){
     if(un) saveNameEverywhere(un);
   }
   notifyDownload(fid, fname, un);
-  // Deschide poza la rezoluție maximă în lightbox. De acolo, apăsarea lungă
-  // pe imagine arată meniul nativ "Save Image"/"Save in Photos" — asta e
-  // metoda dovedită să funcționeze pe toate telefoanele, testată direct.
-  openLB(thumbUrl, un||'', fid, mimeTypeGuess, fname, downloadUrl);
+  // Deschide poza SINGURĂ, pe o pagină complet goală (fără niciun buton sau
+  // text suprapus peste ea) — astfel apăsarea lungă, oriunde pe imagine,
+  // nimerește garantat poza, nu vreun element din interfața noastră.
+  triggerDownload(downloadUrl);
 }
 
 // ══════════════════════════════════════════════════════
