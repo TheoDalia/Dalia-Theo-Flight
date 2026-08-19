@@ -1869,21 +1869,38 @@ async function saveMedia(fid, mimeTypeGuess, fname, downloadUrl, thumbUrl, btn){
   if(btn){ btn.disabled=true; btn.innerHTML='⏳'; }
 
   var shared=false;
-  if(navigator.share && navigator.canShare){
+  var DEBUG=true; // ⚠️ temporar, pentru diagnostic — scoatem după ce găsim problema
+  if(!navigator.share){
+    if(DEBUG) alert('DIAGNOSTIC: navigator.share nu există pe acest browser.');
+  } else if(!navigator.canShare){
+    if(DEBUG) alert('DIAGNOSTIC: navigator.canShare nu există pe acest browser.');
+  } else {
     try{
       var r=await fetchWithTimeout(APPS_URL,{method:'POST',body:JSON.stringify({action:'getFileData',fileId:fid})}, 45000);
-      if(r && r.success && r.base64){
+      if(!r || !r.success || !r.base64){
+        if(DEBUG) alert('DIAGNOSTIC: server nu a returnat fișierul. Răspuns: '+JSON.stringify(r).slice(0,300));
+      } else {
         var byteChars=atob(r.base64);
         var byteNums=new Array(byteChars.length);
         for(var i=0;i<byteChars.length;i++){ byteNums[i]=byteChars.charCodeAt(i); }
         var byteArr=new Uint8Array(byteNums);
         var file=new File([byteArr], r.fileName||fname, {type:r.mimeType||mimeTypeGuess||'application/octet-stream'});
-        if(navigator.canShare({files:[file]})){
-          await navigator.share({files:[file]});
-          shared=true;
+        var canShareFiles=false;
+        try{ canShareFiles=navigator.canShare({files:[file]}); }catch(csErr){ if(DEBUG) alert('DIAGNOSTIC: canShare a aruncat eroare: '+describeError(csErr)); }
+        if(!canShareFiles){
+          if(DEBUG) alert('DIAGNOSTIC: canShare(files) a răspuns FALSE. mimeType folosit: '+file.type+', mărime: '+byteArr.length+' bytes.');
+        } else {
+          try{
+            await navigator.share({files:[file]});
+            shared=true;
+          }catch(shareErr){
+            if(DEBUG) alert('DIAGNOSTIC: navigator.share() a aruncat eroare: '+describeError(shareErr));
+          }
         }
       }
-    }catch(e){ /* utilizatorul poate fi anulat share-ul, sau nu e suportat — cădem pe fallback */ }
+    }catch(e){
+      if(DEBUG) alert('DIAGNOSTIC: eroare la cererea către server: '+describeError(e));
+    }
   }
 
   if(btn){ btn.disabled=false; if(origHTML!==null) btn.innerHTML=origHTML; }
