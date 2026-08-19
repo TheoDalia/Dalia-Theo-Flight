@@ -196,6 +196,11 @@ body{font-family:'DM Sans',sans-serif;background:var(--green);color:var(--cream)
 .del-btn{background:none;border:none;color:var(--gray);cursor:pointer;font-size:14px;padding:4px;border-radius:4px;transition:color .2s;display:none;}
 .del-btn:hover{color:#e74c3c;}
 .del-btn.vis{display:block;}
+.gal-whoami{padding:.9rem 1.1rem 1rem;border-bottom:1px solid var(--border);}
+.gal-whoami-lbl{font-size:10.5px;letter-spacing:.5px;color:var(--gray);margin-bottom:.4rem;}
+.gal-whoami input{width:100%;padding:.65rem .8rem;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.06);color:var(--cream);font-family:'DM Sans',sans-serif;font-size:13px;}
+.gal-whoami input::placeholder{color:var(--gray);}
+.gal-whoami input:focus{outline:none;border-color:var(--gold);}
 .gal-empty,.gal-load{grid-column:1/-1;text-align:center;padding:3rem;color:var(--gray);font-size:14px;}
 .gal-load{color:var(--gold);}
 
@@ -448,6 +453,10 @@ footer{text-align:center;padding:1.5rem;font-size:9px;letter-spacing:2px;color:r
         <div><div class="gal-title" id="gal-title">Galerie</div><div class="gal-count" id="gal-count"></div></div>
         <button class="ref-btn" onclick="loadGallery()">↻ <span id="al-ref">Refresh</span></button>
       </div>
+      <div class="gal-whoami">
+        <div class="gal-whoami-lbl" id="gal-whoami-lbl">Numele tău (ca să poți șterge propriile poze)</div>
+        <input type="text" id="gal-name" placeholder="ex. Maria Ionescu">
+      </div>
       <div class="gal-grid" id="gal-grid"><div class="gal-load">↻ Se încarcă...</div></div>
     </div>
   </div>
@@ -535,6 +544,8 @@ var T={
     alTitle:'Încarcă amintirile tale',
     alSub:'Maximum 10 fotografii per pasager',
     alNameLbl:'Numele tău complet',
+    galWhoAmILbl:'Numele tău (ca să poți șterge propriile poze)',
+    galWhoAmIPh:'ex. Maria Ionescu',
     alDropText:'Apasă sau trage fotografiile aici',
     alDropSub:'JPG, PNG, WEBP, MP4, MOV · Max 20MB per fișier',
     alUpBtn:'Îmbarcare · Trimite fotografiile',
@@ -705,6 +716,8 @@ var T={
     alTitle:'Carica i tuoi ricordi',
     alSub:'Massimo 10 foto per passeggero',
     alNameLbl:'Il tuo nome completo',
+    galWhoAmILbl:'Il tuo nome (per poter cancellare le tue foto)',
+    galWhoAmIPh:'es. Maria Rossi',
     alDropText:'Clicca o trascina le foto qui',
     alDropSub:'JPG, PNG, WEBP, MP4, MOV · Max 20MB per file',
     alUpBtn:'Imbarco · Invia le fotografie',
@@ -874,6 +887,8 @@ var T={
     alTitle:'Upload your memories',
     alSub:'Maximum 10 photos per passenger',
     alNameLbl:'Your full name',
+    galWhoAmILbl:'Your name (so you can delete your own photos)',
+    galWhoAmIPh:'e.g. Maria Smith',
     alDropText:'Click or drag photos here',
     alDropSub:'JPG, PNG, WEBP, MP4, MOV · Max 20MB per file',
     alUpBtn:'Boarding · Send your photos',
@@ -1023,6 +1038,8 @@ function setLang(l,btn){
   document.getElementById('al-sub').textContent=t.alSub;
   document.getElementById('al-name-lbl').textContent=t.alNameLbl;
   document.getElementById('al-name').placeholder=t.alNameLbl;
+  var _galWL=document.getElementById('gal-whoami-lbl'); if(_galWL) _galWL.textContent=t.galWhoAmILbl;
+  var _galNI=document.getElementById('gal-name'); if(_galNI) _galNI.placeholder=t.galWhoAmIPh;
   document.getElementById('al-drop').textContent=t.alDropText;
   document.getElementById('al-drop-sub').textContent=t.alDropSub;
   document.getElementById('al-up-btn').textContent=t.alUpBtn;
@@ -1328,6 +1345,33 @@ fi.addEventListener('change',function(){addFiles(Array.from(fi.files));});
 // Name autocomplete from guest list
 document.getElementById('al-name').addEventListener('input',function(){filterNames(this.value);});
 
+// ── Identitate persistentă pentru galerie (permite ștergerea pozelor proprii
+//    direct din tab-ul Galerie, fără să mai fie nevoie să treci prin Upload) ──
+function getSavedName(){
+  try{ return (localStorage.getItem('la_uname')||'').trim(); }catch(e){ return ''; }
+}
+function saveNameEverywhere(v){
+  v=(v||'').trim();
+  try{ localStorage.setItem('la_uname', v); }catch(e){}
+  var a=document.getElementById('al-name'), gname=document.getElementById('gal-name');
+  if(a && a.value!==v) a.value=v;
+  if(gname && gname.value!==v) gname.value=v;
+}
+function currentUserName(){
+  var a=document.getElementById('al-name'), gname=document.getElementById('gal-name');
+  return ((gname&&gname.value) || (a&&a.value) || getSavedName() || '').trim();
+}
+(function initSavedName(){
+  var saved=getSavedName();
+  if(saved){
+    var a=document.getElementById('al-name'), gname=document.getElementById('gal-name');
+    if(a && !a.value) a.value=saved;
+    if(gname && !gname.value) gname.value=saved;
+  }
+})();
+document.getElementById('al-name').addEventListener('input',function(){saveNameEverywhere(this.value);});
+document.getElementById('gal-name').addEventListener('input',function(){saveNameEverywhere(this.value);loadGallery();});
+
 function filterNames(v){
   var box=document.getElementById('al-name-sugg');
   var q=v.trim().toLowerCase();
@@ -1607,7 +1651,7 @@ async function loadGallery(){
   if(!data.success||!data.photos||!data.photos.length){g.innerHTML='<div class="gal-empty">'+t.alEmpty+'</div>';cnt.textContent=t.photos(0);return;}
   cnt.textContent=t.photos(data.photos.length);
   g.innerHTML='';
-  var uname=(document.getElementById('al-name').value||'').trim();
+  var uname=currentUserName();
   data.photos.forEach(function(ph){
     var dt=new Date(ph.timestamp);
     var ts=dt.toLocaleTimeString(lang==='en'?'en-GB':lang==='it'?'it-IT':'ro-RO',{hour:'2-digit',minute:'2-digit'});
@@ -1622,7 +1666,7 @@ async function loadGallery(){
 async function delPhoto(fid,uname,btn){
   var t=T[lang];
   if(!confirm(t.alConfirmDel)) return;
-  var un=(document.getElementById('al-name').value||'').trim();
+  var un=currentUserName();
   if(!un) return;
   btn.disabled=true;btn.textContent='...';
   try{
