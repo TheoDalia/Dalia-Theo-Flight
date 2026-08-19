@@ -1709,8 +1709,18 @@ async function delPhoto(fid,uname,btn){
 // întârzie sau eșuează.
 function downloadFile(fid, fname){
   var un = currentUserName() || 'Invitat';
+  var payload = JSON.stringify({action:'trackDownload',fileId:fid,userName:un,fileName:fname});
   try{
-    fetch(APPS_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({action:'trackDownload',fileId:fid,userName:un,fileName:fname})});
+    if(navigator.sendBeacon){
+      // sendBeacon e făcut exact pentru cazul ăsta: o cerere mică, în
+      // fundal, care garantat pleacă chiar dacă imediat după deschidem
+      // un tab nou / navigăm — spre deosebire de un fetch normal cu
+      // mode:'no-cors', care poate fi anulat de browser în acel moment.
+      var blob=new Blob([payload],{type:'text/plain;charset=UTF-8'});
+      navigator.sendBeacon(APPS_URL, blob);
+    } else {
+      fetch(APPS_URL,{method:'POST',mode:'no-cors',body:payload});
+    }
   }catch(e){}
   window.open('https://drive.google.com/uc?export=download&id='+fid,'_blank');
 }
@@ -1737,7 +1747,7 @@ async function downloadAllGallery(btn){
       statusEl.textContent=(t.alDlAllOk||'Arhiva e gata — descărcarea a pornit.');
     } else {
       statusEl.className='dl-all-status err';
-      statusEl.textContent=(t.alDlAllErr||'Arhivarea automată a eșuat — deschid folderul Drive ca alternativă.');
+      statusEl.textContent=(t.alDlAllErr||'Arhivarea automată a eșuat — deschid folderul Drive ca alternativă.')+(r&&r.error?(' ('+r.error+')'):'');
       if(r && r.folderUrl){ window.open(r.folderUrl,'_blank'); }
     }
   }catch(e){
