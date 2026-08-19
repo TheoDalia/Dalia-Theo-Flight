@@ -22,6 +22,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--green);color:var(--cream)
 
 /* FLOATERS */
 .floaters{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.music-toggle{position:fixed;bottom:1.25rem;right:1.25rem;z-index:900;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--gold-light),var(--gold));color:#1a1712;border:none;font-size:19px;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;transition:transform .2s;}
+.music-toggle:active{transform:scale(.92);}
+.music-toggle.playing{animation:musicPulse 2s ease-in-out infinite;}
+@keyframes musicPulse{0%,100%{box-shadow:0 6px 18px rgba(0,0,0,.4),0 0 0 0 rgba(201,162,74,.5);}50%{box-shadow:0 6px 18px rgba(0,0,0,.4),0 0 0 8px rgba(201,162,74,0);}}
 .floater{position:absolute;opacity:.17;animation:floatUp linear infinite;}
 @keyframes floatUp{0%{transform:translateY(110vh) rotate(0deg);opacity:0;}10%{opacity:.20;}90%{opacity:.15;}100%{transform:translateY(-10vh) rotate(20deg);opacity:0;}}
 
@@ -259,6 +263,12 @@ footer{text-align:center;padding:1.5rem;font-size:9px;letter-spacing:2px;color:r
 <body>
 
 <div class="floaters" id="floaters"></div>
+
+<!-- Muzică de fundal -->
+<audio id="bg-music" loop preload="auto">
+  <source src="bg-music.mp3" type="audio/mpeg">
+</audio>
+<button class="music-toggle" id="music-toggle" title="Muzică" onclick="toggleMusic()">🔇</button>
 
 <!-- NAVBAR -->
 <nav class="navbar">
@@ -1869,6 +1879,73 @@ function saveMedia(fid, mimeTypeGuess, fname, downloadUrl, thumbUrl, btn){
   // nimerește garantat poza, nu vreun element din interfața noastră.
   triggerDownload(downloadUrl);
 }
+
+// ══════════════════════════════════════════════════════
+// MUZICĂ DE FUNDAL
+// ══════════════════════════════════════════════════════
+// Browserele blochează pornirea automată a sunetului fără nicio interacțiune
+// a utilizatorului. Soluția standard: pornim mut automat la încărcare (asta
+// e mereu permis), apoi, la prima atingere/click oriunde pe pagină, activăm
+// sunetul. Practic, muzica pornește "instant" din perspectiva vizitatorului,
+// de îndată ce interacționează cu pagina — nu trebuie să caute butonul.
+var bgMusic=document.getElementById('bg-music');
+var musicBtn=document.getElementById('music-toggle');
+var musicUnlocked=false;
+
+function updateMusicBtn(){
+  if(!musicBtn) return;
+  if(bgMusic.paused || bgMusic.muted){
+    musicBtn.textContent='🔇';
+    musicBtn.classList.remove('playing');
+  } else {
+    musicBtn.textContent='🎵';
+    musicBtn.classList.add('playing');
+  }
+}
+
+function tryAutoplayMuted(){
+  if(!bgMusic) return;
+  bgMusic.muted=true;
+  bgMusic.volume=0.5;
+  var p=bgMusic.play();
+  if(p && p.catch) p.catch(function(){ /* browserul a blocat și autoplay-ul mut — nu-i grav, pornește la prima atingere */ });
+  updateMusicBtn();
+}
+
+function unlockMusicOnce(){
+  if(musicUnlocked || !bgMusic) return;
+  musicUnlocked=true;
+  bgMusic.muted=false;
+  var p=bgMusic.play();
+  if(p && p.catch) p.catch(function(){});
+  updateMusicBtn();
+}
+
+function toggleMusic(){
+  if(!bgMusic) return;
+  musicUnlocked=true;
+  if(bgMusic.paused){
+    bgMusic.muted=false;
+    var p=bgMusic.play();
+    if(p && p.catch) p.catch(function(){});
+  } else if(bgMusic.muted){
+    bgMusic.muted=false;
+  } else {
+    bgMusic.pause();
+  }
+  updateMusicBtn();
+}
+
+document.addEventListener('click',function(e){
+  if(e.target && e.target.id==='music-toggle') return;
+  unlockMusicOnce();
+});
+document.addEventListener('touchstart',function(e){
+  if(e.target && e.target.id==='music-toggle') return;
+  unlockMusicOnce();
+},{passive:true});
+
+if(bgMusic) tryAutoplayMuted();
 
 // ══════════════════════════════════════════════════════
 // FLOATERS
