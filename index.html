@@ -565,6 +565,7 @@ var T={
     alDlAllOk:'Arhiva e gata — descărcarea a pornit.',
     alDlAllErr:'Arhivarea automată a eșuat — deschid folderul Drive ca alternativă.',
     alDlAllMobileHint:'S-a deschis folderul din Google Drive — de acolo poți vedea și descărca fiecare poză/video.',
+    alDlNamePrompt:'Numele tău, ca să știm cine a descărcat:',
     alLoad:'↻ Se încarcă fotografiile...',
     alEmpty:'Nu există fotografii încă. Fii primul care încarcă! 📷',
     alErrName:'Te rugăm să introduci numele tău.',
@@ -742,6 +743,7 @@ var T={
     alDlAllOk:'Archivio pronto — download avviato.',
     alDlAllErr:'Archiviazione automatica fallita — apro la cartella Drive come alternativa.',
     alDlAllMobileHint:'La cartella di Google Drive è stata aperta — da lì puoi vedere e scaricare ogni foto/video.',
+    alDlNamePrompt:'Il tuo nome, per sapere chi ha scaricato:',
     alLoad:'↻ Caricamento...',
     alEmpty:'Nessuna foto ancora. Sii il primo a caricare! 📷',
     alErrName:'Inserisci il tuo nome.',
@@ -918,6 +920,7 @@ var T={
     alDlAllOk:'Archive ready — download started.',
     alDlAllErr:'Automatic archiving failed — opening the Drive folder instead.',
     alDlAllMobileHint:'The Google Drive folder has opened — from there you can view and download each photo/video.',
+    alDlNamePrompt:'Your name, so we know who downloaded:',
     alLoad:'↻ Loading photos...',
     alEmpty:'No photos yet. Be the first to upload! 📷',
     alErrName:'Please enter your name.',
@@ -1683,9 +1686,22 @@ async function loadGallery(){
     var isO=uname&&uname.toLowerCase()===ph.userName.toLowerCase();
     var item=document.createElement('div');
     item.className='gal-item';
-    item.innerHTML='<div class="gal-img" onclick="openLB(\''+ph.url+'\',\''+esc(ph.userName)+'\')"><img src="'+ph.url+'" alt="'+esc(ph.userName)+'" loading="lazy"></div><div class="gal-info"><div><div class="gal-name">'+esc(ph.userName)+'</div><div class="gal-time">'+ts+'</div></div><div style="display:flex;gap:6px;"><a class="dl-btn" title="Descarcă" href="'+ph.downloadUrl+'" target="_blank" rel="noopener">⬇️</a><button class="del-btn'+(isO?' vis':'')+'" onclick="delPhoto(\''+ph.fileId+'\',\''+esc(ph.userName)+'\',this)">🗑</button></div></div>';
+    // Pe telefon, link-ul direct de download de multe ori doar
+    // previzualizează fișierul (nu-l salvează) — pagina proprie Drive a
+    // fișierului are un buton de descărcare nativ, mult mai de încredere
+    // pe mobil. Pe desktop rămânem la link-ul direct, care merge perfect.
+    var isMobileUA=/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    var dlHref = isMobileUA ? ('https://drive.google.com/file/d/'+ph.fileId+'/view') : ph.downloadUrl;
+    item.innerHTML='<div class="gal-img" onclick="openLB(\''+ph.url+'\',\''+esc(ph.userName)+'\')"><img src="'+ph.url+'" alt="'+esc(ph.userName)+'" loading="lazy"></div><div class="gal-info"><div><div class="gal-name">'+esc(ph.userName)+'</div><div class="gal-time">'+ts+'</div></div><div style="display:flex;gap:6px;"><a class="dl-btn" title="Descarcă" href="'+dlHref+'" target="_blank" rel="noopener">⬇️</a><button class="del-btn'+(isO?' vis':'')+'" onclick="delPhoto(\''+ph.fileId+'\',\''+esc(ph.userName)+'\',this)">🗑</button></div></div>';
     var dlBtn=item.querySelector('.dl-btn');
-    if(dlBtn) dlBtn.addEventListener('click',function(){ notifyDownload(ph.fileId, ph.originalName||ph.fileName); });
+    if(dlBtn) dlBtn.addEventListener('click',function(){
+      var un=currentUserName();
+      if(!un){
+        un=(prompt(T[lang].alDlNamePrompt||'Numele tău, ca să știm cine a descărcat:')||'').trim();
+        if(un) saveNameEverywhere(un);
+      }
+      notifyDownload(ph.fileId, ph.originalName||ph.fileName, un);
+    });
     g.appendChild(item);
   });
 }
@@ -1712,8 +1728,8 @@ async function delPhoto(fid,uname,btn){
 // întârzie sau eșuează.
 // Trimite doar notificarea, în fundal — descărcarea propriu-zisă e
 // gestionată nativ de link-ul <a href> din HTML, nu mai are nevoie de JS.
-function notifyDownload(fid, fname){
-  var un = currentUserName() || 'Invitat';
+function notifyDownload(fid, fname, un){
+  un = un || currentUserName() || 'Invitat';
   try{
     var payload = JSON.stringify({action:'trackDownload',fileId:fid,userName:un,fileName:fname});
     if(navigator.sendBeacon){
@@ -1749,7 +1765,12 @@ function triggerDownload(url){
 async function downloadAllGallery(btn){
   var t=T[lang];
   var statusEl=document.getElementById('dl-all-status');
-  var un=currentUserName()||'Invitat';
+  var un=currentUserName();
+  if(!un){
+    un=(prompt(t.alDlNamePrompt||'Numele tău, ca să știm cine a descărcat:')||'').trim();
+    if(un) saveNameEverywhere(un);
+  }
+  un=un||'Invitat';
   btn.disabled=true;
   var origHTML=btn.innerHTML;
 
