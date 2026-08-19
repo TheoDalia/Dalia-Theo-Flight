@@ -182,6 +182,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--green);color:var(--cream)
 .gal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;}
 .gal-title{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--gold);}
 .gal-count{font-size:10px;letter-spacing:2px;color:var(--gray);text-transform:uppercase;margin-top:.2rem;}
+.dl-all-btn{width:100%;margin:.9rem 0 .2rem;padding:.9rem 1rem;border-radius:10px;border:1.5px solid var(--gold);background:rgba(201,162,74,.08);color:var(--gold);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;letter-spacing:1px;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.5rem;transition:all .2s;}
+.dl-all-btn:hover{background:rgba(201,162,74,.16);}
+.dl-all-btn:disabled{opacity:.6;cursor:default;}
+.dl-all-status{font-size:11px;color:var(--gray);text-align:center;margin-bottom:.6rem;min-height:14px;}
+.dl-all-status.err{color:#c0392b;}
+.dl-btn{background:rgba(255,255,255,.9);border:none;border-radius:6px;padding:.3rem .5rem;font-size:13px;cursor:pointer;color:#1a1a14;transition:all .15s;}
+.dl-btn:hover{background:#fff;transform:scale(1.05);}
 .ref-btn{padding:.45rem 1.1rem;background:none;border:1px solid var(--border);border-radius:20px;color:var(--gold);font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;}
 .ref-btn:hover{background:rgba(201,168,76,.1);}
 .gal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
@@ -453,6 +460,8 @@ footer{text-align:center;padding:1.5rem;font-size:9px;letter-spacing:2px;color:r
         <div><div class="gal-title" id="gal-title">Galerie</div><div class="gal-count" id="gal-count"></div></div>
         <button class="ref-btn" onclick="loadGallery()">↻ <span id="al-ref">Refresh</span></button>
       </div>
+      <button class="dl-all-btn" id="dl-all-btn" onclick="downloadAllGallery(this)">⬇️ <span id="al-dl-all">Descarcă toată galeria</span></button>
+      <div class="dl-all-status" id="dl-all-status"></div>
       <div class="gal-whoami">
         <div class="gal-whoami-lbl" id="gal-whoami-lbl">Numele tău (ca să poți șterge propriile poze)</div>
         <input type="text" id="gal-name" placeholder="ex. Maria Ionescu">
@@ -551,6 +560,10 @@ var T={
     alUpBtn:'Îmbarcare · Trimite fotografiile',
     galTitle:'Galerie',
     alRef:'Refresh',
+    alDlAll:'Descarcă toată galeria',
+    alDlAllWorking:'Se pregătește arhiva… te rog așteaptă',
+    alDlAllOk:'Arhiva e gata — descărcarea a pornit.',
+    alDlAllErr:'Arhivarea automată a eșuat — deschid folderul Drive ca alternativă.',
     alLoad:'↻ Se încarcă fotografiile...',
     alEmpty:'Nu există fotografii încă. Fii primul care încarcă! 📷',
     alErrName:'Te rugăm să introduci numele tău.',
@@ -723,6 +736,10 @@ var T={
     alUpBtn:'Imbarco · Invia le fotografie',
     galTitle:'Galleria',
     alRef:'Aggiorna',
+    alDlAll:'Scarica tutta la galleria',
+    alDlAllWorking:'Preparazione archivio… attendere',
+    alDlAllOk:'Archivio pronto — download avviato.',
+    alDlAllErr:'Archiviazione automatica fallita — apro la cartella Drive come alternativa.',
     alLoad:'↻ Caricamento...',
     alEmpty:'Nessuna foto ancora. Sii il primo a caricare! 📷',
     alErrName:'Inserisci il tuo nome.',
@@ -894,6 +911,10 @@ var T={
     alUpBtn:'Boarding · Send your photos',
     galTitle:'Gallery',
     alRef:'Refresh',
+    alDlAll:'Download the whole gallery',
+    alDlAllWorking:'Preparing the archive… please wait',
+    alDlAllOk:'Archive ready — download started.',
+    alDlAllErr:'Automatic archiving failed — opening the Drive folder instead.',
     alLoad:'↻ Loading photos...',
     alEmpty:'No photos yet. Be the first to upload! 📷',
     alErrName:'Please enter your name.',
@@ -1047,6 +1068,7 @@ function setLang(l,btn){
   document.getElementById('at-up').textContent=t.alUpBtn.split('·')[0].trim();
   document.getElementById('at-gal').textContent=t.galTitle;
   document.getElementById('al-ref').textContent=t.alRef;
+  document.getElementById('al-dl-all').textContent=t.alDlAll;
   var _pmTblResult=document.getElementById('pm-table-result');
   if(_pmTblResult && _pmTblResult.className.indexOf('show')>=0 && pmCurTableName){
     var _tblObj=null;
@@ -1658,7 +1680,9 @@ async function loadGallery(){
     var isO=uname&&uname.toLowerCase()===ph.userName.toLowerCase();
     var item=document.createElement('div');
     item.className='gal-item';
-    item.innerHTML='<div class="gal-img" onclick="openLB(\''+ph.url+'\',\''+esc(ph.userName)+'\')"><img src="'+ph.url+'" alt="'+esc(ph.userName)+'" loading="lazy"></div><div class="gal-info"><div><div class="gal-name">'+esc(ph.userName)+'</div><div class="gal-time">'+ts+'</div></div><button class="del-btn'+(isO?' vis':'')+'" onclick="delPhoto(\''+ph.fileId+'\',\''+esc(ph.userName)+'\',this)">🗑</button></div>';
+    item.innerHTML='<div class="gal-img" onclick="openLB(\''+ph.url+'\',\''+esc(ph.userName)+'\')"><img src="'+ph.url+'" alt="'+esc(ph.userName)+'" loading="lazy"></div><div class="gal-info"><div><div class="gal-name">'+esc(ph.userName)+'</div><div class="gal-time">'+ts+'</div></div><div style="display:flex;gap:6px;"><button class="dl-btn" title="Descarcă">⬇️</button><button class="del-btn'+(isO?' vis':'')+'" onclick="delPhoto(\''+ph.fileId+'\',\''+esc(ph.userName)+'\',this)">🗑</button></div></div>';
+    var dlBtn=item.querySelector('.dl-btn');
+    if(dlBtn) dlBtn.onclick=function(){ downloadFile(ph.fileId, ph.originalName||ph.fileName); };
     g.appendChild(item);
   });
 }
@@ -1675,6 +1699,58 @@ async function delPhoto(fid,uname,btn){
     if(data.success) loadGallery();
     else{alert(data.error||t.alErrDel);btn.disabled=false;btn.textContent='🗑';}
   }catch(e){alert(t.alErrDel);btn.disabled=false;btn.textContent='🗑';}
+}
+
+// Descarcă o singură poză/video. Fișierul e deja partajat public pe Drive,
+// deci descărcarea propriu-zisă pleacă imediat, direct din browser — nu
+// așteptăm răspunsul serverului pentru asta. În paralel (fire-and-forget,
+// mode:'no-cors', ca la upload), anunțăm serverul ca să trimită notificarea
+// prin email, fără să încetinim sau să blocăm descărcarea dacă notificarea
+// întârzie sau eșuează.
+function downloadFile(fid, fname){
+  var un = currentUserName() || 'Invitat';
+  try{
+    fetch(APPS_URL,{method:'POST',mode:'no-cors',body:JSON.stringify({action:'trackDownload',fileId:fid,userName:un,fileName:fname})});
+  }catch(e){}
+  window.open('https://drive.google.com/uc?export=download&id='+fid,'_blank');
+}
+
+// Descarcă toată galeria ca arhivă ZIP. Cere serverului să arhiveze tot
+// (poate dura — arhivarea se face pe server), și când e gata deschide
+// link-ul de descărcare al arhivei. Dacă arhivarea eșuează (ex. galerie
+// prea mare), oferă automat alternativa: deschide folderul Drive, de unde
+// se poate descărca totul manual (Select all → Download), fără limitele
+// unei arhivări automate.
+async function downloadAllGallery(btn){
+  var t=T[lang];
+  var statusEl=document.getElementById('dl-all-status');
+  var un=currentUserName()||'Invitat';
+  btn.disabled=true;
+  var origHTML=btn.innerHTML;
+  btn.innerHTML='⏳ '+(t.alDlAllWorking||'Se pregătește arhiva… te rog așteaptă');
+  statusEl.className='dl-all-status';
+  statusEl.textContent='';
+  try{
+    var r=await fetchWithTimeout(APPS_URL,{method:'POST',body:JSON.stringify({action:'downloadAllZip',userName:un})}, 120000);
+    if(r && r.success && r.downloadUrl){
+      window.open(r.downloadUrl,'_blank');
+      statusEl.textContent=(t.alDlAllOk||'Arhiva e gata — descărcarea a pornit.');
+    } else {
+      statusEl.className='dl-all-status err';
+      statusEl.textContent=(t.alDlAllErr||'Arhivarea automată a eșuat — deschid folderul Drive ca alternativă.');
+      if(r && r.folderUrl){ window.open(r.folderUrl,'_blank'); }
+    }
+  }catch(e){
+    statusEl.className='dl-all-status err';
+    statusEl.textContent=(t.alDlAllErr||'Arhivarea automată a eșuat sau a durat prea mult.');
+    try{
+      var r2=await fetchWithTimeout(APPS_URL+'?action=folderLink',{method:'GET'}, 15000);
+      if(r2 && r2.folderUrl) window.open(r2.folderUrl,'_blank');
+    }catch(e2){}
+  }finally{
+    btn.disabled=false;
+    btn.innerHTML=origHTML;
+  }
 }
 
 function openLB(url,name){document.getElementById('lb-img').src=url;document.getElementById('lb-name').textContent=name;document.getElementById('lightbox').className='lightbox open';}
