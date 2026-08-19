@@ -1693,13 +1693,25 @@ async function loadGallery(){
     // autentificare/acces în funcție de contul Google logat pe telefon.
     item.innerHTML='<div class="gal-img" onclick="openLB(\''+ph.url+'\',\''+esc(ph.userName)+'\')"><img src="'+ph.url+'" alt="'+esc(ph.userName)+'" loading="lazy"></div><div class="gal-info"><div><div class="gal-name">'+esc(ph.userName)+'</div><div class="gal-time">'+ts+'</div></div><div style="display:flex;gap:6px;"><a class="dl-btn" title="Descarcă" href="'+ph.downloadUrl+'" target="_blank" rel="noopener">⬇️</a><button class="del-btn'+(isO?' vis':'')+'" onclick="delPhoto(\''+ph.fileId+'\',\''+esc(ph.userName)+'\',this)">🗑</button></div></div>';
     var dlBtn=item.querySelector('.dl-btn');
-    if(dlBtn) dlBtn.addEventListener('click',function(){
+    if(dlBtn) dlBtn.addEventListener('click',function(ev){
       var un=currentUserName();
       if(!un){
         un=(prompt(T[lang].alDlNamePrompt||'Numele tău, ca să știm cine a descărcat:')||'').trim();
         if(un) saveNameEverywhere(un);
       }
       notifyDownload(ph.fileId, ph.originalName||ph.fileName, un);
+
+      // Pe telefoane care suportă "Web Share" cu fișiere (iOS Safari 15+,
+      // Chrome Android), oferim fișierul prin meniul nativ de Share, unde
+      // apare direct "Save Image"/"Save Video" — se salvează în galeria
+      // telefonului cu un singur tap, fără să treacă prin folderul de
+      // Downloads al browserului. Pe desktop (care nu suportă asta), link-ul
+      // normal de mai jos funcționează neschimbat.
+      if(navigator.canShare){
+        ev.preventDefault();
+        shareOrDownload(ph.fileId, ph.mimeType, ph.originalName||ph.fileName, ph.downloadUrl);
+      }
+      // altfel: lăsăm link-ul <a href> să facă descărcarea normal
     });
     g.appendChild(item);
   });
@@ -1759,6 +1771,31 @@ function triggerDownload(url){
   document.body.appendChild(a);
   a.click();
   setTimeout(function(){ try{ document.body.removeChild(a); }catch(e){} }, 1000);
+}
+
+// Cere fișierul de la server (base64), îl transformă într-un File real în
+// browser, și îl oferă prin meniul nativ "Share" al telefonului — acolo
+// unde iOS/Android arată direct opțiunea "Save Image"/"Save Video", care
+// salvează efectiv în galeria telefonului. Dacă ceva nu merge (telefon
+// vechi, fișier prea mare, fără suport), cade automat pe descărcarea
+// clasică prin link, care oricum funcționează (doar cu un pas manual în
+// plus, prin folderul de Downloads al browserului).
+async function shareOrDownload(fid, mimeTypeGuess, fname, fallbackUrl){
+  try{
+    var r=await fetchWithTimeout(APPS_URL,{method:'POST',body:JSON.stringify({action:'getFileData',fileId:fid})}, 45000);
+    if(r && r.success && r.base64){
+      var byteChars=atob(r.base64);
+      var byteNums=new Array(byteChars.length);
+      for(var i=0;i<byteChars.length;i++){ byteNums[i]=byteChars.charCodeAt(i); }
+      var byteArr=new Uint8Array(byteNums);
+      var file=new File([byteArr], r.fileName||fname, {type:r.mimeType||mimeTypeGuess||'application/octet-stream'});
+      if(navigator.canShare({files:[file]})){
+        await navigator.share({files:[file]});
+        return;
+      }
+    }
+  }catch(e){ /* cade mai jos pe descărcarea clasică */ }
+  triggerDownload(fallbackUrl);
 }
 
 async function downloadAllGallery(btn){
