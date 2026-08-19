@@ -1686,13 +1686,12 @@ async function loadGallery(){
     var isO=uname&&uname.toLowerCase()===ph.userName.toLowerCase();
     var item=document.createElement('div');
     item.className='gal-item';
-    // Pe telefon, link-ul direct de download de multe ori doar
-    // previzualizează fișierul (nu-l salvează) — pagina proprie Drive a
-    // fișierului are un buton de descărcare nativ, mult mai de încredere
-    // pe mobil. Pe desktop rămânem la link-ul direct, care merge perfect.
-    var isMobileUA=/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-    var dlHref = isMobileUA ? ('https://drive.google.com/file/d/'+ph.fileId+'/view') : ph.downloadUrl;
-    item.innerHTML='<div class="gal-img" onclick="openLB(\''+ph.url+'\',\''+esc(ph.userName)+'\')"><img src="'+ph.url+'" alt="'+esc(ph.userName)+'" loading="lazy"></div><div class="gal-info"><div><div class="gal-name">'+esc(ph.userName)+'</div><div class="gal-time">'+ts+'</div></div><div style="display:flex;gap:6px;"><a class="dl-btn" title="Descarcă" href="'+dlHref+'" target="_blank" rel="noopener">⬇️</a><button class="del-btn'+(isO?' vis':'')+'" onclick="delPhoto(\''+ph.fileId+'\',\''+esc(ph.userName)+'\',this)">🗑</button></div></div>';
+    // Link direct de descărcare Drive, pe toate dispozitivele. Pe mobil
+    // uneori doar deschide/previzualizează fișierul în loc să-l salveze
+    // direct (limitare a browserului de telefon) — dar merge de fiecare
+    // dată, spre deosebire de pagina "/view" a Drive, care poate cere
+    // autentificare/acces în funcție de contul Google logat pe telefon.
+    item.innerHTML='<div class="gal-img" onclick="openLB(\''+ph.url+'\',\''+esc(ph.userName)+'\')"><img src="'+ph.url+'" alt="'+esc(ph.userName)+'" loading="lazy"></div><div class="gal-info"><div><div class="gal-name">'+esc(ph.userName)+'</div><div class="gal-time">'+ts+'</div></div><div style="display:flex;gap:6px;"><a class="dl-btn" title="Descarcă" href="'+ph.downloadUrl+'" target="_blank" rel="noopener">⬇️</a><button class="del-btn'+(isO?' vis':'')+'" onclick="delPhoto(\''+ph.fileId+'\',\''+esc(ph.userName)+'\',this)">🗑</button></div></div>';
     var dlBtn=item.querySelector('.dl-btn');
     if(dlBtn) dlBtn.addEventListener('click',function(){
       var un=currentUserName();
