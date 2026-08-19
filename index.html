@@ -1382,7 +1382,7 @@ function drawMap(g){
   svgEl.addEventListener('touchmove',function(e){e.preventDefault();if(e.touches.length===1&&mapPanning&&!mapPinching){mapTransX=e.touches[0].clientX-mapStartX;mapTransY=e.touches[0].clientY-mapStartY;applyMapTransform();}else if(e.touches.length===2&&mapPinching){var d=Math.hypot(e.touches[1].clientX-e.touches[0].clientX,e.touches[1].clientY-e.touches[0].clientY);mapScale=Math.min(Math.max(mapScale*(d/mapLastDist),.5),4);mapLastDist=d;applyMapTransform();}},{passive:false});
   svgEl.addEventListener('touchend',function(e){if(e.touches.length<2)mapPinching=false;if(e.touches.length===0)mapPanning=false;});
 }
-window.addEventListener('resize',function(){if(selG)setTimeout(function(){drawMap(selG);},100);else setTimeout(function(){drawMapOverview();},100);});
+window.addEventListener('resize',function(){if(pmSelG)setTimeout(function(){drawMap(pmSelG);},100);else setTimeout(function(){drawMapOverview();},100);});
 
 // ══════════════════════════════════════════════════════
 // ALBUM — upload + gallery
