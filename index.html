@@ -265,10 +265,41 @@ footer{text-align:center;padding:1.5rem;font-size:9px;letter-spacing:2px;color:r
 <div class="floaters" id="floaters"></div>
 
 <!-- Muzică de fundal -->
-<audio id="bg-music" autoplay muted loop playsinline preload="auto">
+<audio id="bg-music" loop playsinline>
   <source src="bg-music.mp3" type="audio/mpeg">
 </audio>
-<button class="music-toggle" id="music-toggle" title="Muzică" onclick="toggleMusic()">🔇</button>
+<button id="music-toggle" class="music-toggle" title="Muzică" onclick="
+  var m=document.getElementById('bg-music');
+  if(m.paused){ m.play().catch(function(){}); this.textContent='🎵'; this.classList.add('playing'); }
+  else{ m.pause(); this.textContent='🔇'; this.classList.remove('playing'); }
+">🔇</button>
+<script>
+(function(){
+  var m=document.getElementById('bg-music');
+  var btn=document.getElementById('music-toggle');
+  if(!m) return;
+  // Pornire mută automată (mereu permisă de browsere), apoi activare
+  // sunetului la prima interacțiune de orice fel cu pagina. Acest script
+  // e complet separat de restul codului paginii, ca să nu depindă de nimic
+  // altceva de mai jos.
+  m.muted=true;
+  m.play().catch(function(){});
+  function unlock(e){
+    if(e && e.target && e.target.id==='music-toggle') return;
+    if(m.muted){
+      m.muted=false;
+      m.play().catch(function(){});
+      if(btn){ btn.textContent='🎵'; btn.classList.add('playing'); }
+    }
+    document.removeEventListener('click', unlock, true);
+    document.removeEventListener('touchend', unlock, true);
+    document.removeEventListener('keydown', unlock, true);
+  }
+  document.addEventListener('click', unlock, true);
+  document.addEventListener('touchend', unlock, true);
+  document.addEventListener('keydown', unlock, true);
+})();
+</script>
 
 <!-- NAVBAR -->
 <nav class="navbar">
@@ -1878,78 +1909,6 @@ function saveMedia(fid, mimeTypeGuess, fname, downloadUrl, thumbUrl, btn){
   // text suprapus peste ea) — astfel apăsarea lungă, oriunde pe imagine,
   // nimerește garantat poza, nu vreun element din interfața noastră.
   triggerDownload(downloadUrl);
-}
-
-// ══════════════════════════════════════════════════════
-// MUZICĂ DE FUNDAL
-// ══════════════════════════════════════════════════════
-// Browserele blochează pornirea automată a sunetului fără nicio interacțiune
-// a utilizatorului. Soluția: pornim mut automat la încărcare (mereu permis),
-// apoi la PRIMA interacțiune de orice fel, oriunde pe pagină, îl activăm.
-//
-// Ascultăm evenimentele pe faza de "capture" (al treilea parametru `true`),
-// nu pe cea normală — asta înseamnă că răspundem ÎNAINTE ca orice alt buton
-// din pagină să apuce să oprească propagarea evenimentului (ev.stopPropagation
-// folosit de alte butoane, gen descărcare poze). Ascultăm mai multe tipuri
-// de evenimente deodată, ca plasă de siguranță pe toate browserele/telefoanele.
-var bgMusic=document.getElementById('bg-music');
-var musicBtn=document.getElementById('music-toggle');
-var musicUnlocked=false;
-var musicUserPaused=false;
-
-function updateMusicBtn(){
-  if(!musicBtn || !bgMusic) return;
-  if(bgMusic.paused || bgMusic.muted){
-    musicBtn.textContent='🔇';
-    musicBtn.classList.remove('playing');
-  } else {
-    musicBtn.textContent='🎵';
-    musicBtn.classList.add('playing');
-  }
-}
-
-function startMusic(){
-  if(!bgMusic || musicUserPaused) return;
-  bgMusic.muted=false;
-  bgMusic.volume=0.6;
-  var p=bgMusic.play();
-  if(p && p.catch) p.catch(function(){ /* browserul tot a blocat — mai încercăm la următoarea interacțiune */ });
-  updateMusicBtn();
-}
-
-function unlockMusicOnce(){
-  if(musicUnlocked) return;
-  musicUnlocked=true;
-  startMusic();
-}
-
-function toggleMusic(){
-  if(!bgMusic) return;
-  musicUnlocked=true;
-  if(bgMusic.paused || bgMusic.muted){
-    musicUserPaused=false;
-    startMusic();
-  } else {
-    musicUserPaused=true;
-    bgMusic.pause();
-  }
-  updateMusicBtn();
-}
-
-var _unlockEvents=['click','touchend','touchstart','pointerdown','keydown','scroll'];
-_unlockEvents.forEach(function(evt){
-  document.addEventListener(evt, function(e){
-    if(e.target && e.target.closest && e.target.closest('#music-toggle')) return;
-    unlockMusicOnce();
-  }, {capture:true, passive:true});
-});
-
-if(bgMusic){
-  bgMusic.muted=true;
-  bgMusic.volume=0.6;
-  var _p0=bgMusic.play();
-  if(_p0 && _p0.catch) _p0.catch(function(){});
-  updateMusicBtn();
 }
 
 // ══════════════════════════════════════════════════════
