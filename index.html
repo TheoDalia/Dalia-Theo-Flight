@@ -564,6 +564,7 @@ var T={
     alDlAllWorking:'Se pregătește arhiva… te rog așteaptă',
     alDlAllOk:'Arhiva e gata — descărcarea a pornit.',
     alDlAllErr:'Arhivarea automată a eșuat — deschid folderul Drive ca alternativă.',
+    alDlAllMobileHint:'S-a deschis folderul din Google Drive — de acolo poți vedea și descărca fiecare poză/video.',
     alLoad:'↻ Se încarcă fotografiile...',
     alEmpty:'Nu există fotografii încă. Fii primul care încarcă! 📷',
     alErrName:'Te rugăm să introduci numele tău.',
@@ -740,6 +741,7 @@ var T={
     alDlAllWorking:'Preparazione archivio… attendere',
     alDlAllOk:'Archivio pronto — download avviato.',
     alDlAllErr:'Archiviazione automatica fallita — apro la cartella Drive come alternativa.',
+    alDlAllMobileHint:'La cartella di Google Drive è stata aperta — da lì puoi vedere e scaricare ogni foto/video.',
     alLoad:'↻ Caricamento...',
     alEmpty:'Nessuna foto ancora. Sii il primo a caricare! 📷',
     alErrName:'Inserisci il tuo nome.',
@@ -915,6 +917,7 @@ var T={
     alDlAllWorking:'Preparing the archive… please wait',
     alDlAllOk:'Archive ready — download started.',
     alDlAllErr:'Automatic archiving failed — opening the Drive folder instead.',
+    alDlAllMobileHint:'The Google Drive folder has opened — from there you can view and download each photo/video.',
     alLoad:'↻ Loading photos...',
     alEmpty:'No photos yet. Be the first to upload! 📷',
     alErrName:'Please enter your name.',
@@ -1680,9 +1683,9 @@ async function loadGallery(){
     var isO=uname&&uname.toLowerCase()===ph.userName.toLowerCase();
     var item=document.createElement('div');
     item.className='gal-item';
-    item.innerHTML='<div class="gal-img" onclick="openLB(\''+ph.url+'\',\''+esc(ph.userName)+'\')"><img src="'+ph.url+'" alt="'+esc(ph.userName)+'" loading="lazy"></div><div class="gal-info"><div><div class="gal-name">'+esc(ph.userName)+'</div><div class="gal-time">'+ts+'</div></div><div style="display:flex;gap:6px;"><button class="dl-btn" title="Descarcă">⬇️</button><button class="del-btn'+(isO?' vis':'')+'" onclick="delPhoto(\''+ph.fileId+'\',\''+esc(ph.userName)+'\',this)">🗑</button></div></div>';
+    item.innerHTML='<div class="gal-img" onclick="openLB(\''+ph.url+'\',\''+esc(ph.userName)+'\')"><img src="'+ph.url+'" alt="'+esc(ph.userName)+'" loading="lazy"></div><div class="gal-info"><div><div class="gal-name">'+esc(ph.userName)+'</div><div class="gal-time">'+ts+'</div></div><div style="display:flex;gap:6px;"><a class="dl-btn" title="Descarcă" href="'+ph.downloadUrl+'" target="_blank" rel="noopener">⬇️</a><button class="del-btn'+(isO?' vis':'')+'" onclick="delPhoto(\''+ph.fileId+'\',\''+esc(ph.userName)+'\',this)">🗑</button></div></div>';
     var dlBtn=item.querySelector('.dl-btn');
-    if(dlBtn) dlBtn.onclick=function(){ downloadFile(ph.fileId, ph.originalName||ph.fileName); };
+    if(dlBtn) dlBtn.addEventListener('click',function(){ notifyDownload(ph.fileId, ph.originalName||ph.fileName); });
     g.appendChild(item);
   });
 }
@@ -1707,22 +1710,19 @@ async function delPhoto(fid,uname,btn){
 // mode:'no-cors', ca la upload), anunțăm serverul ca să trimită notificarea
 // prin email, fără să încetinim sau să blocăm descărcarea dacă notificarea
 // întârzie sau eșuează.
-function downloadFile(fid, fname){
+// Trimite doar notificarea, în fundal — descărcarea propriu-zisă e
+// gestionată nativ de link-ul <a href> din HTML, nu mai are nevoie de JS.
+function notifyDownload(fid, fname){
   var un = currentUserName() || 'Invitat';
-  var payload = JSON.stringify({action:'trackDownload',fileId:fid,userName:un,fileName:fname});
   try{
+    var payload = JSON.stringify({action:'trackDownload',fileId:fid,userName:un,fileName:fname});
     if(navigator.sendBeacon){
-      // sendBeacon e făcut exact pentru cazul ăsta: o cerere mică, în
-      // fundal, care garantat pleacă chiar dacă imediat după deschidem
-      // un tab nou / navigăm — spre deosebire de un fetch normal cu
-      // mode:'no-cors', care poate fi anulat de browser în acel moment.
       var blob=new Blob([payload],{type:'text/plain;charset=UTF-8'});
       navigator.sendBeacon(APPS_URL, blob);
     } else {
       fetch(APPS_URL,{method:'POST',mode:'no-cors',body:payload});
     }
   }catch(e){}
-  window.open('https://drive.google.com/uc?export=download&id='+fid,'_blank');
 }
 
 // Descarcă toată galeria ca arhivă ZIP. Cere serverului să arhiveze tot
@@ -1731,31 +1731,74 @@ function downloadFile(fid, fname){
 // prea mare), oferă automat alternativa: deschide folderul Drive, de unde
 // se poate descărca totul manual (Select all → Download), fără limitele
 // unei arhivări automate.
+// Deschide un link de descărcare fără să folosească window.open (care poate
+// fi blocat de browser ca "pop-up" dacă se apelează după un await, adică nu
+// mai e considerat un răspuns direct/sincron la click-ul utilizatorului).
+// Un <a> invizibil, adăugat în pagină și "apăsat" programatic, NU e supus
+// acestei blocări — e tratat ca o navigare/descărcare normală.
+function triggerDownload(url){
+  var a=document.createElement('a');
+  a.href=url;
+  a.target='_blank';
+  a.rel='noopener';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function(){ try{ document.body.removeChild(a); }catch(e){} }, 1000);
+}
+
 async function downloadAllGallery(btn){
   var t=T[lang];
   var statusEl=document.getElementById('dl-all-status');
   var un=currentUserName()||'Invitat';
   btn.disabled=true;
   var origHTML=btn.innerHTML;
+
+  // Pe telefon, un ZIP e greu de deschis (majoritatea telefoanelor nu au
+  // un dezarhivator la îndemână) — deschidem direct folderul din Google
+  // Drive, unde pozele/video-urile se văd și se descarcă mult mai simplu.
+  var isMobile=/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if(isMobile){
+    btn.innerHTML='⏳ '+(t.alDlAllWorking||'Se deschide...');
+    statusEl.className='dl-all-status';
+    statusEl.textContent='';
+    try{
+      var rm=await fetchWithTimeout(APPS_URL+'?action=folderLink',{method:'GET'}, 15000);
+      if(rm && rm.folderUrl){
+        triggerDownload(rm.folderUrl);
+        statusEl.textContent=(t.alDlAllMobileHint||'S-a deschis folderul din Google Drive — de acolo poți vedea și descărca fiecare poză/video.');
+      } else {
+        statusEl.className='dl-all-status err';
+        statusEl.textContent=(t.alDlAllErr||'Nu am putut deschide folderul.');
+      }
+    }catch(e){
+      statusEl.className='dl-all-status err';
+      statusEl.textContent=(t.alDlAllErr||'Nu am putut deschide folderul.');
+    }finally{
+      btn.disabled=false;
+      btn.innerHTML=origHTML;
+    }
+    return;
+  }
+
   btn.innerHTML='⏳ '+(t.alDlAllWorking||'Se pregătește arhiva… te rog așteaptă');
   statusEl.className='dl-all-status';
   statusEl.textContent='';
   try{
     var r=await fetchWithTimeout(APPS_URL,{method:'POST',body:JSON.stringify({action:'downloadAllZip',userName:un})}, 120000);
     if(r && r.success && r.downloadUrl){
-      window.open(r.downloadUrl,'_blank');
+      triggerDownload(r.downloadUrl);
       statusEl.textContent=(t.alDlAllOk||'Arhiva e gata — descărcarea a pornit.');
     } else {
       statusEl.className='dl-all-status err';
       statusEl.textContent=(t.alDlAllErr||'Arhivarea automată a eșuat — deschid folderul Drive ca alternativă.')+(r&&r.error?(' ('+r.error+')'):'');
-      if(r && r.folderUrl){ window.open(r.folderUrl,'_blank'); }
+      if(r && r.folderUrl){ triggerDownload(r.folderUrl); }
     }
   }catch(e){
     statusEl.className='dl-all-status err';
     statusEl.textContent=(t.alDlAllErr||'Arhivarea automată a eșuat sau a durat prea mult.');
     try{
       var r2=await fetchWithTimeout(APPS_URL+'?action=folderLink',{method:'GET'}, 15000);
-      if(r2 && r2.folderUrl) window.open(r2.folderUrl,'_blank');
+      if(r2 && r2.folderUrl) triggerDownload(r2.folderUrl);
     }catch(e2){}
   }finally{
     btn.disabled=false;
