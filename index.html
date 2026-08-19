@@ -1922,12 +1922,21 @@ function unlockMusicOnce(){
 }
 
 function toggleMusic(){
-  if(!bgMusic) return;
+  var MDEBUG=true; // ⚠️ temporar — scoatem după ce găsim problema
+  if(!bgMusic){
+    if(MDEBUG) alert('DIAGNOSTIC: elementul audio (#bg-music) nu a fost găsit în pagină.');
+    return;
+  }
   musicUnlocked=true;
   if(bgMusic.paused){
     bgMusic.muted=false;
     var p=bgMusic.play();
-    if(p && p.catch) p.catch(function(){});
+    if(p && p.catch) p.catch(function(err){
+      if(MDEBUG) alert('DIAGNOSTIC: play() a eșuat: '+describeError(err)+' | src actual: '+bgMusic.currentSrc+' | readyState: '+bgMusic.readyState+' | networkState: '+bgMusic.networkState+' | error: '+(bgMusic.error?bgMusic.error.code:'none'));
+    });
+    if(MDEBUG) setTimeout(function(){
+      if(bgMusic.paused) alert('DIAGNOSTIC: după play(), audio.paused=true tot. src: '+bgMusic.currentSrc+' | readyState: '+bgMusic.readyState+' | networkState: '+bgMusic.networkState+' | error code: '+(bgMusic.error?bgMusic.error.code:'none'));
+    }, 700);
   } else if(bgMusic.muted){
     bgMusic.muted=false;
   } else {
