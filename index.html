@@ -265,7 +265,7 @@ footer{text-align:center;padding:1.5rem;font-size:9px;letter-spacing:2px;color:r
 <div class="floaters" id="floaters"></div>
 
 <!-- Muzică de fundal -->
-<audio id="bg-music" loop preload="auto">
+<audio id="bg-music" autoplay muted loop playsinline preload="auto">
   <source src="bg-music.mp3" type="audio/mpeg">
 </audio>
 <button class="music-toggle" id="music-toggle" title="Muzică" onclick="toggleMusic()">🔇</button>
@@ -1884,16 +1884,21 @@ function saveMedia(fid, mimeTypeGuess, fname, downloadUrl, thumbUrl, btn){
 // MUZICĂ DE FUNDAL
 // ══════════════════════════════════════════════════════
 // Browserele blochează pornirea automată a sunetului fără nicio interacțiune
-// a utilizatorului. Soluția standard: pornim mut automat la încărcare (asta
-// e mereu permis), apoi, la prima atingere/click oriunde pe pagină, activăm
-// sunetul. Practic, muzica pornește "instant" din perspectiva vizitatorului,
-// de îndată ce interacționează cu pagina — nu trebuie să caute butonul.
+// a utilizatorului. Soluția: pornim mut automat la încărcare (mereu permis),
+// apoi la PRIMA interacțiune de orice fel, oriunde pe pagină, îl activăm.
+//
+// Ascultăm evenimentele pe faza de "capture" (al treilea parametru `true`),
+// nu pe cea normală — asta înseamnă că răspundem ÎNAINTE ca orice alt buton
+// din pagină să apuce să oprească propagarea evenimentului (ev.stopPropagation
+// folosit de alte butoane, gen descărcare poze). Ascultăm mai multe tipuri
+// de evenimente deodată, ca plasă de siguranță pe toate browserele/telefoanele.
 var bgMusic=document.getElementById('bg-music');
 var musicBtn=document.getElementById('music-toggle');
 var musicUnlocked=false;
+var musicUserPaused=false;
 
 function updateMusicBtn(){
-  if(!musicBtn) return;
+  if(!musicBtn || !bgMusic) return;
   if(bgMusic.paused || bgMusic.muted){
     musicBtn.textContent='🔇';
     musicBtn.classList.remove('playing');
@@ -1903,58 +1908,49 @@ function updateMusicBtn(){
   }
 }
 
-function tryAutoplayMuted(){
-  if(!bgMusic) return;
-  bgMusic.muted=true;
-  bgMusic.volume=0.5;
+function startMusic(){
+  if(!bgMusic || musicUserPaused) return;
+  bgMusic.muted=false;
+  bgMusic.volume=0.6;
   var p=bgMusic.play();
-  if(p && p.catch) p.catch(function(){ /* browserul a blocat și autoplay-ul mut — nu-i grav, pornește la prima atingere */ });
+  if(p && p.catch) p.catch(function(){ /* browserul tot a blocat — mai încercăm la următoarea interacțiune */ });
   updateMusicBtn();
 }
 
 function unlockMusicOnce(){
-  if(musicUnlocked || !bgMusic) return;
+  if(musicUnlocked) return;
   musicUnlocked=true;
-  bgMusic.muted=false;
-  var p=bgMusic.play();
-  if(p && p.catch) p.catch(function(){});
-  updateMusicBtn();
+  startMusic();
 }
 
 function toggleMusic(){
-  var MDEBUG=true; // ⚠️ temporar — scoatem după ce găsim problema
-  if(!bgMusic){
-    if(MDEBUG) alert('DIAGNOSTIC: elementul audio (#bg-music) nu a fost găsit în pagină.');
-    return;
-  }
+  if(!bgMusic) return;
   musicUnlocked=true;
-  if(bgMusic.paused){
-    bgMusic.muted=false;
-    var p=bgMusic.play();
-    if(p && p.catch) p.catch(function(err){
-      if(MDEBUG) alert('DIAGNOSTIC: play() a eșuat: '+describeError(err)+' | src actual: '+bgMusic.currentSrc+' | readyState: '+bgMusic.readyState+' | networkState: '+bgMusic.networkState+' | error: '+(bgMusic.error?bgMusic.error.code:'none'));
-    });
-    if(MDEBUG) setTimeout(function(){
-      if(bgMusic.paused) alert('DIAGNOSTIC: după play(), audio.paused=true tot. src: '+bgMusic.currentSrc+' | readyState: '+bgMusic.readyState+' | networkState: '+bgMusic.networkState+' | error code: '+(bgMusic.error?bgMusic.error.code:'none'));
-    }, 700);
-  } else if(bgMusic.muted){
-    bgMusic.muted=false;
+  if(bgMusic.paused || bgMusic.muted){
+    musicUserPaused=false;
+    startMusic();
   } else {
+    musicUserPaused=true;
     bgMusic.pause();
   }
   updateMusicBtn();
 }
 
-document.addEventListener('click',function(e){
-  if(e.target && e.target.id==='music-toggle') return;
-  unlockMusicOnce();
+var _unlockEvents=['click','touchend','touchstart','pointerdown','keydown','scroll'];
+_unlockEvents.forEach(function(evt){
+  document.addEventListener(evt, function(e){
+    if(e.target && e.target.closest && e.target.closest('#music-toggle')) return;
+    unlockMusicOnce();
+  }, {capture:true, passive:true});
 });
-document.addEventListener('touchstart',function(e){
-  if(e.target && e.target.id==='music-toggle') return;
-  unlockMusicOnce();
-},{passive:true});
 
-if(bgMusic) tryAutoplayMuted();
+if(bgMusic){
+  bgMusic.muted=true;
+  bgMusic.volume=0.6;
+  var _p0=bgMusic.play();
+  if(_p0 && _p0.catch) _p0.catch(function(){});
+  updateMusicBtn();
+}
 
 // ══════════════════════════════════════════════════════
 // FLOATERS
