@@ -269,21 +269,43 @@ footer{text-align:center;padding:1.5rem;font-size:9px;letter-spacing:2px;color:r
   <source src="bg-music.mp3" type="audio/mpeg">
 </audio>
 <button id="music-toggle" class="music-toggle" title="Muzică" onclick="
+  var MDEBUG=true;
   var m=document.getElementById('bg-music');
-  if(m.paused){ m.play().catch(function(){}); this.textContent='🎵'; this.classList.add('playing'); }
-  else{ m.pause(); this.textContent='🔇'; this.classList.remove('playing'); }
+  if(m.paused){
+    var p=m.play();
+    this.textContent='🎵'; this.classList.add('playing');
+    if(p && p.catch) p.catch(function(err){
+      if(MDEBUG) alert('DIAGNOSTIC buton: play() a eșuat.\\nEroare: '+(err&&err.name?err.name+': '+err.message:err)+'\\nreadyState: '+m.readyState+'\\nnetworkState: '+m.networkState+'\\nerror code: '+(m.error?m.error.code:'none')+'\\ncurrentSrc: '+m.currentSrc);
+    });
+    if(MDEBUG) setTimeout(function(){
+      if(m.paused) alert('DIAGNOSTIC buton: după play(), tot paused=true.\\nreadyState: '+m.readyState+'\\nnetworkState: '+m.networkState+'\\nerror code: '+(m.error?m.error.code:'none')+'\\ncurrentSrc: '+m.currentSrc);
+    }, 800);
+  } else {
+    m.pause(); this.textContent='🔇'; this.classList.remove('playing');
+  }
 ">🔇</button>
 <script>
 (function(){
+  var MDEBUG=true; // ⚠️ temporar — scoatem după ce găsim problema
   var m=document.getElementById('bg-music');
   var btn=document.getElementById('music-toggle');
-  if(!m) return;
+  if(!m){
+    if(MDEBUG) alert('DIAGNOSTIC încărcare: elementul <audio id="bg-music"> NU a fost găsit în pagină.');
+    return;
+  }
+  if(MDEBUG){
+    setTimeout(function(){
+      alert('DIAGNOSTIC încărcare (după 1.5s):\\ncurrentSrc: '+(m.currentSrc||'(gol — sursa nu s-a încărcat)')+'\\nreadyState: '+m.readyState+' (0=fără date, 4=gata complet)\\nnetworkState: '+m.networkState+' (2=se încarcă, 3=eroare sursă)\\nerror: '+(m.error?('cod '+m.error.code):'none')+'\\nduration: '+m.duration+'\\npaused: '+m.paused+'\\nmuted: '+m.muted);
+    }, 1500);
+  }
   // Pornire mută automată (mereu permisă de browsere), apoi activare
   // sunetului la prima interacțiune de orice fel cu pagina. Acest script
   // e complet separat de restul codului paginii, ca să nu depindă de nimic
   // altceva de mai jos.
   m.muted=true;
-  m.play().catch(function(){});
+  m.play().catch(function(err){
+    if(MDEBUG) alert('DIAGNOSTIC încărcare: chiar și play() MUT a eșuat.\\nEroare: '+(err&&err.name?err.name+': '+err.message:err));
+  });
   function unlock(e){
     if(e && e.target && e.target.id==='music-toggle') return;
     if(m.muted){
